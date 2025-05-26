@@ -176,6 +176,14 @@ class SoccerInABox {
     }
 
     getCurrentMatchTime() {
+        if (this.timer.elapsed === 0 && !this.timer.isRunning) {
+            // Se il timer non è mai stato avviato, usa l'orario reale
+            const now = new Date();
+            const startTime = this.matchData.startTime ? new Date(this.matchData.startTime) : now;
+            const realMinutes = Math.floor((now - startTime) / 60000);
+            return realMinutes > 0 ? `${realMinutes}'` : `Pre-Match`;
+        }
+        
         const minutes = Math.floor(this.timer.elapsed / 60000);
         return `${minutes}'`;
     }
