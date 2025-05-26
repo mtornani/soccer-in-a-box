@@ -1,10 +1,10 @@
+# ⚽ Soccer in a Box - Minimal Match Analysis Kit
+
+
 ![PWA Ready](https://img.shields.io/badge/PWA-Ready-brightgreen)
 ![Offline Capable](https://img.shields.io/badge/Offline-Capable-orange)
 ![Mobile First](https://img.shields.io/badge/Mobile-First-blue)
 ![License MIT](https://img.shields.io/badge/License-MIT-yellow)
-
-
-# ⚽ Soccer in a Box - Minimal Match Analysis Kit
 
 **Progressive Web App per match analysis e scouting calcistico offline**
 
