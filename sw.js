@@ -9,7 +9,8 @@ const CACHE_FILES = [
     './index.html',
     './style.css',
     './app.js',
-    './manifest.json'
+    './manifest.json',
+    './sw.js'
 ];
 
 // URL che richiedono sempre aggiornamento (API, dati dinamici)
