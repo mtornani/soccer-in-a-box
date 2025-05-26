@@ -154,8 +154,15 @@ class SoccerInABox {
         this.timer.isRunning = false;
         if (this.timer.interval) {
             clearInterval(this.timer.interval);
+            this.timer.interval = null;
         }
+        this.timer.startTime = null;
         this.updateTimerDisplay();
+        
+        // Reset anche la durata del match
+        this.matchData.duration = 0;
+        this.updateReportStats();
+        this.saveData();
     }
 
     updateTimer() {
@@ -176,14 +183,19 @@ class SoccerInABox {
     }
 
     getCurrentMatchTime() {
+        // Se il timer non è mai stato avviato o è a zero
         if (this.timer.elapsed === 0 && !this.timer.isRunning) {
-            // Se il timer non è mai stato avviato, usa l'orario reale
-            const now = new Date();
-            const startTime = this.matchData.startTime ? new Date(this.matchData.startTime) : now;
-            const realMinutes = Math.floor((now - startTime) / 60000);
-            return realMinutes > 0 ? `${realMinutes}'` : `Pre-Match`;
+            // Se esiste un startTime del match, calcola il tempo reale trascorso
+            if (this.matchData.startTime) {
+                const now = new Date();
+                const startTime = new Date(this.matchData.startTime);
+                const realMinutes = Math.floor((now - startTime) / 60000);
+                return realMinutes > 0 ? `${realMinutes}'` : `Pre-Match`;
+            }
+            return `Pre-Match`;
         }
         
+        // Calcola i minuti dal timer elapsed
         const minutes = Math.floor(this.timer.elapsed / 60000);
         return `${minutes}'`;
     }
