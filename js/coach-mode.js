@@ -1,5 +1,5 @@
 /**
- * Soccer in a Box - Coach Mode
+ * Soccer in a Box - Coach Mode (COMPLETO)
  * Professional match analysis, scouting, and player evaluation tools
  */
 
@@ -55,6 +55,29 @@ class CoachMode {
         this.loadCurrentMatch();
     }
 
+    loadExistingData() {
+        // Load saved match data
+        const savedMatch = localStorage.getItem('coach_current_match');
+        if (savedMatch) {
+            this.matchData = JSON.parse(savedMatch);
+            this.notes = this.matchData.notes || [];
+            this.players = this.matchData.players || [];
+        }
+    }
+
+    saveMatchData() {
+        if (this.matchData) {
+            this.matchData.notes = this.notes;
+            this.matchData.players = this.players;
+            this.matchData.elapsedTime = this.elapsedTime;
+            localStorage.setItem('coach_current_match', JSON.stringify(this.matchData));
+            
+            // Update shared data for community
+            window.SoccerBox.sharedData.currentMatch = this.matchData;
+            window.SoccerBox.DataManager.saveSharedData();
+        }
+    }
+
     createCoachInterface() {
         const coachScreen = document.getElementById('coach-screen');
         if (!coachScreen) return;
@@ -74,40 +97,40 @@ class CoachMode {
                 <h3 class="feature-title">🏟️ Setup Match</h3>
                 <div class="match-form">
                     <div class="form-row">
-                        <input type="text" id="home-team" placeholder="Squadra Casa" class="form-input">
-                        <input type="text" id="away-team" placeholder="Squadra Ospite" class="form-input">
+                        <input type="text" id="home-team" placeholder="Squadra Casa" class="form-input" value="${this.matchData.homeTeam || ''}">
+                        <input type="text" id="away-team" placeholder="Squadra Ospite" class="form-input" value="${this.matchData.awayTeam || ''}">
                     </div>
                     <div class="form-row">
-                        <input type="date" id="match-date" class="form-input">
-                        <input type="text" id="venue" placeholder="Venue" class="form-input">
+                        <input type="date" id="match-date" class="form-input" value="${this.matchData.date || new Date().toISOString().split('T')[0]}">
+                        <input type="text" id="venue" placeholder="Venue" class="form-input" value="${this.matchData.venue || ''}">
                     </div>
                     <div class="form-row">
                         <select id="competition" class="form-input">
                             <option value="">Competizione</option>
-                            <option value="campionato">Campionato</option>
-                            <option value="coppa">Coppa</option>
-                            <option value="amichevole">Amichevole</option>
-                            <option value="playoff">Playoff</option>
+                            <option value="campionato" ${this.matchData.competition === 'campionato' ? 'selected' : ''}>Campionato</option>
+                            <option value="coppa" ${this.matchData.competition === 'coppa' ? 'selected' : ''}>Coppa</option>
+                            <option value="amichevole" ${this.matchData.competition === 'amichevole' ? 'selected' : ''}>Amichevole</option>
+                            <option value="playoff" ${this.matchData.competition === 'playoff' ? 'selected' : ''}>Playoff</option>
                         </select>
                         <select id="weather" class="form-input">
                             <option value="">Condizioni Meteo</option>
-                            <option value="sole">☀️ Sole</option>
-                            <option value="nuvoloso">☁️ Nuvoloso</option>
-                            <option value="pioggia">🌧️ Pioggia</option>
-                            <option value="vento">💨 Ventoso</option>
+                            <option value="sole" ${this.matchData.weather === 'sole' ? 'selected' : ''}>☀️ Sole</option>
+                            <option value="nuvoloso" ${this.matchData.weather === 'nuvoloso' ? 'selected' : ''}>☁️ Nuvoloso</option>
+                            <option value="pioggia" ${this.matchData.weather === 'pioggia' ? 'selected' : ''}>🌧️ Pioggia</option>
+                            <option value="vento" ${this.matchData.weather === 'vento' ? 'selected' : ''}>💨 Ventoso</option>
                         </select>
                     </div>
-                    <button id="start-match" class="btn">📊 Inizia Analisi Match</button>
+                    <button id="start-match" class="btn">📊 ${this.matchData.id ? 'Aggiorna Match' : 'Inizia Analisi Match'}</button>
                 </div>
             </div>
 
             <!-- Live Analysis Section -->
-            <div id="live-analysis" class="feature-card" style="display: none;">
+            <div id="live-analysis" class="feature-card" style="display: ${this.matchData.id ? 'block' : 'none'};">
                 <div class="analysis-header">
                     <h3 class="feature-title">⏱️ Analisi Live</h3>
                     <div class="timer-controls">
-                        <div id="match-timer" class="timer-display">00:00</div>
-                        <button id="timer-toggle" class="btn btn-secondary">▶️ Start</button>
+                        <div id="match-timer" class="timer-display">${window.SoccerBox.Utils.formatTime(this.elapsedTime)}</div>
+                        <button id="timer-toggle" class="btn btn-secondary">${this.isRunning ? '⏸️ Pause' : '▶️ Start'}</button>
                         <button id="timer-reset" class="btn">🔄 Reset</button>
                     </div>
                 </div>
@@ -136,7 +159,7 @@ class CoachMode {
 
                 <!-- Notes Timeline -->
                 <div class="notes-timeline" id="notes-timeline">
-                    <h4>Timeline Note:</h4>
+                    <h4>Timeline Note (${this.notes.length}):</h4>
                     <div id="notes-list"></div>
                 </div>
             </div>
@@ -148,7 +171,7 @@ class CoachMode {
                     <div class="form-row">
                         <input type="text" id="player-name" placeholder="Nome Giocatore" class="form-input">
                         <input type="number" id="player-number" placeholder="Numero" class="form-input" min="1" max="99">
-                        <input type="text" id="player-position" placeholder="Posizione" class="form-input">
+                        <input type="text" id="player-position" placeholder="Posizione (es. CC, ATT, DIF)" class="form-input">
                     </div>
                     
                     <!-- Skill Ratings -->
@@ -224,7 +247,7 @@ class CoachMode {
 
                 <!-- Players List -->
                 <div id="players-list" class="players-section">
-                    <h4>Giocatori Valutati:</h4>
+                    <h4>Giocatori Valutati (${this.players.length}):</h4>
                     <div id="players-grid"></div>
                 </div>
             </div>
@@ -232,17 +255,35 @@ class CoachMode {
             <!-- Reports Section -->
             <div class="feature-card">
                 <h3 class="feature-title">📊 Report e Export</h3>
-                <div class="report-stats" id="report-stats"></div>
+                <div class="report-stats" id="report-stats">
+                    <div class="stats-summary">
+                        <div class="stat-item">
+                            <span class="stat-number">${this.notes.length}</span>
+                            <span class="stat-label">Note Totali</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">${this.players.length}</span>
+                            <span class="stat-label">Giocatori Valutati</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">${window.SoccerBox.Utils.formatTime(this.elapsedTime)}</span>
+                            <span class="stat-label">Durata Match</span>
+                        </div>
+                    </div>
+                </div>
                 <div class="export-buttons">
                     <button id="export-markdown" class="btn">📄 Export Markdown</button>
                     <button id="export-txt" class="btn btn-secondary">📝 Export TXT</button>
                     <button id="share-community" class="btn" style="background: var(--accent-color);">
                         🌍 Condividi con Community
                     </button>
+                    <button id="clear-match" class="btn" style="background: #dc3545;">
+                        🗑️ Pulisci Match
+                    </button>
                 </div>
             </div>
 
-            <!-- Additional CSS -->
+            <!-- CSS Styles -->
             <style>
                 .match-form, .player-form {
                     display: flex;
@@ -263,6 +304,12 @@ class CoachMode {
                     font-size: 1rem;
                 }
                 
+                .form-input:focus {
+                    outline: none;
+                    border-color: var(--primary-color);
+                    box-shadow: 0 0 0 2px rgba(44, 90, 160, 0.1);
+                }
+                
                 .analysis-header {
                     display: flex;
                     justify-content: space-between;
@@ -281,6 +328,8 @@ class CoachMode {
                     font-weight: bold;
                     color: var(--primary-color);
                     font-family: monospace;
+                    min-width: 80px;
+                    text-align: center;
                 }
                 
                 .quick-actions {
@@ -310,6 +359,10 @@ class CoachMode {
                     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
                 }
                 
+                .note-input-section {
+                    margin: 1rem 0;
+                }
+                
                 .note-textarea {
                     width: 100%;
                     min-height: 100px;
@@ -318,6 +371,7 @@ class CoachMode {
                     border-radius: 8px;
                     resize: vertical;
                     font-family: inherit;
+                    margin-bottom: 0.5rem;
                 }
                 
                 .skills-section {
@@ -349,6 +403,7 @@ class CoachMode {
                     font-size: 1.2rem;
                     opacity: 0.3;
                     transition: opacity 0.2s ease;
+                    user-select: none;
                 }
                 
                 .star.active {
@@ -361,7 +416,7 @@ class CoachMode {
                 
                 .players-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
                     gap: 1rem;
                     margin-top: 1rem;
                 }
@@ -371,6 +426,12 @@ class CoachMode {
                     padding: 1rem;
                     border-radius: 8px;
                     border-left: 4px solid var(--primary-color);
+                    transition: transform 0.2s ease;
+                }
+                
+                .player-card:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                 }
                 
                 .player-header {
@@ -383,6 +444,7 @@ class CoachMode {
                 .player-name {
                     font-weight: bold;
                     font-size: 1.1rem;
+                    color: var(--primary-color);
                 }
                 
                 .player-number {
@@ -391,6 +453,14 @@ class CoachMode {
                     padding: 0.2rem 0.5rem;
                     border-radius: 50%;
                     font-size: 0.9rem;
+                    min-width: 25px;
+                    text-align: center;
+                }
+                
+                .player-position {
+                    color: var(--text-secondary);
+                    font-style: italic;
+                    margin-bottom: 0.5rem;
                 }
                 
                 .player-skills {
@@ -398,11 +468,26 @@ class CoachMode {
                     grid-template-columns: 1fr 1fr;
                     gap: 0.3rem;
                     font-size: 0.8rem;
+                    margin-bottom: 0.5rem;
                 }
                 
-                .notes-list {
+                .player-notes {
+                    font-size: 0.85rem;
+                    color: var(--text-secondary);
+                    font-style: italic;
+                    margin-top: 0.5rem;
+                    padding-top: 0.5rem;
+                    border-top: 1px solid #e9ecef;
+                }
+                
+                .notes-timeline {
+                    margin-top: 1rem;
+                }
+                
+                #notes-list {
                     max-height: 300px;
                     overflow-y: auto;
+                    margin-top: 0.5rem;
                 }
                 
                 .note-item {
@@ -417,10 +502,35 @@ class CoachMode {
                     font-size: 0.8rem;
                     color: var(--text-secondary);
                     font-weight: bold;
+                    font-family: monospace;
                 }
                 
                 .note-content {
                     margin-top: 0.3rem;
+                    line-height: 1.4;
+                }
+                
+                .stats-summary {
+                    display: flex;
+                    gap: 2rem;
+                    margin-bottom: 1rem;
+                    flex-wrap: wrap;
+                }
+                
+                .stat-item {
+                    text-align: center;
+                }
+                
+                .stat-number {
+                    display: block;
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                    color: var(--primary-color);
+                }
+                
+                .stat-label {
+                    font-size: 0.8rem;
+                    color: var(--text-secondary);
                 }
                 
                 .export-buttons {
@@ -438,6 +548,11 @@ class CoachMode {
                     .analysis-header {
                         flex-direction: column;
                         gap: 1rem;
+                        align-items: stretch;
+                    }
+                    
+                    .timer-controls {
+                        justify-content: center;
                     }
                     
                     .quick-buttons {
@@ -447,6 +562,21 @@ class CoachMode {
                     .export-buttons {
                         flex-direction: column;
                     }
+                    
+                    .stats-summary {
+                        justify-content: center;
+                    }
+                    
+                    .players-grid {
+                        grid-template-columns: 1fr;
+                    }
+                }
+                
+                .empty-state {
+                    text-align: center;
+                    padding: 2rem;
+                    color: var(--text-secondary);
+                    font-style: italic;
                 }
             </style>
         `;
@@ -485,6 +615,17 @@ class CoachMode {
             addNoteBtn.addEventListener('click', () => this.addNote());
         }
 
+        // Live notes enter key
+        const liveNotesTextarea = document.getElementById('live-notes');
+        if (liveNotesTextarea) {
+            liveNotesTextarea.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    this.addNote();
+                }
+            });
+        }
+
         // Player rating stars
         document.querySelectorAll('.star').forEach(star => {
             star.addEventListener('click', (e) => this.setPlayerRating(e));
@@ -500,6 +641,7 @@ class CoachMode {
         const exportMdBtn = document.getElementById('export-markdown');
         const exportTxtBtn = document.getElementById('export-txt');
         const shareCommunityBtn = document.getElementById('share-community');
+        const clearMatchBtn = document.getElementById('clear-match');
 
         if (exportMdBtn) {
             exportMdBtn.addEventListener('click', () => this.exportMarkdown());
@@ -511,6 +653,29 @@ class CoachMode {
         
         if (shareCommunityBtn) {
             shareCommunityBtn.addEventListener('click', () => this.shareToCommunity());
+        }
+
+        if (clearMatchBtn) {
+            clearMatchBtn.addEventListener('click', () => this.clearMatch());
+        }
+
+        // Initial data load
+        this.refreshNotesList();
+        this.refreshPlayersList();
+    }
+
+    refreshInterface() {
+        if (this.matchData.id) {
+            document.getElementById('live-analysis').style.display = 'block';
+        }
+        this.refreshNotesList();
+        this.refreshPlayersList();
+    }
+
+    loadCurrentMatch() {
+        if (this.matchData.elapsedTime) {
+            this.elapsedTime = this.matchData.elapsedTime;
+            this.updateTimerDisplay();
         }
     }
 
@@ -524,32 +689,55 @@ class CoachMode {
         const weather = document.getElementById('weather').value;
 
         if (!homeTeam || !awayTeam) {
-            alert('Inserisci almeno i nomi delle squadre');
+            window.SoccerBox.Utils.showNotification('Inserisci almeno i nomi delle squadre', 'error');
             return;
         }
 
         this.matchData = {
-            id: window.SoccerBox.Utils.generateId(),
+            id: this.matchData.id || window.SoccerBox.Utils.generateId(),
             homeTeam,
             awayTeam,
             date: matchDate || new Date().toISOString().split('T')[0],
             venue,
             competition,
             weather,
-            startTime: new Date().toISOString(),
-            notes: [],
-            players: []
+            startTime: this.matchData.startTime || new Date().toISOString(),
+            notes: this.notes,
+            players: this.players
         };
 
         // Hide setup, show analysis
         document.getElementById('match-setup').style.display = 'none';
         document.getElementById('live-analysis').style.display = 'block';
 
-        // Update shared data for community
-        window.SoccerBox.sharedData.currentMatch = this.matchData;
-        window.SoccerBox.DataManager.saveSharedData();
+        this.saveMatchData();
+        window.SoccerBox.Utils.showNotification('Match configurato! Timer disponibile.', 'success');
+    }
 
-        window.SoccerBox.Utils.showNotification('Match iniziato! Timer disponibile.', 'success');
+    clearMatch() {
+        if (confirm('Sei sicuro di voler cancellare tutti i dati del match corrente? Questa azione non può essere annullata.')) {
+            this.matchData = {};
+            this.notes = [];
+            this.players = [];
+            this.elapsedTime = 0;
+            this.resetTimer();
+            
+            localStorage.removeItem('coach_current_match');
+            
+            // Reset interface
+            document.getElementById('match-setup').style.display = 'block';
+            document.getElementById('live-analysis').style.display = 'none';
+            
+            // Clear form
+            document.getElementById('home-team').value = '';
+            document.getElementById('away-team').value = '';
+            document.getElementById('venue').value = '';
+            document.getElementById('competition').value = '';
+            document.getElementById('weather').value = '';
+            
+            this.refreshInterface();
+            window.SoccerBox.Utils.showNotification('Match cancellato', 'success');
+        }
     }
 
     // Timer Functions
@@ -571,7 +759,10 @@ class CoachMode {
         this.isRunning = true;
         this.matchTimer = setInterval(() => this.updateTimer(), 1000);
         
-        document.getElementById('timer-toggle').textContent = '⏸️ Pause';
+        const toggleBtn = document.getElementById('timer-toggle');
+        if (toggleBtn) {
+            toggleBtn.textContent = '⏸️ Pause';
+        }
     }
 
     pauseTimer() {
@@ -580,7 +771,11 @@ class CoachMode {
             this.matchTimer = null;
         }
         this.isRunning = false;
-        document.getElementById('timer-toggle').textContent = '▶️ Start';
+        
+        const toggleBtn = document.getElementById('timer-toggle');
+        if (toggleBtn) {
+            toggleBtn.textContent = '▶️ Start';
+        }
     }
 
     resetTimer() {
@@ -588,243 +783,12 @@ class CoachMode {
         this.elapsedTime = 0;
         this.startTime = null;
         this.updateTimerDisplay();
+        this.saveMatchData();
     }
 
     updateTimer() {
         if (this.isRunning && this.startTime) {
             this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
             this.updateTimerDisplay();
-        }
-    }
-
-    updateTimerDisplay() {
-        const display = document.getElementById('match-timer');
-        if (display) {
-            display.textContent = window.SoccerBox.Utils.formatTime(this.elapsedTime);
-        }
-    }
-
-    // Notes Management
-    addQuickNote(action) {
-        const actionTexts = {
-            goal: '⚽ GOL!',
-            yellow: '🟨 Cartellino giallo',
-            red: '🟥 Cartellino rosso',
-            substitution: '🔄 Sostituzione',
-            corner: '📐 Calcio d\'angolo',
-            foul: '🚫 Fallo',
-            offside: '🏁 Fuorigioco',
-            shot: '🎯 Tiro in porta'
-        };
-
-        const noteText = actionTexts[action] || action;
-        this.addNoteWithText(noteText);
-    }
-
-    addNote() {
-        const noteInput = document.getElementById('live-notes');
-        if (noteInput && noteInput.value.trim()) {
-            this.addNoteWithText(noteInput.value.trim());
-            noteInput.value = '';
-        }
-    }
-
-    addNoteWithText(text) {
-        const note = {
-            id: window.SoccerBox.Utils.generateId(),
-            timestamp: this.elapsedTime,
-            time: window.SoccerBox.Utils.formatTime(this.elapsedTime),
-            text: text,
-            created: new Date().toISOString()
-        };
-
-        this.notes.push(note);
-        this.matchData.notes = this.notes;
-        
-        this.refreshNotesList();
-        this.saveMatchData();
-
-        // Share to community
-        window.SoccerBox.eventBus.emit('match:note:added', note);
-    }
-
-    refreshNotesList() {
-        const notesList = document.getElementById('notes-list');
-        if (!notesList) return;
-
-        notesList.innerHTML = this.notes
-            .sort((a, b) => b.timestamp - a.timestamp)
-            .map(note => `
-                <div class="note-item">
-                    <div class="note-timestamp">${note.time}</div>
-                    <div class="note-content">${note.text}</div>
-                </div>
-            `).join('');
-    }
-
-    focusNoteInput() {
-        const noteInput = document.getElementById('live-notes');
-        if (noteInput) {
-            noteInput.focus();
-        }
-    }
-
-    // Player Evaluation
-    setPlayerRating(event) {
-        const star = event.target;
-        const rating = parseInt(star.dataset.rating);
-        const skillGroup = star.closest('.stars');
-        const skill = skillGroup.dataset.skill;
-        
-        // Update visual stars
-        const stars = skillGroup.querySelectorAll('.star');
-        stars.forEach((s, index) => {
-            if (index < rating) {
-                s.classList.add('active');
-            } else {
-                s.classList.remove('active');
-            }
-        });
-        
-        // Store rating
-        if (!this.playerRatings.current) {
-            this.playerRatings.current = {};
-        }
-        this.playerRatings.current[skill] = rating;
-    }
-
-    savePlayer() {
-        const name = document.getElementById('player-name').value;
-        const number = document.getElementById('player-number').value;
-        const position = document.getElementById('player-position').value;
-        const notes = document.getElementById('player-notes').value;
-
-        if (!name) {
-            alert('Inserisci il nome del giocatore');
-            return;
-        }
-
-        const player = {
-            id: window.SoccerBox.Utils.generateId(),
-            name,
-            number: number || null,
-            position,
-            notes,
-            ratings: { ...this.playerRatings.current } || {},
-            matchId: this.matchData?.id,
-            evaluatedAt: new Date().toISOString()
-        };
-
-        this.players.push(player);
-        this.matchData.players = this.players;
-        
-        // Clear form
-        document.getElementById('player-name').value = '';
-        document.getElementById('player-number').value = '';
-        document.getElementById('player-position').value = '';
-        document.getElementById('player-notes').value = '';
-        
-        // Reset ratings
-        document.querySelectorAll('.star').forEach(star => {
-            star.classList.remove('active');
-        });
-        this.playerRatings.current = {};
-
-        this.refreshPlayersList();
-        this.saveMatchData();
-        
-        window.SoccerBox.Utils.showNotification(`Giocatore ${name} salvato!`, 'success');
-    }
-
-    refreshPlayersList() {
-        const playersGrid = document.getElementById('players-grid');
-        if (!playersGrid) return;
-
-        playersGrid.innerHTML = this.players.map(player => `
-            <div class="player-card">
-                <div class="player-header">
-                    <span class="player-name">${player.name}</span>
-                    ${player.number ? `<span class="player-number">${player.number}</span>` : ''}
-                </div>
-                <div class="player-position">${player.position || 'Posizione non specificata'}</div>
-                <div class="player-skills">
-                    ${Object.entries(player.ratings).map(([skill, rating]) => 
-                        `<div>${this.getSkillName(skill)}: ${'⭐'.repeat(rating)}</div>`
-                    ).join('')}
-                </div>
-                ${player.notes ? `<div class="player-notes">${player.notes}</div>` : ''}
-            </div>
-        `).join('');
-    }
-
-    getSkillName(skill) {
-        const skillNames = {
-            'ball-control': 'Controllo',
-            'passing': 'Passaggio',
-            'shooting': 'Tiro',
-            'defending': 'Difesa',
-            'physical': 'Fisico',
-            'mental': 'Mentale'
-        };
-        return skillNames[skill] || skill;
-    }
-
-    // Export Functions
-    exportMarkdown() {
-        const markdown = this.generateMarkdownReport();
-        this.downloadFile(markdown, 'match-report.md', 'text/markdown');
-    }
-
-    exportTxt() {
-        const txtReport = this.generateTxtReport();
-        this.downloadFile(txtReport, 'match-report.txt', 'text/plain');
-    }
-
-    generateMarkdownReport() {
-        const match = this.matchData;
-        if (!match) return '';
-
-        return `# Match Report: ${match.homeTeam} vs ${match.awayTeam}
-
-## Match Information
-- **Date:** ${match.date}
-- **Venue:** ${match.venue || 'N/A'}
-- **Competition:** ${match.competition || 'N/A'}
-- **Weather:** ${match.weather || 'N/A'}
-- **Duration:** ${window.SoccerBox.Utils.formatTime(this.elapsedTime)}
-
-## Match Notes
-${this.notes.map(note => `- **${note.time}** - ${note.text}`).join('\n')}
-
-## Player Evaluations
-${this.players.map(player => `
-### ${player.name} ${player.number ? `#${player.number}` : ''}
-- **Position:** ${player.position || 'N/A'}
-- **Ratings:**
-${Object.entries(player.ratings).map(([skill, rating]) => 
-  `  - ${this.getSkillName(skill)}: ${rating}/5 ⭐`).join('\n')}
-${player.notes ? `- **Notes:** ${player.notes}` : ''}
-`).join('\n')}
-
-## Statistics
-- **Total Notes:** ${this.notes.length}
-- **Players Evaluated:** ${this.players.length}
-- **Match Duration:** ${window.SoccerBox.Utils.formatTime(this.elapsedTime)}
-
----
-*Generated by Soccer in a Box - ${new Date().toLocaleString()}*
-`;
-    }
-
-    generateTxtReport() {
-        const match = this.matchData;
-        if (!match) return '';
-
-        return `MATCH REPORT: ${match.homeTeam} vs ${match.awayTeam}
-${'='.repeat(50)}
-
-MATCH INFORMATION:
-Date: ${match.date}
-Venue: ${match.venue || 'N/A'}
-Competition: ${match.competition || 'N/A'}
-Weather: ${match.weather || 'N/A'}
+            
+            // Auto-save every 30 seconds
