@@ -4,278 +4,417 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#2c5aa0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Soccer in a Box">
-    <title>Soccer in a Box - Match Analysis</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Soccer in a Box - Ecosistema Calcistico</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%232c5aa0'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle' fill='white'%3E⚽%3C/text%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Ccircle cx='90' cy='90' r='90' fill='%232c5aa0'/%3E%3Ccircle cx='90' cy='90' r='40' fill='white'/%3E%3Cpolygon points='90,65 100,72 100,82 90,89 80,82 80,72' fill='%232c5aa0'/%3E%3Cpolygon points='90,95 100,102 100,112 90,119 80,112 80,102' fill='%232c5aa0'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <style>
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #4CAF50;
+            --accent-color: #FF9800;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --background: #f5f5f5;
+            --card-background: #ffffff;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 3rem;
+            max-width: 600px;
+        }
+
+        .mode-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .mode-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .mode-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .mode-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .mode-description {
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* Header comum */
+        .app-header {
+            background: var(--card-background);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .mode-switcher {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .mode-switcher:hover {
+            background: var(--secondary-color);
+        }
+
+        /* Container principale */
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Cards */
+        .feature-card {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--accent-color);
+        }
+
+        /* Community specific styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .mode-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .app-header {
+                padding: 1rem;
+            }
+            
+            .app-container {
+                padding: 1rem;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <h1>⚽ Soccer in a Box</h1>
-            <p class="subtitle">Minimal Match Analysis Kit</p>
-            <div class="status-indicator" id="statusIndicator">
-                <span class="offline-dot"></span>
-                <span>Modalità Offline</span>
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="screen welcome-screen active">
+        <div class="logo">⚽</div>
+        <h1 class="welcome-title">Soccer in a Box</h1>
+        <p class="welcome-subtitle">
+            L'ecosistema completo per l'analisi calcistica.<br>
+            Scegli la tua modalità per iniziare.
+        </p>
+        
+        <div class="mode-selector">
+            <div class="mode-card" onclick="selectMode('coach')">
+                <div class="mode-icon">📊</div>
+                <h3 class="mode-title">Allenatore/Scout</h3>
+                <p class="mode-description">
+                    Analisi tattica approfondita, valutazione giocatori, 
+                    report professionali e strumenti di scouting avanzati.
+                </p>
             </div>
-        </header>
-
-        <!-- Navigation Tabs -->
-        <nav class="tabs">
-            <button class="tab-btn active" data-tab="match-setup">Setup</button>
-            <button class="tab-btn" data-tab="live-notes">Note Live</button>
-            <button class="tab-btn" data-tab="player-eval">Valutazioni</button>
-            <button class="tab-btn" data-tab="reports">Report</button>
-        </nav>
-
-        <!-- Tab Content: Match Setup -->
-        <section class="tab-content active" id="match-setup">
-            <div class="card">
-                <h2>🏟️ Informazioni Match</h2>
-                <form id="matchForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="homeTeam">Squadra Casa</label>
-                            <input type="text" id="homeTeam" placeholder="Nome squadra casa" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="awayTeam">Squadra Ospite</label>
-                            <input type="text" id="awayTeam" placeholder="Nome squadra ospite" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="matchDate">Data</label>
-                            <input type="date" id="matchDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="competition">Competizione</label>
-                            <input type="text" id="competition" placeholder="es. Campionato Regionale">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="venue">Venue</label>
-                            <input type="text" id="venue" placeholder="Campo da gioco">
-                        </div>
-                        <div class="form-group">
-                            <label for="weather">Condizioni</label>
-                            <select id="weather">
-                                <option value="">Seleziona</option>
-                                <option value="sole">☀️ Sole</option>
-                                <option value="nuvoloso">☁️ Nuvoloso</option>
-                                <option value="pioggia">🌧️ Pioggia</option>
-                                <option value="vento">💨 Ventoso</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="scoutingFocus">Focus Scouting</label>
-                        <select id="scoutingFocus">
-                            <option value="team-analysis">Analisi di squadra</option>
-                            <option value="individual-player">Giocatore specifico</option>
-                            <option value="tactical-observation">Osservazione tattica</option>
-                            <option value="physical-assessment">Valutazione fisica</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn-primary">Inizia Match Analysis</button>
-                </form>
+            
+            <div class="mode-card" onclick="selectMode('community')">
+                <div class="mode-icon">🎉</div>
+                <h3 class="mode-title">Tifoso/Community</h3>
+                <p class="mode-description">
+                    Segui la tua squadra, partecipa ai sondaggi, 
+                    condividi emozioni e connettiti con altri tifosi.
+                </p>
             </div>
-        </section>
-
-        <!-- Tab Content: Live Notes -->
-        <section class="tab-content" id="live-notes">
-            <div class="card">
-                <h2>📝 Note Live</h2>
-                <div class="match-timer">
-                    <div class="timer-display">
-                        <span id="matchTime">00:00</span>
-                        <div class="timer-controls">
-                            <button id="startTimer" class="btn-small">▶️</button>
-                            <button id="pauseTimer" class="btn-small">⏸️</button>
-                            <button id="resetTimer" class="btn-small">🔄</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="quick-actions">
-                    <button class="quick-btn" data-action="goal">⚽ Gol</button>
-                    <button class="quick-btn" data-action="card">🟨 Ammonizione</button>
-                    <button class="quick-btn" data-action="substitution">🔄 Cambio</button>
-                    <button class="quick-btn" data-action="tactical">📋 Nota Tattica</button>
-                </div>
-
-                <div class="note-input">
-                    <textarea id="liveNote" placeholder="Inserisci osservazione (tempo automatico)..." rows="3"></textarea>
-                    <button id="addNote" class="btn-primary">Aggiungi Nota</button>
-                </div>
-
-                <div class="notes-timeline" id="notesTimeline">
-                    <!-- Le note verranno aggiunte dinamicamente qui -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Tab Content: Player Evaluation -->
-        <section class="tab-content" id="player-eval">
-            <div class="card">
-                <h2>👤 Valutazioni Giocatori</h2>
-                <div class="player-selector">
-                    <input type="text" id="playerName" placeholder="Nome giocatore">
-                    <input type="number" id="playerNumber" placeholder="Numero" min="1" max="99">
-                    <select id="playerPosition">
-                        <option value="">Ruolo</option>
-                        <option value="GK">Portiere</option>
-                        <option value="CB">Difensore Centrale</option>
-                        <option value="FB">Terzino</option>
-                        <option value="CM">Centrocampista</option>
-                        <option value="CAM">Trequartista</option>
-                        <option value="W">Ala</option>
-                        <option value="ST">Attaccante</option>
-                    </select>
-                </div>
-
-                <div class="evaluation-grid">
-                    <div class="eval-category">
-                        <h3>Tecnica</h3>
-                        <div class="rating-row">
-                            <label>Controllo palla</label>
-                            <div class="rating" data-skill="ball-control">
-                                <span class="star" data-value="1">⭐</span>
-                                <span class="star" data-value="2">⭐</span>
-                                <span class="star" data-value="3">⭐</span>
-                                <span class="star" data-value="4">⭐</span>
-                                <span class="star" data-value="5">⭐</span>
-                            </div>
-                        </div>
-                        <div class="rating-row">
-                            <label>Passaggio</label>
-                            <div class="rating" data-skill="passing">
-                                <span class="star" data-value="1">⭐</span>
-                                <span class="star" data-value="2">⭐</span>
-                                <span class="star" data-value="3">⭐</span>
-                                <span class="star" data-value="4">⭐</span>
-                                <span class="star" data-value="5">⭐</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="eval-category">
-                        <h3>Fisico</h3>
-                        <div class="rating-row">
-                            <label>Velocità</label>
-                            <div class="rating" data-skill="speed">
-                                <span class="star" data-value="1">⭐</span>
-                                <span class="star" data-value="2">⭐</span>
-                                <span class="star" data-value="3">⭐</span>
-                                <span class="star" data-value="4">⭐</span>
-                                <span class="star" data-value="5">⭐</span>
-                            </div>
-                        </div>
-                        <div class="rating-row">
-                            <label>Resistenza</label>
-                            <div class="rating" data-skill="stamina">
-                                <span class="star" data-value="1">⭐</span>
-                                <span class="star" data-value="2">⭐</span>
-                                <span class="star" data-value="3">⭐</span>
-                                <span class="star" data-value="4">⭐</span>
-                                <span class="star" data-value="5">⭐</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="eval-category">
-                        <h3>Mentale</h3>
-                        <div class="rating-row">
-                            <label>Decisione</label>
-                            <div class="rating" data-skill="decision">
-                                <span class="star" data-value="1">⭐</span>
-                                <span class="star" data-value="2">⭐</span>
-                                <span class="star" data-value="3">⭐</span>
-                                <span class="star" data-value="4">⭐</span>
-                                <span class="star" data-value="5">⭐</span>
-                            </div>
-                        </div>
-                        <div class="rating-row">
-                            <label>Leadership</label>
-                            <div class="rating" data-skill="leadership">
-                                <span class="star" data-value="1">⭐</span>
-                                <span class="star" data-value="2">⭐</span>
-                                <span class="star" data-value="3">⭐</span>
-                                <span class="star" data-value="4">⭐</span>
-                                <span class="star" data-value="5">⭐</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="player-notes">
-                    <textarea id="playerNotes" placeholder="Note specifiche sul giocatore..." rows="3"></textarea>
-                </div>
-
-                <button id="savePlayer" class="btn-primary">Salva Valutazione</button>
-
-                <div class="saved-players" id="savedPlayers">
-                    <!-- Lista giocatori valutati -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Tab Content: Reports -->
-        <section class="tab-content" id="reports">
-            <div class="card">
-                <h2>📊 Report e Export</h2>
-                
-                <div class="report-summary" id="reportSummary">
-                    <div class="summary-stats">
-                        <div class="stat-item">
-                            <span class="stat-number" id="totalNotes">0</span>
-                            <span class="stat-label">Note Totali</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="totalPlayers">0</span>
-                            <span class="stat-label">Giocatori Valutati</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="matchDuration">0</span>
-                            <span class="stat-label">Durata (min)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="export-options">
-                    <button id="exportMarkdown" class="btn-secondary">📄 Esporta Markdown</button>
-                    <button id="exportText" class="btn-secondary">📝 Esporta TXT</button>
-                    <button id="clearData" class="btn-warning">🗑️ Cancella Tutto</button>
-                </div>
-
-                <div class="report-preview" id="reportPreview">
-                    <!-- Anteprima del report -->
-                </div>
-            </div>
-        </section>
+        </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="app.js"></script>
-    <script>
-        // Registrazione Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(() => console.log('SW registered'))
-                    .catch(() => console.log('SW registration failed'));
-            });
-        }
-    </script>
+    <!-- Coach Mode Screen -->
+    <div id="coach-screen" class="screen">
+        <header class="app-header">
+            <h1 class="header-title">⚽ Match Analysis</h1>
+            <button class="mode-switcher" onclick="switchMode()">
+                Modalità Community 🎉
+            </button>
+        </header>
+        
+        <div class="app-container">
+            <div class="feature-card">
+                <h3 class="feature-title">🏟️ Setup Match</h3>
+                <p>Configura squadre, data, venue e condizioni per iniziare l'analisi professionale.</p>
+                <button class="btn" onclick="startMatchSetup()">
+                    <span>Nuovo Match</span>
+                </button>
+            </div>
+            
+            <div class="feature-card">
+                <h3 class="feature-title">⏱️ Match Analysis Live</h3>
+                <p>Timer integrato, note timestampate e valutazioni giocatori in tempo reale.</p>
+                <button class="btn btn-secondary">
+                    <span>Continua Analisi</span>
+                </button>
+            </div>
+            
+            <div class="feature-card">
+                <h3 class="feature-title">👤 Database Giocatori</h3>
+                <p>Profili completi, valutazioni storiche e tracking delle performance.</p>
+                <button class="btn">
+                    <span>Gestisci Giocatori</span>
+                </button>
+            </div>
+            
+            <div class="feature-card">
+                <h3 class="feature-title">📊 Report e Export</h3>
+                <p>Genera report professionali in Markdown e TXT per condivisione.</p>
+                <button class="btn">
+                    <span>Visualizza Report</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Community Mode Screen -->
+    <div id="community-screen" class="screen">
+        <header class="app-header">
+            <h1 class="header-title">🎉 Community Hub</h1>
+            <button class="mode-switcher" onclick="switchMode()">
+                Modalità Tecnica 📊
+            </button>
+        </header>
+        
+        <div class="app-container">
+            <!-- Team Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">15</div>
+                    <div class="stat-label">Partite Seguite</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">247</div>
+                    <div class="stat-label">Tifosi Attivi</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">89%</div>
+                    <div class="stat-label">Soddisfazione</div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="feature-card">
+                <h3 class="feature-title">⚡ Azioni Rapide</h3>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                    <button class="btn" onclick="openPoll()">
+                        🗳️ Vota Sondaggio
+                    </button>
+                    <button class="btn btn-secondary" onclick="shareEmotion()">
+                        😍 Condividi Emozione
+                    </button>
+                    <button class="btn" onclick="viewStats()">
+                        📈 Statistiche Squadra
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Live Feed -->
+            <div class="feature-card">
+                <h3 class="feature-title">📱 Feed Live</h3>
+                <p>Segui in tempo reale i momenti salienti e le emozioni della community.</p>
+                <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <p><strong>⚽ GOL!</strong> Incredibile rete di Marco al 78'!</p>
+                    <small style="color: var(--text-secondary);">2 minuti fa • 🔥 15 reazioni</small>
+                </div>
+            </div>
+            
+            <!-- Team Connection -->
+            <div class="feature-card">
+                <h3 class="feature-title">🤝 Connetti con la Squadra</h3>
+                <p>Il tuo supporto arriva direttamente allo staff tecnico.</p>
+                <button class="btn" onclick="sendSupport()">
+                    <span>Invia Messaggio di Supporto</span>
+                </button>
+            </div>
+            
+            <!-- Global Network -->
+            <div class="feature-card">
+                <h3 class="feature-title">🌍 Network Globale</h3>
+                <p>Connettiti con tifosi di tutto il mondo che usano Soccer in a Box.</p>
+                <div style="margin-top: 1rem;">
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <span>🇮🇹 Italia: 1,247 squadre</span>
+                        <span>🇧🇷 Brasile: 892 squadre</span>
+                        <span>🇪🇸 Spagna: 634 squadre</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app-core.js"></script>
+    <script src="js/coach-mode.js"></script>
+    <script src="js/community-mode.js"></script>
+    <script src="js/data-sync.js"></script>
 </body>
 </html>
