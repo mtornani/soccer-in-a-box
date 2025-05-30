@@ -1,103 +1,179 @@
 {
-  "name": "Soccer in a Box - Minimal Match Analysis Kit",
-  "short_name": "Soccer in a Box",
-  "description": "Strumenti essenziali per match analysis e scouting calcistico, progettato per contesti rurali e squadre a basso budget",
-  "version": "1.0.0",
-  "start_url": "./index.html",
+  "name": "Soccer in a Box - Ecosistema Calcistico",
+  "short_name": "Soccer Box",
+  "description": "Ecosistema completo per l'analisi calcistica e community engagement. Match analysis professionale e coinvolgimento tifosi in un'unica app.",
+  "version": "2.0.0",
+  "start_url": "./",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "background_color": "#2c5aa0",
   "theme_color": "#2c5aa0",
-  "background_color": "#f5f5f5",
+  "orientation": "portrait-primary",
   "scope": "./",
   "lang": "it",
-  "categories": ["sports", "productivity", "utilities"],
+  "categories": ["sports", "productivity", "social"],
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Ccircle cx='96' cy='96' r='96' fill='%232c5aa0'/%3E%3Ccircle cx='96' cy='96' r='45' fill='white'/%3E%3Cpolygon points='96,70 105,77 105,87 96,94 87,87 87,77' fill='%232c5aa0'/%3E%3Cpolygon points='96,98 105,105 105,115 96,122 87,115 87,105' fill='%232c5aa0'/%3E%3C/svg%3E",
+      "src": "icon-72.png",
       "sizes": "72x72",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Ccircle cx='96' cy='96' r='96' fill='%232c5aa0'/%3E%3Ccircle cx='96' cy='96' r='45' fill='white'/%3E%3Cpolygon points='96,70 105,77 105,87 96,94 87,87 87,77' fill='%232c5aa0'/%3E%3Cpolygon points='96,98 105,105 105,115 96,122 87,115 87,105' fill='%232c5aa0'/%3E%3Crect x='125' y='65' width='4' height='15' fill='%23FF9800' rx='2'/%3E%3Crect x='130' y='55' width='4' height='25' fill='%234CAF50' rx='2'/%3E%3C/svg%3E",
+      "src": "icon-96.png",
       "sizes": "96x96",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Ccircle cx='96' cy='96' r='96' fill='%232c5aa0'/%3E%3Ccircle cx='96' cy='96' r='45' fill='white'/%3E%3Cpolygon points='96,70 105,77 105,87 96,94 87,87 87,77' fill='%232c5aa0'/%3E%3Cpolygon points='96,98 105,105 105,115 96,122 87,115 87,105' fill='%232c5aa0'/%3E%3Crect x='125' y='65' width='4' height='15' fill='%23FF9800' rx='2'/%3E%3Crect x='130' y='55' width='4' height='25' fill='%234CAF50' rx='2'/%3E%3Crect x='135' y='70' width='4' height='10' fill='%23FF9800' rx='2'/%3E%3C/svg%3E",
+      "src": "icon-128.png",
       "sizes": "128x128",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Ccircle cx='96' cy='96' r='96' fill='%232c5aa0'/%3E%3Ccircle cx='96' cy='96' r='45' fill='white'/%3E%3Cpolygon points='96,70 105,77 105,87 96,94 87,87 87,77' fill='%232c5aa0'/%3E%3Cpolygon points='96,98 105,105 105,115 96,122 87,115 87,105' fill='%232c5aa0'/%3E%3Crect x='125' y='65' width='4' height='15' fill='%23FF9800' rx='2'/%3E%3Crect x='130' y='55' width='4' height='25' fill='%234CAF50' rx='2'/%3E%3Crect x='135' y='70' width='4' height='10' fill='%23FF9800' rx='2'/%3E%3Crect x='50' y='120' width='15' height='2' fill='white' rx='1'/%3E%3Crect x='50' y='125' width='12' height='2' fill='white' rx='1'/%3E%3Crect x='50' y='130' width='18' height='2' fill='white' rx='1'/%3E%3C/svg%3E",
+      "src": "icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Ccircle cx='96' cy='96' r='96' fill='%232c5aa0'/%3E%3Ccircle cx='96' cy='96' r='40' fill='white'/%3E%3Cpolygon points='96,70 105,77 105,87 96,94 87,87 87,77' fill='%232c5aa0'/%3E%3Cpolygon points='96,98 105,105 105,115 96,122 87,115 87,105' fill='%232c5aa0'/%3E%3C/svg%3E",
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 568'%3E%3Crect width='320' height='568' fill='%23f5f5f5'/%3E%3Crect x='16' y='16' width='288' height='80' rx='8' fill='%232c5aa0'/%3E%3Ctext x='160' y='64' fill='white' font-family='Arial' font-size='16' text-anchor='middle'%3ESoccer in a Box%3C/text%3E%3Crect x='16' y='112' width='288' height='400' rx='8' fill='white'/%3E%3C/svg%3E",
-      "sizes": "320x568",
-      "type": "image/svg+xml",
-      "form_factor": "narrow"
-    }
-  ],
-  "features": [
-    "offline",
-    "installable",
-    "cross-platform"
-  ],
-  "categories_custom": [
-    "football",
-    "soccer",
-    "analysis",
-    "scouting", 
-    "coaching"
-  ],
-  "related_applications": [],
-  "prefer_related_applications": false,
   "shortcuts": [
     {
-      "name": "Nuovo Match",
-      "short_name": "Match",
-      "description": "Inizia una nuova analisi match",
-      "url": "./index.html",
+      "name": "Modalità Allenatore",
+      "short_name": "Coach",
+      "description": "Accesso diretto all'analisi match e scouting",
+      "url": "./?mode=coach",
       "icons": [
         {
-          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='20' fill='%234CAF50'/%3E%3Cpath d='M48 20v56M20 48h56' stroke='white' stroke-width='4'/%3E%3C/svg%3E",
-          "sizes": "96x96"
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
         }
       ]
     },
     {
-      "name": "Note Live",
-      "short_name": "Note",
-      "description": "Aggiungi note durante il match",
-      "url": "./index.html#live-notes",
+      "name": "Modalità Community",
+      "short_name": "Tifosi",
+      "description": "Accesso diretto alla community e coinvolgimento tifosi",
+      "url": "./?mode=community",
       "icons": [
         {
-          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='20' fill='%23FF9800'/%3E%3Cpath d='M24 36h48M24 48h36M24 60h42' stroke='white' stroke-width='3'/%3E%3C/svg%3E",
-          "sizes": "96x96"
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Nuovo Match",
+      "short_name": "Match",
+      "description": "Inizia subito l'analisi di un nuovo match",
+      "url": "./?action=new-match",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Live Feed",
+      "short_name": "Live",
+      "description": "Visualizza il feed live della community",
+      "url": "./?action=live-feed",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
         }
       ]
     }
   ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "dir": "ltr",
+  "iarc_rating_id": "",
+  "screenshots": [
+    {
+      "src": "screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Interfaccia principale Soccer in a Box con modalità dual"
+    },
+    {
+      "src": "screenshot-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "App mobile Soccer in a Box per analisi match e community"
+    }
+  ],
+  "features": [
+    "Cross-platform PWA installabile",
+    "Funzionamento completamente offline",
+    "Sincronizzazione dati tra modalità",
+    "Analisi match professionali",
+    "Community engagement e polls",
+    "Export report avanzati",
+    "Network globale squadre",
+    "Sistema di notifiche intelligenti"
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+soccerbox",
+      "url": "./?data=%s"
+    }
+  ],
   "share_target": {
-    "action": "./index.html",
+    "action": "./",
     "method": "GET",
     "params": {
       "title": "title",
       "text": "text",
       "url": "url"
     }
+  },
+  "file_handlers": [
+    {
+      "action": "./",
+      "accept": {
+        "application/json": [".json"],
+        "text/markdown": [".md"],
+        "text/plain": [".txt"]
+      }
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
   }
 }
