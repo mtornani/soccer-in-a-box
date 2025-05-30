@@ -1,347 +1,400 @@
-// Soccer in a Box - Service Worker
-// Versione cache - incrementa per force update
-const CACHE_VERSION = 'soccer-in-a-box-v1.0.0';
-const CACHE_NAME = `${CACHE_VERSION}`;
+/**
+ * Soccer in a Box - Service Worker
+ * Enhanced offline capabilities and background sync
+ */
 
-// File da cachare per funzionamento offline
-const CACHE_FILES = [
-    './',
-    './index.html',
-    './style.css',
-    './app.js',
-    './manifest.json',
-    './sw.js'
+const CACHE_NAME = 'soccer-box-v2.0.0';
+const DATA_CACHE_NAME = 'soccer-box-data-v2.0.0';
+
+// Files to cache for offline functionality
+const FILES_TO_CACHE = [
+  './',
+  './index.html',
+  './style.css',
+  './js/app-core.js',
+  './js/coach-mode.js',
+  './js/community-mode.js',
+  './js/data-sync.js',
+  './manifest.json',
+  // Add any additional assets
+  './icon-192.png',
+  './icon-512.png'
 ];
 
-// URL che richiedono sempre aggiornamento (API, dati dinamici)
-const SKIP_CACHE_URLS = [
-    // Aggiungi qui eventuali URL da non cachare
+// API endpoints for background sync (future feature)
+const API_ENDPOINTS = [
+  '/api/matches',
+  '/api/players',
+  '/api/community',
+  '/api/polls'
 ];
 
-// === INSTALLAZIONE SERVICE WORKER ===
+/**
+ * Service Worker Installation
+ */
 self.addEventListener('install', (event) => {
-    console.log('🔧 Soccer in a Box SW: Installing...');
-    
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('📦 SW: Caching core files');
-                return cache.addAll(CACHE_FILES);
-            })
-            .then(() => {
-                console.log('✅ SW: Installation complete');
-                // Forza attivazione immediata
-                return self.skipWaiting();
-            })
-            .catch((error) => {
-                console.error('❌ SW: Installation failed', error);
-            })
-    );
+  console.log('🔧 Service Worker: Installing...');
+  
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('📦 Service Worker: Caching app shell');
+        return cache.addAll(FILES_TO_CACHE);
+      })
+      .then(() => {
+        // Force the waiting service worker to become the active service worker
+        return self.skipWaiting();
+      })
+      .catch((error) => {
+        console.error('❌ Service Worker: Cache failed:', error);
+      })
+  );
 });
 
-// === ATTIVAZIONE SERVICE WORKER ===
+/**
+ * Service Worker Activation
+ */
 self.addEventListener('activate', (event) => {
-    console.log('🚀 Soccer in a Box SW: Activating...');
-    
-    event.waitUntil(
-        caches.keys()
-            .then((cacheNames) => {
-                // Rimuovi cache vecchie
-                const deletePromises = cacheNames
-                    .filter(cacheName => {
-                        return cacheName !== CACHE_NAME && 
-                               cacheName.startsWith('soccer-in-a-box-');
-                    })
-                    .map(cacheName => {
-                        console.log('🗑️ SW: Deleting old cache:', cacheName);
-                        return caches.delete(cacheName);
-                    });
-                
-                return Promise.all(deletePromises);
-            })
-            .then(() => {
-                console.log('✅ SW: Activation complete');
-                // Prendi controllo di tutte le pagine immediatamente
-                return self.clients.claim();
-            })
-            .catch((error) => {
-                console.error('❌ SW: Activation failed', error);
-            })
-    );
-});
-
-// === INTERCETTAZIONE RICHIESTE (FETCH) ===
-self.addEventListener('fetch', (event) => {
-    const requestUrl = new URL(event.request.url);
-    
-    // Strategia di caching: Cache-First per risorse statiche
-    event.respondWith(
-        cacheFirstStrategy(event.request)
-    );
-});
-
-// === STRATEGIE DI CACHING ===
-
-// Cache-First: Cerca prima nella cache, poi nella rete
-async function cacheFirstStrategy(request) {
-    try {
-        // 1. Prova a servire dalla cache
-        const cachedResponse = await caches.match(request);
-        if (cachedResponse) {
-            console.log('📦 SW: Serving from cache:', request.url);
-            return cachedResponse;
-        }
-        
-        // 2. Se non in cache, fetch dalla rete
-        console.log('🌐 SW: Fetching from network:', request.url);
-        const networkResponse = await fetch(request);
-        
-        // 3. Se risposta valida, aggiungi alla cache
-        if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            const cache = await caches.open(CACHE_NAME);
-            
-            // Non cachare richieste non-GET o URL da skipppare
-            if (request.method === 'GET' && 
-                !shouldSkipCache(request.url)) {
-                cache.put(request, responseToCache);
-                console.log('💾 SW: Cached response:', request.url);
+  console.log('🚀 Service Worker: Activating...');
+  
+  event.waitUntil(
+    caches.keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            // Delete old caches
+            if (cacheName !== CACHE_NAME && cacheName !== DATA_CACHE_NAME) {
+              console.log('🗑️ Service Worker: Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
             }
-        }
-        
-        return networkResponse;
-        
-    } catch (error) {
-        console.log('🔥 SW: Network failed, trying cache fallback:', error);
-        
-        // Fallback: Cerca nella cache se la rete fallisce
-        const cachedResponse = await caches.match(request);
-        if (cachedResponse) {
-            return cachedResponse;
-        }
-        
-        // Fallback finale: Pagina offline personalizzata per navigazione
-        if (request.destination === 'document') {
-            return createOfflinePage();
-        }
-        
-        // Per altre risorse, lancia l'errore
-        throw error;
-    }
-}
-
-// Network-First: Prova prima la rete, poi la cache (per dati dinamici)
-async function networkFirstStrategy(request) {
-    try {
-        // 1. Prova prima la rete
-        const networkResponse = await fetch(request);
-        
-        // 2. Se successo, aggiorna cache e restituisci
-        if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            const cache = await caches.open(CACHE_NAME);
-            cache.put(request, responseToCache);
-        }
-        
-        return networkResponse;
-        
-    } catch (error) {
-        // 3. Se rete fallisce, prova cache
-        console.log('🔥 SW: Network failed, trying cache:', error);
-        const cachedResponse = await caches.match(request);
-        
-        if (cachedResponse) {
-            return cachedResponse;
-        }
-        
-        throw error;
-    }
-}
-
-// === UTILITY FUNCTIONS ===
-
-// Controlla se URL deve essere skippato dalla cache
-function shouldSkipCache(url) {
-    return SKIP_CACHE_URLS.some(skipUrl => 
-        url.includes(skipUrl)
-    );
-}
-
-// Crea pagina offline personalizzata
-function createOfflinePage() {
-    const offlineHtml = `
-        <!DOCTYPE html>
-        <html lang="it">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta name="theme-color" content="#2c5aa0">
-            <title>Soccer in a Box - Offline</title>
-            <style>
-                body {
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                    background: linear-gradient(135deg, #2c5aa0, #1e3d72);
-                    color: white;
-                    margin: 0;
-                    padding: 20px;
-                    min-height: 100vh;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .offline-container {
-                    text-align: center;
-                    max-width: 400px;
-                    padding: 40px;
-                    background: rgba(255,255,255,0.1);
-                    border-radius: 16px;
-                    backdrop-filter: blur(10px);
-                }
-                .offline-icon {
-                    font-size: 4rem;
-                    margin-bottom: 20px;
-                }
-                h1 { margin-bottom: 16px; }
-                p { margin-bottom: 24px; opacity: 0.9; }
-                .retry-btn {
-                    background: #4CAF50;
-                    color: white;
-                    border: none;
-                    padding: 12px 24px;
-                    border-radius: 8px;
-                    font-size: 16px;
-                    cursor: pointer;
-                    transition: background 0.3s;
-                }
-                .retry-btn:hover {
-                    background: #45a049;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="offline-container">
-                <div class="offline-icon">⚽</div>
-                <h1>Soccer in a Box</h1>
-                <p>L'app funziona anche offline!<br>Controlla la tua connessione per sincronizzare i dati.</p>
-                <button class="retry-btn" onclick="window.location.reload()">
-                    Riprova
-                </button>
-            </div>
-        </body>
-        </html>
-    `;
-    
-    return new Response(offlineHtml, {
-        headers: {
-            'Content-Type': 'text/html',
-            'Cache-Control': 'no-store'
-        }
-    });
-}
-
-// === GESTIONE MESSAGGI ===
-self.addEventListener('message', (event) => {
-    console.log('💬 SW: Received message:', event.data);
-    
-    if (event.data && event.data.type === 'SKIP_WAITING') {
-        self.skipWaiting();
-        return;
-    }
-    
-    if (event.data && event.data.type === 'GET_VERSION') {
-        event.ports[0].postMessage({
-            version: CACHE_VERSION,
-            cacheSize: CACHE_FILES.length
-        });
-        return;
-    }
-    
-    if (event.data && event.data.type === 'CLEAR_CACHE') {
-        caches.delete(CACHE_NAME)
-            .then(() => {
-                event.ports[0].postMessage({
-                    success: true,
-                    message: 'Cache cleared successfully'
-                });
-            })
-            .catch((error) => {
-                event.ports[0].postMessage({
-                    success: false,
-                    error: error.message
-                });
-            });
-        return;
-    }
-});
-
-// === GESTIONE AGGIORNAMENTI ===
-self.addEventListener('updatefound', () => {
-    console.log('🔄 SW: Update found, installing new version...');
-});
-
-// === SYNC BACKGROUND (per futuri sviluppi) ===
-self.addEventListener('sync', (event) => {
-    console.log('🔄 SW: Background sync triggered:', event.tag);
-    
-    if (event.tag === 'background-sync') {
-        event.waitUntil(
-            // Implementa qui la logica di sync per dati offline
-            console.log('📡 SW: Background sync not implemented yet')
+          })
         );
-    }
+      })
+      .then(() => {
+        // Take control of all pages
+        return self.clients.claim();
+      })
+      .catch((error) => {
+        console.error('❌ Service Worker: Activation failed:', error);
+      })
+  );
 });
 
-// === NOTIFICHE PUSH (per futuri sviluppi) ===
-self.addEventListener('push', (event) => {
-    console.log('🔔 SW: Push notification received');
+/**
+ * Fetch Event Handler - Network-first with fallback to cache
+ */
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+  
+  // Handle API requests (future feature)
+  if (API_ENDPOINTS.some(endpoint => url.pathname.includes(endpoint))) {
+    event.respondWith(handleApiRequest(request));
+    return;
+  }
+  
+  // Handle app shell requests
+  if (request.method === 'GET') {
+    event.respondWith(handleAppShellRequest(request));
+  }
+});
+
+/**
+ * Handle API requests with network-first strategy
+ */
+async function handleApiRequest(request) {
+  try {
+    // Try network first
+    const networkResponse = await fetch(request);
     
-    // Implementa qui la gestione delle notifiche push
-    // per alerts di match, promemoria, etc.
-});
-
-// === ERROR HANDLING ===
-self.addEventListener('error', (event) => {
-    console.error('❌ SW: Error occurred:', event.error);
-});
-
-self.addEventListener('unhandledrejection', (event) => {
-    console.error('❌ SW: Unhandled promise rejection:', event.reason);
-});
-
-// === LOG INIZIALE ===
-console.log(`
-🚀 Soccer in a Box Service Worker ${CACHE_VERSION}
-📦 Caching ${CACHE_FILES.length} files for offline use
-⚽ Ready for match analysis!
-`);
-
-// === UTILITY: Pulizia cache periodica ===
-// Rimuove cache entries vecchie di oltre 30 giorni
-async function cleanupOldCache() {
-    try {
-        const cache = await caches.open(CACHE_NAME);
-        const requests = await cache.keys();
-        const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-        
-        for (const request of requests) {
-            const response = await cache.match(request);
-            if (response) {
-                const dateHeader = response.headers.get('date');
-                if (dateHeader) {
-                    const responseDate = new Date(dateHeader).getTime();
-                    if (responseDate < thirtyDaysAgo) {
-                        await cache.delete(request);
-                        console.log('🗑️ SW: Removed old cache entry:', request.url);
-                    }
-                }
-            }
-        }
-    } catch (error) {
-        console.error('❌ SW: Cache cleanup failed:', error);
+    if (networkResponse.ok) {
+      // Cache successful responses
+      const cache = await caches.open(DATA_CACHE_NAME);
+      cache.put(request.url, networkResponse.clone());
+      return networkResponse;
     }
+    
+    throw new Error('Network response not ok');
+    
+  } catch (error) {
+    console.log('📡 Service Worker: Network failed, trying cache:', request.url);
+    
+    // Fallback to cache
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    // Return offline response
+    return new Response(
+      JSON.stringify({ 
+        error: 'Offline', 
+        message: 'Network unavailable and no cached data found' 
+      }),
+      {
+        status: 503,
+        statusText: 'Service Unavailable',
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        })
+      }
+    );
+  }
 }
 
-// Esegui pulizia cache ogni volta che si attiva il SW
-self.addEventListener('activate', (event) => {
-    event.waitUntil(cleanupOldCache());
+/**
+ * Handle app shell requests with cache-first strategy
+ */
+async function handleAppShellRequest(request) {
+  try {
+    // Try cache first for app shell
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    // Fallback to network
+    const networkResponse = await fetch(request);
+    
+    if (networkResponse.ok) {
+      // Cache the response
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request.url, networkResponse.clone());
+    }
+    
+    return networkResponse;
+    
+  } catch (error) {
+    console.error('❌ Service Worker: Request failed:', request.url, error);
+    
+    // Return offline page for navigation requests
+    if (request.destination === 'document') {
+      const cache = await caches.open(CACHE_NAME);
+      return cache.match('./index.html');
+    }
+    
+    throw error;
+  }
+}
+
+/**
+ * Background Sync for offline actions
+ */
+self.addEventListener('sync', (event) => {
+  console.log('🔄 Service Worker: Background sync triggered:', event.tag);
+  
+  switch (event.tag) {
+    case 'sync-match-data':
+      event.waitUntil(syncMatchData());
+      break;
+    case 'sync-community-data':
+      event.waitUntil(syncCommunityData());
+      break;
+    case 'sync-offline-actions':
+      event.waitUntil(syncOfflineActions());
+      break;
+    default:
+      console.log('🔄 Service Worker: Unknown sync tag:', event.tag);
+  }
 });
+
+/**
+ * Sync match data when online
+ */
+async function syncMatchData() {
+  try {
+    console.log('📊 Service Worker: Syncing match data...');
+    
+    // Get stored match data
+    const matchData = await getStoredData('coach_current_match');
+    if (!matchData) return;
+    
+    // In a full implementation, this would sync with a backend
+    // For now, just update local storage timestamp
+    matchData.lastSynced = new Date().toISOString();
+    await setStoredData('coach_current_match', matchData);
+    
+    // Notify clients about successful sync
+    notifyClients('match-data-synced', matchData);
+    
+  } catch (error) {
+    console.error('❌ Service Worker: Match data sync failed:', error);
+  }
+}
+
+/**
+ * Sync community data when online
+ */
+async function syncCommunityData() {
+  try {
+    console.log('🎉 Service Worker: Syncing community data...');
+    
+    // Get stored community data
+    const communityData = await getStoredData('community_data');
+    if (!communityData) return;
+    
+    // In a full implementation, this would sync with a backend
+    // For now, just update local storage timestamp
+    communityData.lastSynced = new Date().toISOString();
+    await setStoredData('community_data', communityData);
+    
+    // Notify clients about successful sync
+    notifyClients('community-data-synced', communityData);
+    
+  } catch (error) {
+    console.error('❌ Service Worker: Community data sync failed:', error);
+  }
+}
+
+/**
+ * Sync offline actions when online
+ */
+async function syncOfflineActions() {
+  try {
+    console.log('📤 Service Worker: Syncing offline actions...');
+    
+    // Get offline queue
+    const offlineQueue = await getStoredData('soccerbox_offline_queue');
+    if (!offlineQueue || offlineQueue.length === 0) return;
+    
+    let syncedActions = 0;
+    
+    for (const action of offlineQueue) {
+      try {
+        // Process each offline action
+        await processOfflineAction(action);
+        syncedActions++;
+      } catch (error) {
+        console.error('❌ Service Worker: Failed to sync action:', action.id, error);
+      }
+    }
+    
+    // Clear processed actions
+    if (syncedActions > 0) {
+      const remainingActions = offlineQueue.slice(syncedActions);
+      await setStoredData('soccerbox_offline_queue', remainingActions);
+      
+      // Notify clients
+      notifyClients('offline-actions-synced', { 
+        processed: syncedActions, 
+        remaining: remainingActions.length 
+      });
+    }
+    
+  } catch (error) {
+    console.error('❌ Service Worker: Offline actions sync failed:', error);
+  }
+}
+
+/**
+ * Process individual offline action
+ */
+async function processOfflineAction(action) {
+  switch (action.type) {
+    case 'save_match_note':
+      // In full implementation: POST to /api/matches/{id}/notes
+      console.log('📝 Processing offline match note:', action.data);
+      break;
+      
+    case 'save_player_evaluation':
+      // In full implementation: POST to /api/players/{id}/evaluations
+      console.log('👤 Processing offline player evaluation:', action.data);
+      break;
+      
+    case 'community_emotion':
+      // In full implementation: POST to /api/community/emotions
+      console.log('😍 Processing offline emotion:', action.data);
+      break;
+      
+    case 'support_message':
+      // In full implementation: POST to /api/community/support
+      console.log('💌 Processing offline support message:', action.data);
+      break;
+      
+    default:
+      console.log('❓ Unknown offline action type:', action.type);
+  }
+}
+
+/**
+ * Push Notifications (future feature)
+ */
+self.addEventListener('push', (event) => {
+  console.log('📨 Service Worker: Push received');
+  
+  let notificationData = {};
+  
+  if (event.data) {
+    notificationData = event.data.json();
+  }
+  
+  const title = notificationData.title || 'Soccer in a Box';
+  const options = {
+    body: notificationData.body || 'Nuova attività disponibile',
+    icon: './icon-192.png',
+    badge: './icon-72.png',
+    tag: notificationData.tag || 'general',
+    data: notificationData.data || {},
+    actions: [
+      {
+        action: 'open',
+        title: 'Apri App',
+        icon: './icon-72.png'
+      },
+      {
+        action: 'dismiss',
+        title: 'Ignora'
+      }
+    ],
+    requireInteraction: notificationData.priority === 'high'
+  };
+  
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});
+
+/**
+ * Notification Click Handler
+ */
+self.addEventListener('notificationclick', (event) => {
+  console.log('🔔 Service Worker: Notification clicked');
+  
+  event.notification.close();
+  
+  if (event.action === 'dismiss') {
+    return;
+  }
+  
+  // Open or focus the app
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        // If app is already open, focus it
+        for (const client of clientList) {
+          if (client.url.includes(self.location.origin)) {
+            return client.focus();
+          }
+        }
+        
+        // Otherwise, open new window
+        return clients.openWindow('./');
+      })
+  );
+});
+
+/**
+ * Message Handler for communication with main app
+ */
+self.addEventListener('message', (event) => {
+  console.log('💬 Service Worker: Message received:', event.data);
+  
+  const { type, payload } = event.data;
+  
+  switch (type) {
+    case 'SKIP_WAITING':
+      self.skipWaiting();
+      break;
+      
+    case 'GET_VERSION':
+      event.ports[0].postMessage({ version
