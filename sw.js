@@ -3,8 +3,8 @@
  * Enhanced offline capabilities and background sync
  */
 
-const CACHE_NAME = 'soccer-box-v2.0.0';
-const DATA_CACHE_NAME = 'soccer-box-data-v2.0.0';
+const CACHE_NAME = 'soccer-box-v2.0.1';
+const DATA_CACHE_NAME = 'soccer-box-data-v2.0.1';
 
 // Files to cache for offline functionality
 const FILES_TO_CACHE = [
@@ -15,10 +15,7 @@ const FILES_TO_CACHE = [
   './js/coach-mode.js',
   './js/community-mode.js',
   './js/data-sync.js',
-  './manifest.json',
-  // Add any additional assets
-  './icon-192.png',
-  './icon-512.png'
+  './manifest.json'
 ];
 
 // API endpoints for background sync (future feature)
@@ -33,7 +30,7 @@ const API_ENDPOINTS = [
  * Service Worker Installation
  */
 self.addEventListener('install', (event) => {
-  console.log('🔧 Service Worker: Installing...');
+  console.log('🔧 Service Worker: Installing v2.0.1...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -42,6 +39,7 @@ self.addEventListener('install', (event) => {
         return cache.addAll(FILES_TO_CACHE);
       })
       .then(() => {
+        console.log('✅ Service Worker: Installation complete');
         // Force the waiting service worker to become the active service worker
         return self.skipWaiting();
       })
@@ -55,7 +53,7 @@ self.addEventListener('install', (event) => {
  * Service Worker Activation
  */
 self.addEventListener('activate', (event) => {
-  console.log('🚀 Service Worker: Activating...');
+  console.log('🚀 Service Worker: Activating v2.0.1...');
   
   event.waitUntil(
     caches.keys()
@@ -71,8 +69,13 @@ self.addEventListener('activate', (event) => {
         );
       })
       .then(() => {
+        console.log('✅ Service Worker: Activation complete');
         // Take control of all pages
         return self.clients.claim();
+      })
+      .then(() => {
+        // Notify all clients that SW is updated
+        return notifyClients('sw-updated', { version: CACHE_NAME });
       })
       .catch((error) => {
         console.error('❌ Service Worker: Activation failed:', error);
@@ -81,11 +84,16 @@ self.addEventListener('activate', (event) => {
 });
 
 /**
- * Fetch Event Handler - Network-first with fallback to cache
+ * Fetch Event Handler - Cache-first with network fallback for app shell
  */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
+  
+  // Skip non-GET requests
+  if (request.method !== 'GET') {
+    return;
+  }
   
   // Handle API requests (future feature)
   if (API_ENDPOINTS.some(endpoint => url.pathname.includes(endpoint))) {
@@ -94,9 +102,7 @@ self.addEventListener('fetch', (event) => {
   }
   
   // Handle app shell requests
-  if (request.method === 'GET') {
-    event.respondWith(handleAppShellRequest(request));
-  }
+  event.respondWith(handleAppShellRequest(request));
 });
 
 /**
@@ -150,6 +156,8 @@ async function handleAppShellRequest(request) {
     // Try cache first for app shell
     const cachedResponse = await caches.match(request);
     if (cachedResponse) {
+      // Check if we should update in background
+      updateInBackground(request);
       return cachedResponse;
     }
     
@@ -170,10 +178,27 @@ async function handleAppShellRequest(request) {
     // Return offline page for navigation requests
     if (request.destination === 'document') {
       const cache = await caches.open(CACHE_NAME);
-      return cache.match('./index.html');
+      const fallback = await cache.match('./index.html');
+      return fallback || new Response('App not available offline', { status: 503 });
     }
     
     throw error;
+  }
+}
+
+/**
+ * Update cache in background
+ */
+async function updateInBackground(request) {
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request.url, networkResponse);
+    }
+  } catch (error) {
+    // Silently fail background updates
+    console.log('📡 Background update failed for:', request.url);
   }
 }
 
@@ -205,20 +230,16 @@ async function syncMatchData() {
   try {
     console.log('📊 Service Worker: Syncing match data...');
     
-    // Get stored match data
-    const matchData = await getStoredData('coach_current_match');
-    if (!matchData) return;
-    
     // In a full implementation, this would sync with a backend
-    // For now, just update local storage timestamp
-    matchData.lastSynced = new Date().toISOString();
-    await setStoredData('coach_current_match', matchData);
-    
-    // Notify clients about successful sync
-    notifyClients('match-data-synced', matchData);
+    // For now, just notify clients
+    notifyClients('match-data-sync-attempted', { 
+      timestamp: new Date().toISOString(),
+      status: 'success'
+    });
     
   } catch (error) {
     console.error('❌ Service Worker: Match data sync failed:', error);
+    notifyClients('match-data-sync-failed', { error: error.message });
   }
 }
 
@@ -229,20 +250,16 @@ async function syncCommunityData() {
   try {
     console.log('🎉 Service Worker: Syncing community data...');
     
-    // Get stored community data
-    const communityData = await getStoredData('community_data');
-    if (!communityData) return;
-    
     // In a full implementation, this would sync with a backend
-    // For now, just update local storage timestamp
-    communityData.lastSynced = new Date().toISOString();
-    await setStoredData('community_data', communityData);
-    
-    // Notify clients about successful sync
-    notifyClients('community-data-synced', communityData);
+    // For now, just notify clients
+    notifyClients('community-data-sync-attempted', { 
+      timestamp: new Date().toISOString(),
+      status: 'success'
+    });
     
   } catch (error) {
     console.error('❌ Service Worker: Community data sync failed:', error);
+    notifyClients('community-data-sync-failed', { error: error.message });
   }
 }
 
@@ -253,66 +270,13 @@ async function syncOfflineActions() {
   try {
     console.log('📤 Service Worker: Syncing offline actions...');
     
-    // Get offline queue
-    const offlineQueue = await getStoredData('soccerbox_offline_queue');
-    if (!offlineQueue || offlineQueue.length === 0) return;
-    
-    let syncedActions = 0;
-    
-    for (const action of offlineQueue) {
-      try {
-        // Process each offline action
-        await processOfflineAction(action);
-        syncedActions++;
-      } catch (error) {
-        console.error('❌ Service Worker: Failed to sync action:', action.id, error);
-      }
-    }
-    
-    // Clear processed actions
-    if (syncedActions > 0) {
-      const remainingActions = offlineQueue.slice(syncedActions);
-      await setStoredData('soccerbox_offline_queue', remainingActions);
-      
-      // Notify clients
-      notifyClients('offline-actions-synced', { 
-        processed: syncedActions, 
-        remaining: remainingActions.length 
-      });
-    }
+    // Notify clients to process their offline queue
+    notifyClients('process-offline-queue', { 
+      timestamp: new Date().toISOString()
+    });
     
   } catch (error) {
     console.error('❌ Service Worker: Offline actions sync failed:', error);
-  }
-}
-
-/**
- * Process individual offline action
- */
-async function processOfflineAction(action) {
-  switch (action.type) {
-    case 'save_match_note':
-      // In full implementation: POST to /api/matches/{id}/notes
-      console.log('📝 Processing offline match note:', action.data);
-      break;
-      
-    case 'save_player_evaluation':
-      // In full implementation: POST to /api/players/{id}/evaluations
-      console.log('👤 Processing offline player evaluation:', action.data);
-      break;
-      
-    case 'community_emotion':
-      // In full implementation: POST to /api/community/emotions
-      console.log('😍 Processing offline emotion:', action.data);
-      break;
-      
-    case 'support_message':
-      // In full implementation: POST to /api/community/support
-      console.log('💌 Processing offline support message:', action.data);
-      break;
-      
-    default:
-      console.log('❓ Unknown offline action type:', action.type);
   }
 }
 
@@ -325,7 +289,11 @@ self.addEventListener('push', (event) => {
   let notificationData = {};
   
   if (event.data) {
-    notificationData = event.data.json();
+    try {
+      notificationData = event.data.json();
+    } catch (error) {
+      notificationData = { body: event.data.text() };
+    }
   }
   
   const title = notificationData.title || 'Soccer in a Box';
@@ -346,7 +314,8 @@ self.addEventListener('push', (event) => {
         title: 'Ignora'
       }
     ],
-    requireInteraction: notificationData.priority === 'high'
+    requireInteraction: notificationData.priority === 'high',
+    silent: false
   };
   
   event.waitUntil(
@@ -397,4 +366,140 @@ self.addEventListener('message', (event) => {
       break;
       
     case 'GET_VERSION':
-      event.ports[0].postMessage({ version
+      event.ports[0].postMessage({ version: CACHE_NAME });
+      break;
+      
+    case 'FORCE_UPDATE':
+      // Force update by clearing cache and reloading
+      event.waitUntil(
+        caches.keys().then((cacheNames) => {
+          return Promise.all(
+            cacheNames.map((cacheName) => caches.delete(cacheName))
+          );
+        }).then(() => {
+          return self.registration.update();
+        }).then(() => {
+          notifyClients('cache-cleared', { timestamp: new Date().toISOString() });
+        })
+      );
+      break;
+      
+    case 'CACHE_STATUS':
+      event.waitUntil(
+        caches.keys().then(cacheNames => {
+          event.ports[0].postMessage({ 
+            caches: cacheNames,
+            current: CACHE_NAME 
+          });
+        })
+      );
+      break;
+      
+    default:
+      console.log('❓ Service Worker: Unknown message type:', type);
+  }
+});
+
+/**
+ * Notify all clients about events
+ */
+async function notifyClients(type, data) {
+  try {
+    const clients = await self.clients.matchAll({ includeUncontrolled: true });
+    const message = { type, data, timestamp: new Date().toISOString() };
+    
+    clients.forEach(client => {
+      client.postMessage(message);
+    });
+    
+    console.log(`📡 Service Worker: Notified ${clients.length} clients:`, type);
+  } catch (error) {
+    console.error('❌ Service Worker: Failed to notify clients:', error);
+  }
+}
+
+/**
+ * Periodic Background Tasks
+ */
+self.addEventListener('periodicsync', (event) => {
+  console.log('⏰ Service Worker: Periodic sync:', event.tag);
+  
+  switch (event.tag) {
+    case 'update-check':
+      event.waitUntil(checkForUpdates());
+      break;
+    case 'cleanup-cache':
+      event.waitUntil(cleanupOldCaches());
+      break;
+    default:
+      console.log('⏰ Unknown periodic sync tag:', event.tag);
+  }
+});
+
+/**
+ * Check for app updates
+ */
+async function checkForUpdates() {
+  try {
+    const response = await fetch('./manifest.json?t=' + Date.now());
+    const manifest = await response.json();
+    
+    // Compare versions and trigger update if needed
+    const currentVersion = CACHE_NAME.split('-v')[1];
+    if (manifest.version !== currentVersion) {
+      notifyClients('update-available', { 
+        current: currentVersion,
+        available: manifest.version 
+      });
+    }
+  } catch (error) {
+    console.error('❌ Service Worker: Update check failed:', error);
+  }
+}
+
+/**
+ * Cleanup old caches
+ */
+async function cleanupOldCaches() {
+  try {
+    const cacheNames = await caches.keys();
+    const oldCaches = cacheNames.filter(name => 
+      name.startsWith('soccer-box-') && 
+      name !== CACHE_NAME && 
+      name !== DATA_CACHE_NAME
+    );
+    
+    await Promise.all(oldCaches.map(name => caches.delete(name)));
+    
+    if (oldCaches.length > 0) {
+      console.log('🧹 Service Worker: Cleaned up old caches:', oldCaches);
+      notifyClients('cache-cleanup', { removed: oldCaches });
+    }
+  } catch (error) {
+    console.error('❌ Service Worker: Cache cleanup failed:', error);
+  }
+}
+
+/**
+ * Error handling
+ */
+self.addEventListener('error', (event) => {
+  console.error('❌ Service Worker: Global error:', event.error);
+  notifyClients('sw-error', { 
+    message: event.error.message,
+    filename: event.filename,
+    lineno: event.lineno 
+  });
+});
+
+/**
+ * Unhandled promise rejection
+ */
+self.addEventListener('unhandledrejection', (event) => {
+  console.error('❌ Service Worker: Unhandled promise rejection:', event.reason);
+  notifyClients('sw-promise-rejection', { 
+    reason: event.reason?.message || event.reason 
+  });
+});
+
+console.log('🔧 Service Worker: Script loaded, version', CACHE_NAME);
