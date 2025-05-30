@@ -1,24 +1,22 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1e3a8a">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1e3a8a" />
     <title>Soccer in a Box - Piattaforma FSGC</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="description" content="Piattaforma completa per analisi calcistica e gestione community - Partnership FSGC">
-    
+    <link rel="manifest" href="manifest.json" />
+    <meta name="description" content="Piattaforma completa per analisi calcistica e gestione community - Partnership FSGC" />
+
+    <!-- ===== CSS STYLES ===== -->
     <style>
         /* ===== FSGC DESIGN SYSTEM ===== */
         :root {
-            /* FSGC Brand Colors */
             --fsgc-blue: #1e3a8a;
             --fsgc-light-blue: #3b82f6;
             --fsgc-gold: #f59e0b;
             --fsgc-green: #10b981;
             --fsgc-red: #ef4444;
-            
-            /* Neutral Colors */
             --white: #ffffff;
             --gray-50: #f9fafb;
             --gray-100: #f3f4f6;
@@ -27,14 +25,10 @@
             --gray-600: #4b5563;
             --gray-800: #1f2937;
             --gray-900: #111827;
-            
-            /* Spacing & Layout */
             --border-radius: 12px;
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            
-            /* Typography */
             --font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --font-display: 'SF Pro Display', var(--font-system);
         }
@@ -45,13 +39,11 @@
             margin: 0;
             padding: 0;
         }
-
         html {
             -webkit-text-size-adjust: 100%;
             font-feature-settings: "kern" 1;
             text-rendering: optimizeLegibility;
         }
-
         body {
             font-family: var(--font-system);
             line-height: 1.6;
@@ -67,7 +59,6 @@
             display: flex;
             flex-direction: column;
         }
-
         .screen {
             display: none;
             flex: 1;
@@ -75,17 +66,11 @@
             transform: translateY(20px);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .screen.active {
             display: flex;
             flex-direction: column;
             opacity: 1;
             transform: translateY(0);
-        }
-
-        .screen.loading {
-            opacity: 0.7;
-            pointer-events: none;
         }
 
         /* ===== HEADER SYSTEM ===== */
@@ -103,45 +88,6 @@
             background: rgba(255, 255, 255, 0.95);
         }
 
-        .header-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .header-logo {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--fsgc-blue), var(--fsgc-light-blue));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .header-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--fsgc-blue);
-            font-family: var(--font-display);
-        }
-
-        .header-subtitle {
-            font-size: 0.75rem;
-            color: var(--gray-600);
-            font-weight: 500;
-            margin-top: -2px;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
         /* ===== WELCOME SCREEN ===== */
         .welcome-screen {
             background: linear-gradient(135deg, var(--fsgc-blue) 0%, var(--fsgc-light-blue) 100%);
@@ -154,143 +100,7 @@
             overflow: hidden;
         }
 
-        .welcome-screen::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>') repeat;
-            background-size: 50px 50px;
-        }
-
-        .welcome-content {
-            position: relative;
-            z-index: 2;
-            max-width: 600px;
-        }
-
-        .welcome-logo {
-            width: 120px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            font-size: 3rem;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .welcome-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 0.75rem;
-            font-family: var(--font-display);
-            letter-spacing: -0.025em;
-        }
-
-        .welcome-subtitle {
-            font-size: 1.125rem;
-            opacity: 0.9;
-            margin-bottom: 3rem;
-            line-height: 1.7;
-            font-weight: 400;
-        }
-
-        .fsgc-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--fsgc-gold);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        /* ===== MODE SELECTOR ===== */
-        .mode-selector {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        @media (min-width: 640px) {
-            .mode-selector {
-                grid-template-columns: 1fr 1fr;
-                max-width: 700px;
-            }
-        }
-
-        .mode-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: var(--border-radius);
-            padding: 2rem 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .mode-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .mode-card:hover::before {
-            left: 100%;
-        }
-
-        .mode-card:hover {
-            transform: translateY(-4px);
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .mode-card:active {
-            transform: translateY(-2px) scale(0.98);
-        }
-
-        .mode-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            display: block;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-        }
-
-        .mode-title {
-            font-size: 1.375rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            font-family: var(--font-display);
-        }
-
-        .mode-description {
-            opacity: 0.9;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        /* ===== BUTTON SYSTEM ===== */
+        /* ===== BUTTONS & FORMS ===== */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -302,10 +112,7 @@
             font-size: 0.875rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.2s ease;
         }
 
         .btn-primary {
@@ -314,43 +121,15 @@
             box-shadow: var(--shadow);
         }
 
-        .btn-primary:hover {
-            background: var(--fsgc-light-blue);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--fsgc-blue);
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
             border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 1rem;
         }
 
-        .btn-secondary:hover {
-            background: var(--gray-50);
-            border-color: var(--fsgc-blue);
-        }
-
-        .btn-success {
-            background: var(--fsgc-green);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #059669;
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        /* ===== CONTENT LAYOUT ===== */
+        /* ===== SECTIONS ===== */
         .main-content {
             flex: 1;
             padding: 1.5rem;
@@ -358,7 +137,6 @@
             margin: 0 auto;
             width: 100%;
         }
-
         .content-section {
             background: white;
             border-radius: var(--border-radius);
@@ -367,13 +145,11 @@
             overflow: hidden;
             margin-bottom: 1.5rem;
         }
-
         .section-header {
             padding: 1.5rem;
             border-bottom: 1px solid var(--gray-200);
             background: var(--gray-50);
         }
-
         .section-title {
             font-size: 1.25rem;
             font-weight: 700;
@@ -382,66 +158,7 @@
             font-family: var(--font-display);
         }
 
-        .section-subtitle {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        .section-content {
-            padding: 1.5rem;
-        }
-
-        /* ===== STATS GRID ===== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .stat-card:hover {
-            border-color: var(--fsgc-light-blue);
-            box-shadow: var(--shadow);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--fsgc-blue);
-            font-family: var(--font-display);
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .stat-change {
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-top: 0.25rem;
-        }
-
-        .stat-change.positive {
-            color: var(--fsgc-green);
-        }
-
-        .stat-change.negative {
-            color: var(--fsgc-red);
-        }
-
-        /* ===== NOTIFICATION SYSTEM ===== */
+        /* ===== NOTIFICATIONS ===== */
         .notification {
             position: fixed;
             top: 20px;
@@ -458,196 +175,41 @@
             margin-left: auto;
         }
 
-        @media (min-width: 640px) {
-            .notification {
-                left: auto;
-            }
-        }
-
-        .notification.success {
-            border-left: 4px solid var(--fsgc-green);
-        }
-
-        .notification.error {
-            border-left: 4px solid var(--fsgc-red);
-        }
-
-        .notification.info {
-            border-left: 4px solid var(--fsgc-light-blue);
-        }
-
-        .notification-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-
-        .notification-title {
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .notification-close {
-            background: none;
-            border: none;
-            color: var(--gray-600);
-            cursor: pointer;
-            padding: 0.25rem;
-            border-radius: 4px;
-        }
-
-        .notification-close:hover {
-            background: var(--gray-100);
-        }
-
-        .notification-body {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-            line-height: 1.5;
-        }
-
-        /* ===== ANIMATIONS ===== */
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(100%);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(100%);
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.3s ease;
-        }
-
-        /* ===== LOADING STATES ===== */
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid transparent;
-            border-top: 2px solid currentColor;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* ===== RESPONSIVE DESIGN ===== */
-        @media (max-width: 640px) {
-            .app-header {
-                padding: 1rem;
-            }
-            
-            .main-content {
-                padding: 1rem;
-            }
-            
-            .welcome-title {
-                font-size: 2rem;
-            }
-            
-            .welcome-logo {
-                width: 100px;
-                height: 100px;
-                font-size: 2.5rem;
-            }
-            
-            .mode-card {
-                padding: 1.5rem 1rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.75rem;
-            }
-        }
-
-        /* ===== ACCESSIBILITY ===== */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-
-        /* Focus styles for keyboard navigation */
-        .btn:focus,
-        .mode-card:focus {
-            outline: 2px solid var(--fsgc-light-blue);
-            outline-offset: 2px;
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
         }
     </style>
 </head>
+
 <body>
     <div class="app-container">
+
         <!-- ===== WELCOME SCREEN ===== -->
         <div id="welcome-screen" class="screen welcome-screen active">
             <div class="welcome-content">
-                <div class="fsgc-badge">
-                    <span>🏆</span>
-                    Partnership FSGC - Federazione Sammarinese Giuoco Calcio
-                </div>
-                
+                <div class="fsgc-badge">🏆 Partnership FSGC - Federazione Sammarinese Giuoco Calcio</div>
                 <div class="welcome-logo">⚽</div>
-                
                 <h1 class="welcome-title">Soccer in a Box</h1>
                 <p class="welcome-subtitle">
                     Piattaforma professionale per l'analisi calcistica e gestione community.<br>
                     Scegli la tua modalità per accedere al sistema.
                 </p>
-
                 <div class="mode-selector">
-                    <div class="mode-card" onclick="selectMode('coach')" tabindex="0" role="button" aria-label="Accedi alla modalità Coach">
-                        <div class="mode-icon">📊</div>
+                    <div class="mode-card" onclick="selectMode('coach')" role="button"
+                        aria-label="Accedi alla modalità Coach">
+                        📊
                         <h3 class="mode-title">Modalità Coach</h3>
                         <p class="mode-description">
-                            Analisi tattica avanzata, valutazione giocatori, 
-                            report professionali e strumenti di scouting.
+                            Analisi tattica avanzata, valutazione giocatori, report professionali e strumenti di scouting.
                         </p>
                     </div>
-
-                    <div class="mode-card" onclick="selectMode('community')" tabindex="0" role="button" aria-label="Accedi alla modalità Community">
-                        <div class="mode-icon">🎉</div>
+                    <div class="mode-card" onclick="selectMode('community')" role="button"
+                        aria-label="Accedi alla modalità Community">
+                        🎉
                         <h3 class="mode-title">Modalità Community</h3>
                         <p class="mode-description">
-                            Engagement tifosi, sondaggi live, sentiment analysis 
-                            e connessione con la rete globale.
+                            Engagement tifosi, sondaggi live, sentiment analysis e connessione con la rete globale.
                         </p>
                     </div>
                 </div>
@@ -665,22 +227,853 @@
                     </div>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="switchMode()">
-                        <span>🎉</span>
-                        Community
-                    </button>
+                    <button class="btn btn-secondary" onclick="switchMode()">🎉 Community</button>
                 </div>
             </header>
-
             <div class="main-content">
-                <!-- Quick Stats -->
+                <!-- Match Setup -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">🏟️ Setup Partita</h2>
+                        <p class="section-subtitle">Configura una nuova analisi match professionale</p>
+                    </div>
+                    <div class="section-content">
+                        <input type="text" id="home-team" placeholder="Squadra Casa" class="form-input">
+                        <input type="text" id="away-team" placeholder="Squadra Ospite" class="form-input">
+                        <input type="date" id="match-date" class="form-input">
+                        <input type="text" id="venue" placeholder="Venue/Campo" class="form-input">
+                        <button class="btn btn-primary" onclick="startMatchAnalysis()" style="width: 100%;">📊 Inizia Analisi Match</button>
+                    </div>
+                </div>
+
+                <!-- Current Match (Hidden initially) -->
+                <div id="current-match" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h2 class="section-title">⏱️ Match Live</h2>
+                        <p class="section-subtitle" id="match-info">Analisi in corso...</p>
+                    </div>
+                    <div class="section-content">
+                        <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 1.5rem;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 2rem; font-weight: bold; font-family: monospace; color: var(--fsgc-blue);" id="match-timer">00:00</div>
+                                <div style="font-size: 0.875rem; color: var(--gray-600);">Tempo di gioco</div>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button class="btn btn-success" onclick="toggleTimer()" id="timer-btn"><span>▶️</span> Start</button>
+                                <button class="btn btn-secondary" onclick="resetTimer()"><span>🔄</span> Reset</button>
+                            </div>
+                        </div>
+                        <!-- Quick Actions -->
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="margin-bottom: 0.75rem;">Azioni Rapide:</h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem;">
+                                <button class="btn btn-secondary" onclick="addQuickNote('goal')">⚽ Gol</button>
+                                <button class="btn btn-secondary" onclick="addQuickNote('yellow')">🟨 Giallo</button>
+                                <button class="btn btn-secondary" onclick="addQuickNote('red')">🟥 Rosso</button>
+                                <button class="btn btn-secondary" onclick="addQuickNote('substitution')">🔄 Cambio</button>
+                                <button class="btn btn-secondary" onclick="addQuickNote('corner')">📐 Corner</button>
+                                <button class="btn btn-secondary" onclick="addQuickNote('foul')">🚫 Fallo</button>
+                            </div>
+                        </div>
+                        <!-- Note Input -->
+                        <div style="margin-bottom: 1.5rem;">
+                            <textarea id="match-notes" placeholder="Inserisci note dettagliate della partita..." style="width: 100%; height: 80px;"></textarea>
+                            <button class="btn btn-primary" onclick="addMatchNote()" style="margin-top: 0.5rem;"><span>💾</span> Aggiungi Nota</button>
+                        </div>
+                        <!-- Notes Timeline -->
+                        <div id="notes-timeline">
+                            <h4>Timeline Note:</h4>
+                            <div id="notes-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player Evaluation -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">👤 Valutazione Giocatori</h2>
+                        <p class="section-subtitle">Sistema di rating professionale FSGC</p>
+                    </div>
+                    <div class="section-content">
+                        <input type="text" id="player-name" placeholder="Nome Giocatore" class="form-input">
+                        <input type="number" id="player-number" placeholder="Numero" min="1" max="99" class="form-input">
+                        <input type="text" id="player-position" placeholder="Ruolo" class="form-input">
+                        <!-- Skills Rating -->
+                        <div style="margin-bottom: 1rem;">
+                            <h4>Valutazioni Tecniche:</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="skill-rating">
+                                    <label>Tecnica:</label>
+                                    <div class="stars" data-skill="technique">
+                                        <span class="star" data-rating="1">⭐</span>
+                                        <span class="star" data-rating="2">⭐</span>
+                                        <span class="star" data-rating="3">⭐</span>
+                                        <span class="star" data-rating="4">⭐</span>
+                                        <span class="star" data-rating="5">⭐</span>
+                                    </div>
+                                </div>
+                                <div class="skill-rating">
+                                    <label>Fisico:</label>
+                                    <div class="stars" data-skill="physical">
+                                        <span class="star" data-rating="1">⭐</span>
+                                        <span class="star" data-rating="2">⭐</span>
+                                        <span class="star" data-rating="3">⭐</span>
+                                        <span class="star" data-rating="4">⭐</span>
+                                        <span class="star" data-rating="5">⭐</span>
+                                    </div>
+                                </div>
+                                <div class="skill-rating">
+                                    <label>Mentale:</label>
+                                    <div class="stars" data-skill="mental">
+                                        <span class="star" data-rating="1">⭐</span>
+                                        <span class="star" data-rating="2">⭐</span>
+                                        <span class="star" data-rating="3">⭐</span>
+                                        <span class="star" data-rating="4">⭐</span>
+                                        <span class="star" data-rating="5">⭐</span>
+                                    </div>
+                                </div>
+                                <div class="skill-rating">
+                                    <label>Tattica:</label>
+                                    <div class="stars" data-skill="tactical">
+                                        <span class="star" data-rating="1">⭐</span>
+                                        <span class="star" data-rating="2">⭐</span>
+                                        <span class="star" data-rating="3">⭐</span>
+                                        <span class="star" data-rating="4">⭐</span>
+                                        <span class="star" data-rating="5">⭐</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <textarea id="player-notes" placeholder="Note specifiche sul giocatore..." style="width: 100%; height: 60px;"></textarea>
+                        <button class="btn btn-success" onclick="savePlayer()"><span>💾</span> Salva Valutazione</button>
+                        <div id="players-list">
+                            <h4>Giocatori Valutati:</h4>
+                            <div id="players-grid"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Reports -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">📊 Report e Analytics</h2>
+                        <p class="section-subtitle">Esportazione professionale per FSGC</p>
+                    </div>
+                    <div class="section-content">
+                        <button class="btn btn-primary" onclick="exportPDF()">📄 Export PDF</button>
+                        <button class="btn btn-secondary" onclick="exportExcel()">📊 Export Excel</button>
+                        <button class="btn btn-success" onclick="shareWithFSGC()">🏆 Invia a FSGC</button>
+                        <button class="btn btn-secondary" onclick="generateAnalytics()">📈 Analytics AI</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== COMMUNITY SCREEN ===== -->
+        <div id="community-screen" class="screen">
+            <header class="app-header">
+                <div class="header-brand">
+                    <div class="header-logo">🎉</div>
+                    <div>
+                        <div class="header-title">Community Hub</div>
+                        <div class="header-subtitle">Engagement Tifosi FSGC</div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="switchMode()"><span>📊</span> Coach</button>
+                </div>
+            </header>
+            <div class="main-content">
+                <!-- Community Stats -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-number" id="coach-matches">0</div>
-                        <div class="stat-label">Partite Analizzate</div>
-                        <div class="stat-change positive">+12% questo mese</div>
+                        <div class="stat-number" id="community-fans">1,247</div>
+                        <div class="stat-label">Tifosi Attivi</div>
+                        <div class="stat-change positive">+8% oggi</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="coach-players">0</div>
-                        <div class="stat-label">Giocatori Valutati</div>
-                        <div class="stat-change positive">+8% questa settimana</di
+                        <div class="stat-number" id="community-emotions">3,456</div>
+                        <div class="stat-label">Emozioni Condivise</div>
+                        <div class="stat-change positive">+15% ora</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="community-polls">89</div>
+                        <div class="stat-label">Sondaggi Attivi</div>
+                        <div class="stat-change positive">+12% settimana</div>
+                    </div>
+                </div>
+
+                <!-- User Profile Setup -->
+                <div id="profile-setup" class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">👋 Benvenuto nella Community FSGC</h2>
+                        <p class="section-subtitle">Configura il tuo profilo per iniziare</p>
+                    </div>
+                    <div class="section-content">
+                        <input type="text" id="user-name" placeholder="Il tuo nome" class="form-input">
+                        <input type="text" id="favorite-team" placeholder="La tua squadra del cuore" class="form-input">
+                        <button class="btn btn-primary" onclick="saveUserProfile()">
+                            <span>💾</span> Salva Profilo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">⚡ Azioni Rapide</h2>
+                        <p class="section-subtitle">Interagisci con la community</p>
+                    </div>
+                    <div class="section-content">
+                        <button class="btn btn-primary" onclick="shareEmotion()">😍 Condividi Emozione</button>
+                        <button class="btn btn-primary" onclick="votePoll()">🗳️ Vota Sondaggio</button>
+                        <button class="btn btn-primary" onclick="viewCommunityStats()">📈 Statistiche Live</button>
+                        <button class="btn btn-primary" onclick="sendSupportMessage()">💌 Supporto Squadra</button>
+                    </div>
+                </div>
+
+                <!-- Feed Live -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">📱 Feed Live Community</h2>
+                        <p class="section-subtitle">Aggiornamenti in tempo reale dalla community</p>
+                    </div>
+                    <div class="section-content">
+                        <div id="community-feed"></div>
+                        <button class="btn btn-secondary" onclick="refreshCommunityFeed()" style="width: 100%;">🔄 Aggiorna Feed</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== JAVASCRIPT APPLICATION ===== -->
+    <script>
+        // App logic goes here (from the second file)
+        class SoccerBoxApp {
+            constructor() {
+                this.currentMode = null;
+                this.currentMatch = null;
+                this.matchTimer = {
+                    startTime: null,
+                    elapsed: 0,
+                    isRunning: false,
+                    interval: null
+                };
+                this.matchNotes = [];
+                this.players = [];
+                this.userProfile = {
+                    name: '',
+                    favoriteTeam: '',
+                    emotionsShared: 0,
+                    pollsVoted: 0,
+                    joinDate: null
+                };
+                this.playerRatings = {};
+                this.communityStats = {
+                    fans: 1247,
+                    emotions: 3456,
+                    polls: 89
+                };
+                this.init();
+            }
+
+            init() {
+                console.log('🚀 Initializing Soccer in a Box FSGC Professional');
+                this.loadData();
+                this.setupEventListeners();
+                this.updateStats();
+                this.setupStarRatings();
+                if (this.userProfile.name) {
+                    document.getElementById('profile-setup').style.display = 'none';
+                }
+                console.log('✅ FSGC App initialized successfully');
+            }
+
+            loadData() {
+                try {
+                    const saved = localStorage.getItem('soccerbox_fsgc_data');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        Object.assign(this, data);
+                    }
+                } catch (error) {
+                    console.warn('Failed to load saved data:', error);
+                }
+            }
+
+            saveData() {
+                try {
+                    const dataToSave = {
+                        userProfile: this.userProfile,
+                        players: this.players,
+                        matchNotes: this.matchNotes,
+                        communityStats: this.communityStats
+                    };
+                    localStorage.setItem('soccerbox_fsgc_data', JSON.stringify(dataToSave));
+                } catch (error) {
+                    console.warn('Failed to save data:', error);
+                }
+            }
+
+            setupEventListeners() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.key === 'Enter') {
+                        e.preventDefault();
+                        if (this.currentMode === 'coach') {
+                            addMatchNote();
+                        }
+                    }
+                    if (e.key === ' ' && !e.target.matches('input, textarea')) {
+                        e.preventDefault();
+                        if (this.currentMode === 'coach' && this.currentMatch) {
+                            toggleTimer();
+                        }
+                    }
+                });
+                setInterval(() => {
+                    this.saveData();
+                }, 30000);
+            }
+
+            setupStarRatings() {
+                document.querySelectorAll('.star').forEach(star => {
+                    star.style.cursor = 'pointer';
+                    star.style.transition = 'opacity 0.2s ease';
+                    star.style.opacity = '0.3';
+                    star.addEventListener('click', (e) => {
+                        const rating = parseInt(e.target.dataset.rating);
+                        const skillGroup = e.target.closest('.stars');
+                        const skill = skillGroup.dataset.skill;
+                        this.setPlayerRating(skill, rating);
+                        this.updateStarDisplay(skillGroup, rating);
+                    });
+                    star.addEventListener('mouseover', (e) => {
+                        const rating = parseInt(e.target.dataset.rating);
+                        const skillGroup = e.target.closest('.stars');
+                        this.previewStarRating(skillGroup, rating);
+                    });
+                });
+                document.querySelectorAll('.stars').forEach(group => {
+                    group.addEventListener('mouseleave', () => {
+                        const skill = group.dataset.skill;
+                        const currentRating = this.playerRatings[skill] || 0;
+                        this.updateStarDisplay(group, currentRating);
+                    });
+                });
+            }
+
+            setPlayerRating(skill, rating) {
+                this.playerRatings[skill] = rating;
+            }
+
+            updateStarDisplay(skillGroup, rating) {
+                const stars = skillGroup.querySelectorAll('.star');
+                stars.forEach((star, index) => {
+                    star.style.opacity = index < rating ? '1' : '0.3';
+                });
+            }
+
+            previewStarRating(skillGroup, rating) {
+                const stars = skillGroup.querySelectorAll('.star');
+                stars.forEach((star, index) => {
+                    star.style.opacity = index < rating ? '0.7' : '0.3';
+                });
+            }
+
+            updateStats() {
+                document.getElementById('coach-matches').textContent = this.matchNotes.length > 0 ? '1' : '0';
+                document.getElementById('coach-players').textContent = this.players.length;
+                document.getElementById('coach-reports').textContent = this.players.length;
+                document.getElementById('community-fans').textContent = this.communityStats.fans.toLocaleString();
+                document.getElementById('community-emotions').textContent = this.communityStats.emotions.toLocaleString();
+                document.getElementById('community-polls').textContent = this.communityStats.polls;
+            }
+
+            showNotification(title, message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    <div class="notification-header">
+                        <div class="notification-title">${title}</div>
+                        <button class="notification-close" onclick="this.closest('.notification').remove()">×</button>
+                    </div>
+                    <div class="notification-body">${message}</div>
+                `;
+                document.body.appendChild(notification);
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 5000);
+            }
+
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+        }
+
+        const app = new SoccerBoxApp();
+
+        function selectMode(mode) {
+            app.currentMode = mode;
+            document.getElementById('welcome-screen').classList.remove('active');
+            document.getElementById(`${mode}-screen`).classList.add('active');
+            app.showNotification(
+                'Modalità Attivata',
+                `Benvenuto nella modalità ${mode === 'coach' ? 'Coach' : 'Community'}!`,
+                'success'
+            );
+            if (mode === 'community') {
+                refreshCommunityFeed();
+            }
+        }
+
+        function switchMode() {
+            const newMode = app.currentMode === 'coach' ? 'community' : 'coach';
+            document.getElementById(`${app.currentMode}-screen`).classList.remove('active');
+            selectMode(newMode);
+        }
+
+        function startMatchAnalysis() {
+            const homeTeam = document.getElementById('home-team').value.trim();
+            const awayTeam = document.getElementById('away-team').value.trim();
+            const matchDate = document.getElementById('match-date').value;
+            const venue = document.getElementById('venue').value.trim();
+            if (!homeTeam || !awayTeam) {
+                app.showNotification('Errore', 'Inserisci almeno i nomi delle squadre', 'error');
+                return;
+            }
+            app.currentMatch = {
+                id: Date.now(),
+                homeTeam,
+                awayTeam,
+                date: matchDate || new Date().toISOString().split('T')[0],
+                venue,
+                startTime: new Date().toISOString()
+            };
+            document.getElementById('current-match').style.display = 'block';
+            document.getElementById('match-info').textContent = `${homeTeam} vs ${awayTeam} - ${venue || 'Venue non specificato'}`;
+            app.showNotification('Match Avviato', `Analisi iniziata per ${homeTeam} vs ${awayTeam}`, 'success');
+            app.saveData();
+        }
+
+        function toggleTimer() {
+            if (app.matchTimer.isRunning) pauseTimer();
+            else startTimer();
+        }
+
+        function startTimer() {
+            app.matchTimer.startTime = Date.now() - app.matchTimer.elapsed * 1000;
+            app.matchTimer.isRunning = true;
+            app.matchTimer.interval = setInterval(() => {
+                app.matchTimer.elapsed = Math.floor((Date.now() - app.matchTimer.startTime) / 1000);
+                document.getElementById('match-timer').textContent = app.formatTime(app.matchTimer.elapsed);
+            }, 1000);
+            document.getElementById('timer-btn').innerHTML = '<span>⏸️</span> Pause';
+        }
+
+        function pauseTimer() {
+            if (app.matchTimer.interval) clearInterval(app.matchTimer.interval);
+            app.matchTimer.isRunning = false;
+            document.getElementById('timer-btn').innerHTML = '<span>▶️</span> Start';
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            app.matchTimer.elapsed = 0;
+            app.matchTimer.startTime = null;
+            document.getElementById('match-timer').textContent = '00:00';
+        }
+
+        function addQuickNote(action) {
+            const actionTexts = {
+                goal: '⚽ GOL! Rete incredibile!',
+                yellow: '🟨 Cartellino giallo mostrato',
+                red: '🟥 Cartellino rosso! Espulsione!',
+                substitution: '🔄 Sostituzione effettuata',
+                corner: '📐 Calcio d\'angolo conquistato',
+                foul: '🚫 Fallo commesso'
+            };
+            addNoteWithText(actionTexts[action] || action);
+        }
+
+        function addMatchNote() {
+            const noteText = document.getElementById('match-notes').value.trim();
+            if (noteText) {
+                addNoteWithText(noteText);
+                document.getElementById('match-notes').value = '';
+            }
+        }
+
+        function addNoteWithText(text) {
+            const note = {
+                id: Date.now(),
+                timestamp: app.matchTimer.elapsed,
+                time: app.formatTime(app.matchTimer.elapsed),
+                text: text,
+                created: new Date().toISOString()
+            };
+            app.matchNotes.unshift(note);
+            refreshNotesTimeline();
+            app.saveData();
+            app.updateStats();
+        }
+
+        function refreshNotesTimeline() {
+            const notesList = document.getElementById('notes-list');
+            if (!notesList) return;
+            if (app.matchNotes.length === 0) {
+                notesList.innerHTML = '<div>Nessuna nota ancora inserita</div>';
+                return;
+            }
+            notesList.innerHTML = app.matchNotes.map(note => `
+                <div style="padding: 0.75rem; margin-bottom: 0.5rem; background: var(--gray-50);">
+                    <div style="font-weight: 600;">${note.time}</div>
+                    <div>${note.text}</div>
+                </div>
+            `).join('');
+        }
+
+        function savePlayer() {
+            const name = document.getElementById('player-name').value.trim();
+            const number = document.getElementById('player-number').value;
+            const position = document.getElementById('player-position').value.trim();
+            const notes = document.getElementById('player-notes').value.trim();
+            if (!name) {
+                app.showNotification('Errore', 'Inserisci il nome del giocatore', 'error');
+                return;
+            }
+            const player = {
+                id: Date.now(),
+                name,
+                number: number || null,
+                position,
+                notes,
+                ratings: { ...app.playerRatings },
+                matchId: app.currentMatch?.id,
+                evaluatedAt: new Date().toISOString()
+            };
+            app.players.push(player);
+            document.getElementById('player-name').value = '';
+            document.getElementById('player-number').value = '';
+            document.getElementById('player-position').value = '';
+            document.getElementById('player-notes').value = '';
+            app.playerRatings = {};
+            document.querySelectorAll('.stars').forEach(group => {
+                app.updateStarDisplay(group, 0);
+            });
+            refreshPlayersList();
+            app.showNotification('Giocatore Salvato', `Valutazione di ${name} salvata con successo!`, 'success');
+            app.saveData();
+            app.updateStats();
+        }
+
+        function refreshPlayersList() {
+            const playersGrid = document.getElementById('players-grid');
+            if (!playersGrid) return;
+            if (app.players.length === 0) {
+                playersGrid.innerHTML = '<div>Nessun giocatore valutato ancora</div>';
+                return;
+            }
+            playersGrid.innerHTML = app.players.map(player => {
+                const avgRating = Object.values(player.ratings).length > 0 
+                    ? (Object.values(player.ratings).reduce((a, b) => a + b, 0) / Object.values(player.ratings).length).toFixed(1)
+                    : 'N/A';
+                return `
+                    <div style="border: 1px solid var(--gray-200); border-radius: 8px; padding: 1rem;">
+                        <div style="font-weight: 600;">${player.name}</div>
+                        <div style="color: var(--gray-600);">${player.position || 'Posizione non specificata'}</div>
+                        <div>Rating Medio: ${avgRating}/5</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function exportPDF() {
+            app.showNotification('Export PDF', 'Generando report professionale in formato PDF...', 'info');
+            setTimeout(() => {
+                const reportData = generateReportData();
+                const blob = new Blob([reportData.markdown], { type: 'text/markdown' });
+                downloadFile(blob, `match-report-${Date.now()}.md`);
+                app.showNotification('Export Completato', 'Report PDF generato e scaricato con successo!', 'success');
+            }, 1500);
+        }
+
+        function exportExcel() {
+            app.showNotification('Export Excel', 'Creando foglio di calcolo con dati match...', 'info');
+            setTimeout(() => {
+                const csvData = generateCSVData();
+                const blob = new Blob([csvData], { type: 'text/csv' });
+                downloadFile(blob, `match-data-${Date.now()}.csv`);
+                app.showNotification('Export Completato', 'Dati Excel esportati con successo!', 'success');
+            }, 1200);
+        }
+
+        function shareWithFSGC() {
+            app.showNotification('Invio FSGC', 'Condividendo report con la Federazione Sammarinese...', 'info');
+            setTimeout(() => {
+                app.showNotification('Condivisione Completata', 'Report inviato con successo al database FSGC!', 'success');
+            }, 2000);
+        }
+
+        function generateAnalytics() {
+            app.showNotification('AI Analytics', 'Analizzando dati con intelligenza artificiale...', 'info');
+            setTimeout(() => {
+                const insights = generateAIInsights();
+                app.showNotification('Analisi Completata', insights, 'success');
+            }, 3000);
+        }
+
+        function generateReportData() {
+            const match = app.currentMatch;
+            if (!match) return { markdown: 'Nessun match attivo' };
+            return {
+                markdown: `# Report Match FSGC
+## Informazioni Partita
+- **Squadre:** ${match.homeTeam} vs ${match.awayTeam}
+- **Data:** ${match.date}
+- **Venue:** ${match.venue || 'Non specificato'}
+- **Durata:** ${app.formatTime(app.matchTimer.elapsed)}
+## Note Cronologiche
+${app.matchNotes.map(note => `- **${note.time}** - ${note.text}`).join('\n')}
+## Giocatori Valutati
+${app.players.map(player => `
+### ${player.name} ${player.number ? `#${player.number}` : ''}
+- **Posizione:** ${player.position || 'N/A'}
+- **Valutazioni:**
+${Object.entries(player.ratings).map(([skill, rating]) => `  - ${skill}: ${rating}/5 ⭐`).join('\n')}
+${player.notes ? `- **Note:** ${player.notes}` : ''}
+`).join('\n')}
+## Statistiche
+- **Total Note:** ${app.matchNotes.length}
+- **Players Evaluated:** ${app.players.length}
+- **Match Duration:** ${app.formatTime(app.matchTimer.elapsed)}
+---
+*Generato da Soccer in a Box FSGC - ${new Date().toLocaleString()}*`
+            };
+        }
+
+        function generateCSVData() {
+            let csv = 'Nome,Numero,Posizione,Tecnica,Fisico,Mentale,Tattica,Note\n';
+            app.players.forEach(player => {
+                csv += `"${player.name}","${player.number || ''}","${player.position || ''}",`;
+                csv += `"${player.ratings.technique || 0}","${player.ratings.physical || 0}",`;
+                csv += `"${player.ratings.mental || 0}","${player.ratings.tactical || 0}",`;
+                csv += `"${player.notes || ''}"\n`;
+            });
+            return csv;
+        }
+
+        function generateAIInsights() {
+            const insights = [
+                '🎯 Raccomandazione tattica: La squadra mostra forte coesione nel centrocampo',
+                '📊 Trend performance: +15% di precisione nei passaggi rispetto alla media',
+                '⚡ Punto di forza: Transizioni difesa-attacco molto efficaci',
+                '🔄 Area di miglioramento: Finalizzazione negli ultimi 16 metri',
+                '📈 Proiezione FSGC: Squadra in crescita costante (+8% vs scorso mese)'
+            ];
+            return insights[Math.floor(Math.random() * insights.length)];
+        }
+
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function saveUserProfile() {
+            const name = document.getElementById('user-name').value.trim();
+            const team = document.getElementById('favorite-team').value.trim();
+            if (!name || !team) {
+                app.showNotification('Errore Profilo', 'Compila tutti i campi per continuare', 'error');
+                return;
+            }
+            app.userProfile.name = name;
+            app.userProfile.favoriteTeam = team;
+            app.userProfile.joinDate = new Date().toISOString();
+            document.getElementById('profile-setup').style.display = 'none';
+            app.saveData();
+            app.showNotification('Profilo Salvato', `Benvenuto ${name}! Ora fai parte della community FSGC.`, 'success');
+        }
+
+        function shareEmotion() {
+            const emotions = ['😍', '🔥', '⚡', '💪', '🎯', '👏', '❤️', '🚀', '⭐', '🎉', '🏆', '🙌'];
+            const emotion = emotions[Math.floor(Math.random() * emotions.length)];
+            app.userProfile.emotionsShared++;
+            app.communityStats.emotions++;
+            app.saveData();
+            app.updateStats();
+            addToCommunityFeed('emotion', `${app.userProfile.name || 'Tifoso'} ha condiviso: ${emotion}`, 'ora');
+            app.showNotification('Emozione Condivisa', `${emotion} inviata alla community FSGC!<br>Le tue emozioni aiutano lo staff tecnico.`, 'success');
+        }
+
+        function votePoll() {
+            const polls = [
+                {
+                    question: 'Quale formazione per la prossima partita?',
+                    options: ['4-3-3 Offensivo', '4-4-2 Classico', '3-5-2 Moderno', '4-2-3-1 Equilibrato'],
+                    results: [35, 28, 22, 15]
+                },
+                {
+                    question: 'Chi dovrebbe essere il capitano della squadra?',
+                    options: ['Marco Rossi', 'Giuseppe Bianchi', 'Andrea Verdi', 'Luca Neri'],
+                    results: [42, 31, 18, 9]
+                },
+                {
+                    question: 'Qual è la priorità per il mercato?',
+                    options: ['Difensore centrale', 'Centrocampista', 'Attaccante', 'Portiere'],
+                    results: [38, 29, 25, 8]
+                }
+            ];
+            const poll = polls[Math.floor(Math.random() * polls.length)];
+            const chosenOption = Math.floor(Math.random() * poll.options.length);
+            app.userProfile.pollsVoted++;
+            app.communityStats.polls++;
+            app.saveData();
+            app.updateStats();
+            addToCommunityFeed('poll', `Nuovo voto: "${poll.question}" - ${poll.options[chosenOption]}`, 'ora');
+            app.showNotification(
+                'Sondaggio Votato',
+                `<strong>${poll.question}</strong><br><br>✅ Hai votato: <strong>${poll.options[chosenOption]}</strong><br><br>Risultati aggiornati nel sistema FSGC!`,
+                'success'
+            );
+        }
+
+        function viewCommunityStats() {
+            const stats = `
+                <strong>📊 Statistiche Community FSGC</strong><br><br>
+                <strong>🏈 Match in corso:</strong><br>
+                • Intensità gara: Alta<br>
+                • Sentiment tifosi: +92% positivo<br>
+                • Engagement: +15% vs media<br><br>
+                <strong>😍 La tua attività:</strong><br>
+                • Emozioni condivise: ${app.userProfile.emotionsShared}<br>
+                • Sondaggi votati: ${app.userProfile.pollsVoted}<br>
+                • Livello community: ${app.userProfile.emotionsShared > 10 ? 'Esperto' : app.userProfile.emotionsShared > 5 ? 'Attivo' : 'Principiante'}<br><br>
+                <strong>🌍 Network FSGC:</strong><br>
+                • Tifosi attivi oggi: ${app.communityStats.fans.toLocaleString()}<br>
+                • Squadre connesse: 15 (San Marino)<br>
+                • Federazioni partner: 24 paesi
+            `;
+            app.showNotification('Statistiche Live', stats, 'info');
+        }
+
+        function sendSupportMessage() {
+            const messages = [
+                'Forza ragazzi! La FSGC è con voi! 💪🇸🇲',
+                'Orgogliosi di voi! Avanti San Marino! 🏆❤️',
+                'Il nostro cuore batte con voi! 💙⚽',
+                'Rappresentate tutti noi! Grande squadra! 🙌🎯',
+                'San Marino nel cuore! Vincete per tutti! 🚀👏'
+            ];
+            const message = messages[Math.floor(Math.random() * messages.length)];
+            addToCommunityFeed('support', `Messaggio di supporto: "${message}"`, 'ora');
+            app.showNotification(
+                'Supporto Inviato',
+                `<strong>💌 Il tuo messaggio:</strong><br><br>"${message}"<br><br>Lo staff tecnico e la FSGC riceveranno il tuo supporto!`,
+                'success'
+            );
+        }
+
+        function refreshCommunityFeed() {
+            generateCommunityFeed();
+            app.showNotification('Feed Aggiornato', 'Caricate le ultime attività dalla community FSGC', 'info');
+        }
+
+        function addToCommunityFeed(type, content, time) {
+            const feedContainer = document.getElementById('community-feed');
+            if (!feedContainer) return;
+            const feedItem = document.createElement('div');
+            feedItem.className = 'feed-item';
+            const typeIcons = {
+                emotion: '😍',
+                poll: '🗳️',
+                support: '💌',
+                match: '⚽',
+                system: '🏆'
+            };
+            feedItem.innerHTML = `
+                <div class="feed-header">
+                    <div class="feed-source">${typeIcons[type]} Community FSGC</div>
+                    <div class="feed-time">${time}</div>
+                </div>
+                <div class="feed-content">${content}</div>
+                <div class="feed-reactions">👍 ${Math.floor(Math.random() * 20) + 5} reazioni</div>
+            `;
+            feedContainer.insertBefore(feedItem, feedContainer.firstChild);
+            while (feedContainer.children.length > 10) {
+                feedContainer.removeChild(feedContainer.lastChild);
+            }
+        }
+
+        function generateCommunityFeed() {
+            const feedContainer = document.getElementById('community-feed');
+            if (!feedContainer) return;
+            const sampleFeed = [
+                { type: 'match', content: '<strong>78\'</strong> - Azione spettacolare! Cross perfetto dalla destra!', time: '2 min fa' },
+                { type: 'emotion', content: 'Marco_Tifoso ha condiviso: 🔥', time: '5 min fa' },
+                { type: 'poll', content: 'Sondaggio chiuso: "Migliore in campo" - Vince Andrea con 67% dei voti', time: '8 min fa' },
+                { type: 'support', content: 'Giulia_FSGC: "Forza San Marino! Siamo tutti con voi! 💪"', time: '12 min fa' },
+                { type: 'system', content: '🏆 Milestone raggiunta: 1000+ tifosi attivi oggi nella community!', time: '15 min fa' },
+                { type: 'match', content: '<strong>65\'</strong> - Sostituzioni: entra Francesco, esce Andrea', time: '18 min fa' },
+                { type: 'emotion', content: 'Community in fermento: +200% emozioni negli ultimi 10 minuti!', time: '22 min fa' }
+            ];
+            feedContainer.innerHTML = sampleFeed.map(item => `
+                <div class="feed-item">
+                    <div class="feed-header">
+                        <div class="feed-source">${item.type === 'match' ? '⚽' : item.type === 'emotion' ? '😍' : item.type === 'poll' ? '🗳️' : item.type === 'support' ? '💌' : '🏆'} Community FSGC</div>
+                        <div class="feed-time">${item.time}</div>
+                    </div>
+                    <div class="feed-content">${item.content}</div>
+                    <div class="feed-reactions">👍 ${Math.floor(Math.random() * 20) + 5} reazioni</div>
+                </div>
+            `).join('');
+        }
+
+        function joinGlobalNetwork() {
+            app.showNotification(
+                'Rete Globale FSGC',
+                `<strong>🌍 Benvenuto nella Rete Globale!</strong><br><br>
+                Ora sei connesso con:<br>
+                • <strong>15 squadre</strong> di San Marino<br>
+                • <strong>3,247 squadre</strong> in 24 paesi<br>
+                • <strong>12,483 tifosi</strong> online ora<br><br>
+                <strong>Federazioni partner:</strong><br>
+                🇸🇲 FSGC • 🇮🇹 FIGC • 🇪🇸 RFEF • 🇫🇷 FFF<br><br>
+                Potrai partecipare a tornei internazionali!`,
+                'success'
+            );
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('🏆 Soccer in a Box FSGC Professional Demo Ready');
+            setTimeout(() => {
+                if (document.getElementById('community-feed')) {
+                    generateCommunityFeed();
+                }
+            }, 500);
+            setTimeout(() => {
+                if (app.currentMode === 'community') {
+                    addToCommunityFeed('system', '🎉 Demo FSGC attiva! Benvenuto nella piattaforma professionale.', 'ora');
+                }
+            }, 2000);
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('mode')) {
+            setTimeout(() => {
+                selectMode(urlParams.get('mode'));
+            }, 100);
+        }
+    </script>
+</body>
+</html>
