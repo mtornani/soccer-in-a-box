@@ -412,127 +412,173 @@
         </div>
     </div>
 
-    <script src="js/app-core.js"></script>
-    <script src="js/coach-mode.js"></script>
-    <script src="js/community-mode.js"></script>
-    <script src="js/data-sync.js"></script>
-    
-    <!-- Fallback inline scripts in case external files don't load -->
+    <!-- Complete inline JavaScript implementation -->
     <script>
-        // Check if external scripts loaded, if not, provide minimal functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof window.SoccerBox === 'undefined') {
-                console.log('⚠️ External scripts not loaded, using fallback...');
-                
-                // Minimal inline implementation for testing
-                window.SoccerBox = {
-                    currentMode: null,
-                    userData: { role: null, preferences: {} },
-                    sharedData: { currentMatch: null, liveEvents: [] },
-                    eventBus: { 
-                        on: function() {}, 
-                        emit: function() {} 
-                    },
-                    Utils: {
-                        showNotification: function(msg, type) {
-                            alert(msg);
-                        },
-                        generateId: function() {
-                            return Date.now().toString(36) + Math.random().toString(36).substr(2);
-                        }
+        // Global state
+        window.SoccerBox = {
+            currentMode: null,
+            userData: { 
+                role: null, 
+                preferences: { language: 'it', theme: 'light' },
+                profile: { name: '', favoriteTeam: '', emotionsShared: 0, pollsVoted: 0 }
+            },
+            sharedData: { currentMatch: null, liveEvents: [], communityMessages: [] },
+            eventBus: { 
+                events: {},
+                on: function(event, callback) {
+                    if (!this.events[event]) this.events[event] = [];
+                    this.events[event].push(callback);
+                },
+                emit: function(event, data) {
+                    if (this.events[event]) {
+                        this.events[event].forEach(cb => cb(data));
                     }
-                };
-                
-                // Basic mode selection
-                window.selectMode = function(mode) {
-                    window.SoccerBox.currentMode = mode;
-                    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-                    document.getElementById(mode + '-screen').classList.add('active');
-                    
-                    if (mode === 'community') {
-                        setupCommunityFallback();
-                    }
-                };
-                
-                window.switchMode = function() {
-                    const newMode = window.SoccerBox.currentMode === 'coach' ? 'community' : 'coach';
-                    selectMode(newMode);
-                };
-                
-                function setupCommunityFallback() {
-                    // Quick emotion sharing
-                    document.getElementById('share-emotion')?.addEventListener('click', function() {
-                        const emotions = ['😍', '🔥', '⚡', '💪', '🎯', '👏'];
-                        const emotion = emotions[Math.floor(Math.random() * emotions.length)];
-                        window.SoccerBox.Utils.showNotification(`Hai condiviso: ${emotion}`);
-                    });
-                    
-                    // Quick poll voting
-                    document.getElementById('vote-poll')?.addEventListener('click', function() {
-                        window.SoccerBox.Utils.showNotification('Sondaggio: Quale formazione preferisci?\n\n1. 4-3-3 Offensivo ✅\n2. 4-4-2 Classico\n3. 3-5-2 Moderno\n\nVoto registrato!');
-                    });
-                    
-                    // View stats
-                    document.getElementById('view-stats')?.addEventListener('click', function() {
-                        window.SoccerBox.Utils.showNotification('📊 Statistiche:\n\n• Possesso: 62%\n• Tiri: 8\n• Precisione: 87%\n• Intensità: Alta');
-                    });
-                    
-                    // Send support
-                    document.getElementById('send-support')?.addEventListener('click', function() {
-                        const message = prompt('Scrivi un messaggio di supporto:');
-                        if (message) {
-                            window.SoccerBox.Utils.showNotification('💌 Messaggio inviato alla squadra!');
-                        }
-                    });
-                    
-                    // Quick support
-                    document.getElementById('quick-support')?.addEventListener('click', function() {
-                        window.SoccerBox.Utils.showNotification('💪 "Forza ragazzi!" inviato alla squadra!');
-                    });
-                    
-                    // Join global network
-                    document.getElementById('join-global')?.addEventListener('click', function() {
-                        window.SoccerBox.Utils.showNotification('🌍 Benvenuto nella rete globale! Ora sei connesso con 3,247 squadre in tutto il mondo.');
-                    });
-                    
-                    // Refresh feed
-                    document.getElementById('refresh-feed')?.addEventListener('click', function() {
-                        const feedContainer = document.getElementById('live-feed');
-                        if (feedContainer) {
-                            feedContainer.innerHTML = `
-                                <div class="feed-item">
-                                    <div class="feed-header">
-                                        <span class="feed-source">⚽ Match Live</span>
-                                        <span class="feed-time">2 min fa</span>
-                                    </div>
-                                    <div class="feed-content"><strong>78'</strong> - Incredibile rete di Marco!</div>
-                                    <div class="feed-reactions">🔥 15 reazioni</div>
-                                </div>
-                                <div class="feed-item">
-                                    <div class="feed-header">
-                                        <span class="feed-source">😍 Community</span>
-                                        <span class="feed-time">5 min fa</span>
-                                    </div>
-                                    <div class="feed-content">Giuseppe ha condiviso: 🔥</div>
-                                    <div class="feed-reactions">👏 3 reazioni</div>
-                                </div>
-                                <div class="feed-item">
-                                    <div class="feed-header">
-                                        <span class="feed-source">🌍 Network Globale</span>
-                                        <span class="feed-time">10 min fa</span>
-                                    </div>
-                                    <div class="feed-content">🏆 Nuova squadra attiva: FC Barcelona Youth</div>
-                                    <div class="feed-reactions">⭐ 89 reazioni</div>
-                                </div>
-                            `;
-                        }
-                        window.SoccerBox.Utils.showNotification('Feed aggiornato!');
-                    });
                 }
-                
-                console.log('✅ Fallback scripts loaded');
+            },
+            Utils: {
+                showNotification: function(msg, type = 'info') {
+                    // Create notification element
+                    const notification = document.createElement('div');
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: ${type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#2196F3'};
+                        color: white;
+                        padding: 1rem 1.5rem;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                        z-index: 1000;
+                        max-width: 300px;
+                        animation: slideIn 0.3s ease;
+                    `;
+                    notification.textContent = msg;
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => notification.remove(), 300);
+                    }, 3000);
+                },
+                generateId: function() {
+                    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+                },
+                formatTime: function(seconds) {
+                    const mins = Math.floor(seconds / 60);
+                    const secs = seconds % 60;
+                    return mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+                }
             }
-        });
-    </script>
-</body>
-</html>
+        };
+
+        // Mode selection functions
+        window.selectMode = function(mode) {
+            console.log('🎯 Selecting mode:', mode);
+            window.SoccerBox.currentMode = mode;
+            window.SoccerBox.userData.role = mode;
+            
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show selected screen
+            const targetScreen = document.getElementById(mode + '-screen');
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+                console.log('✅ Screen switched to:', mode);
+                
+                if (mode === 'community') {
+                    setupCommunityFeatures();
+                }
+            }
+            
+            // Save preference
+            localStorage.setItem('soccerbox_userdata', JSON.stringify(window.SoccerBox.userData));
+        };
+
+        window.switchMode = function() {
+            const currentMode = window.SoccerBox.currentMode;
+            const newMode = currentMode === 'coach' ? 'community' : 'coach';
+            console.log('🔄 Switching from', currentMode, 'to', newMode);
+            selectMode(newMode);
+        };
+
+        // Community features setup
+        function setupCommunityFeatures() {
+            console.log('🎉 Setting up community features...');
+            
+            // Share emotion
+            const shareEmotionBtn = document.getElementById('share-emotion');
+            if (shareEmotionBtn) {
+                shareEmotionBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('😍 Share emotion clicked');
+                    shareEmotion();
+                };
+            }
+            
+            // Vote poll
+            const votePollBtn = document.getElementById('vote-poll');
+            if (votePollBtn) {
+                votePollBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('🗳️ Vote poll clicked');
+                    votePoll();
+                };
+            }
+            
+            // View stats
+            const viewStatsBtn = document.getElementById('view-stats');
+            if (viewStatsBtn) {
+                viewStatsBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('📈 View stats clicked');
+                    viewStats();
+                };
+            }
+            
+            // Send support
+            const sendSupportBtn = document.getElementById('send-support');
+            if (sendSupportBtn) {
+                sendSupportBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('💌 Send support clicked');
+                    sendSupport();
+                };
+            }
+            
+            // Quick support
+            const quickSupportBtn = document.getElementById('quick-support');
+            if (quickSupportBtn) {
+                quickSupportBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('⚡ Quick support clicked');
+                    quickSupport();
+                };
+            }
+            
+            // Detailed feedback
+            const detailedFeedbackBtn = document.getElementById('detailed-feedback');
+            if (detailedFeedbackBtn) {
+                detailedFeedbackBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('📝 Detailed feedback clicked');
+                    detailedFeedback();
+                };
+            }
+            
+            // Join global network
+            const joinGlobalBtn = document.getElementById('join-global');
+            if (joinGlobalBtn) {
+                joinGlobalBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('🌍 Join global clicked');
+                    joinGlobalNetwork();
+                };
+            }
+            
+            // Refresh feed
+            const refreshFeedBtn = document.getElementById('refresh-feed');
+            if (refreshFeedBtn) {
+                refreshFeedBtn.onclick = 
