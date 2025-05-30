@@ -3,375 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#2c5aa0">
-    <title>Soccer in a Box - Ecosistema Calcistico</title>
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- JavaScript at the top to ensure it loads -->
-    <script>
-        console.log('🚀 JavaScript loading...');
-        
-        // Global state
-        let currentMode = null;
-        let userProfile = {
-            name: '',
-            favoriteTeam: '',
-            emotionsShared: 0,
-            pollsVoted: 0
-        };
-
-        // Show notification
-        function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = message.replace(/\n/g, '<br>');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                left: 20px;
-                right: 20px;
-                background: ${type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#2196F3'};
-                color: white;
-                padding: 1rem;
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                z-index: 1000;
-                animation: slideDown 0.3s ease;
-                text-align: center;
-                font-size: 0.9rem;
-                line-height: 1.4;
-            `;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 4000);
-        }
-
-        // Mode selection - MAIN FUNCTION
-        function selectMode(mode) {
-            console.log('🎯 Selecting mode:', mode);
-            currentMode = mode;
-            
-            try {
-                // Hide all screens
-                document.querySelectorAll('.screen').forEach(screen => {
-                    screen.classList.remove('active');
-                });
-                
-                // Show selected screen
-                const targetScreen = document.getElementById(mode + '-screen');
-                if (targetScreen) {
-                    targetScreen.classList.add('active');
-                    console.log('✅ Screen switched to:', mode);
-                    
-                    if (mode === 'community') {
-                        setupCommunity();
-                    }
-                    
-                    // Save preference
-                    localStorage.setItem('soccerbox_mode', mode);
-                } else {
-                    console.error('❌ Screen not found:', mode + '-screen');
-                }
-            } catch (error) {
-                console.error('❌ Error in selectMode:', error);
-                showNotification('Errore nel cambio modalità', 'error');
-            }
-        }
-
-        // Switch between modes
-        function switchMode() {
-            const newMode = currentMode === 'coach' ? 'community' : 'coach';
-            console.log('🔄 Switching to:', newMode);
-            selectMode(newMode);
-        }
-
-        // Setup community
-        function setupCommunity() {
-            console.log('🎉 Setting up community...');
-            loadData();
-            if (userProfile.name) {
-                const profileSetup = document.getElementById('profile-setup');
-                if (profileSetup) {
-                    profileSetup.style.display = 'none';
-                }
-            }
-            updateStats();
-        }
-
-        // Load saved data
-        function loadData() {
-            try {
-                const saved = localStorage.getItem('soccerbox_data');
-                if (saved) {
-                    userProfile = { ...userProfile, ...JSON.parse(saved) };
-                }
-            } catch (e) {
-                console.warn('Failed to load data');
-            }
-        }
-
-        // Save data
-        function saveData() {
-            try {
-                localStorage.setItem('soccerbox_data', JSON.stringify(userProfile));
-            } catch (e) {
-                console.warn('Failed to save data');
-            }
-        }
-
-        // Save profile
-        function saveProfile() {
-            console.log('💾 Saving profile...');
-            const nameInput = document.getElementById('user-name');
-            const teamInput = document.getElementById('favorite-team');
-            
-            if (!nameInput || !teamInput) {
-                showNotification('Errore: campi non trovati', 'error');
-                return;
-            }
-            
-            const name = nameInput.value.trim();
-            const team = teamInput.value.trim();
-            
-            if (!name || !team) {
-                showNotification('Compila tutti i campi', 'error');
-                return;
-            }
-            
-            userProfile.name = name;
-            userProfile.favoriteTeam = team;
-            saveData();
-            
-            const profileSetup = document.getElementById('profile-setup');
-            if (profileSetup) {
-                profileSetup.style.display = 'none';
-            }
-            
-            showNotification(`Benvenuto ${name}! 🎉<br>Ora puoi usare tutte le funzioni!`);
-        }
-
-        // Share emotion
-        function shareEmotion() {
-            console.log('😍 Sharing emotion...');
-            const emotions = ['😍', '🔥', '⚡', '💪', '🎯', '👏', '❤️', '🚀', '⭐', '🎉'];
-            const emotion = emotions[Math.floor(Math.random() * emotions.length)];
-            
-            userProfile.emotionsShared++;
-            saveData();
-            updateStats();
-            
-            showNotification(`Hai condiviso: ${emotion}<br><br>La tua emozione è stata inviata alla community!`);
-        }
-
-        // Vote poll
-        function votePoll() {
-            console.log('🗳️ Voting poll...');
-            const polls = [
-                {
-                    question: "Quale formazione per la prossima partita?",
-                    choice: "4-3-3 Offensivo"
-                },
-                {
-                    question: "Chi dovrebbe essere il capitano?", 
-                    choice: "Marco Rossi"
-                },
-                {
-                    question: "Miglior momento per allenarsi?",
-                    choice: "Pomeriggio"
-                }
-            ];
-            
-            const poll = polls[Math.floor(Math.random() * polls.length)];
-            userProfile.pollsVoted++;
-            saveData();
-            updateStats();
-            
-            showNotification(`Sondaggio: ${poll.question}<br><br>✅ Hai votato: ${poll.choice}<br><br>Voto registrato con successo!`);
-        }
-
-        // View stats
-        function viewStats() {
-            console.log('📈 Viewing stats...');
-            const stats = `📊 Statistiche Dettagliate:<br><br>🏈 Match in corso:<br>• Possesso palla: 62%<br>• Tiri in porta: 8<br>• Precisione passaggi: 87%<br>• Intensità: Alta<br><br>😍 La tua attività:<br>• Emozioni condivise: ${userProfile.emotionsShared}<br>• Sondaggi votati: ${userProfile.pollsVoted}<br><br>🌍 Community globale:<br>• Squadre attive: 3,247<br>• Tifosi online: 12,483<br>• Paesi connessi: 67`;
-
-            showNotification(stats, 'info');
-        }
-
-        // Send support
-        function sendSupport() {
-            console.log('💌 Sending support...');
-            const messages = [
-                "Forza ragazzi! Siamo con voi! 💪",
-                "Crediamo in voi, vinceremo insieme! 🏆", 
-                "Grande squadra, grande cuore! ❤️",
-                "Il nostro supporto non vi manca mai! 👏",
-                "Avanti così, siete fantastici! ⚡"
-            ];
-            
-            const message = messages[Math.floor(Math.random() * messages.length)];
-            showNotification(`💌 Messaggio inviato alla squadra:<br><br>"${message}"<br><br>Lo staff tecnico riceverà il tuo supporto!`);
-        }
-
-        // Refresh feed
-        function refreshFeed() {
-            console.log('🔄 Refreshing feed...');
-            const feeds = [
-                {
-                    source: "⚽ Match Live",
-                    time: "ora",
-                    content: "<strong>85'</strong> - Parata incredibile del portiere!",
-                    reactions: "🔥 23 reazioni"
-                },
-                {
-                    source: "😍 Community", 
-                    time: "2 min fa",
-                    content: "Anna ha condiviso: 🚀",
-                    reactions: "👏 12 reazioni"
-                },
-                {
-                    source: "🗳️ Sondaggi",
-                    time: "5 min fa", 
-                    content: "Nuovo sondaggio: Chi è il migliore oggi?",
-                    reactions: "📊 45 voti"
-                },
-                {
-                    source: "🌍 Network",
-                    time: "8 min fa",
-                    content: "🏆 Record giornaliero: 5,000 squadre attive!",
-                    reactions: "⭐ 156 reazioni"
-                }
-            ];
-            
-            const feedContainer = document.getElementById('live-feed');
-            if (feedContainer) {
-                feedContainer.innerHTML = feeds.map(feed => `
-                    <div class="feed-item">
-                        <div class="feed-header">
-                            <span class="feed-source">${feed.source}</span>
-                            <span class="feed-time">${feed.time}</span>
-                        </div>
-                        <div class="feed-content">${feed.content}</div>
-                        <div class="feed-reactions">${feed.reactions}</div>
-                    </div>
-                `).join('');
-            }
-            
-            showNotification('📱 Feed aggiornato con le ultime attività!');
-        }
-
-        // Join global network
-        function joinGlobalNetwork() {
-            console.log('🌍 Joining global network...');
-            showNotification('🌍 Benvenuto nella Rete Globale!<br><br>Ora sei connesso con:<br>• 3,247 squadre attive<br>• 67 paesi nel mondo<br>• 12,483 tifosi online<br><br>Potrai partecipare a tornei globali!');
-        }
-
-        // Coach functions
-        function startMatchSetup() {
-            console.log('🏟️ Starting match setup...');
-            showNotification('🏟️ Avvio setup match...<br><br>Funzionalità disponibile nella versione completa Coach.');
-        }
-
-        // Update stats display
-        function updateStats() {
-            const emotionsElement = document.getElementById('user-emotions');
-            if (emotionsElement) {
-                emotionsElement.textContent = userProfile.emotionsShared;
-            }
-        }
-
-        // Initialize app when page loads
-        function initApp() {
-            console.log('🚀 Initializing Soccer in a Box...');
-            
-            try {
-                loadData();
-                
-                // Check for returning user
-                const savedMode = localStorage.getItem('soccerbox_mode');
-                if (savedMode) {
-                    console.log('📱 Returning user, loading mode:', savedMode);
-                    selectMode(savedMode);
-                }
-                
-                console.log('✅ App initialized successfully');
-            } catch (error) {
-                console.error('❌ App initialization failed:', error);
-            }
-        }
-
-        // Wait for page to load, then initialize
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initApp);
-        } else {
-            initApp();
-        }
-        
-        console.log('✅ JavaScript loaded successfully');
-    </script>
+    <title>Soccer in a Box</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .screen {
-            display: none;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #2c5aa0, #4CAF50);
+            color: white;
             min-height: 100vh;
-            padding: 20px;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        /* Welcome Screen */
-        .welcome-screen {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 20px;
             text-align: center;
-            background: linear-gradient(135deg, #2c5aa0, #4CAF50);
-            color: white;
         }
-
-        .logo {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-
-        .welcome-title {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .welcome-subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 2rem;
-            max-width: 400px;
-        }
-
-        .mode-selector {
+        
+        .logo { font-size: 4rem; margin-bottom: 1rem; }
+        .title { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .subtitle { font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem; }
+        
+        .cards {
             display: flex;
             flex-direction: column;
             gap: 1rem;
             width: 100%;
             max-width: 400px;
         }
-
-        .mode-card {
+        
+        .card {
             background: rgba(255,255,255,0.15);
             backdrop-filter: blur(10px);
             border-radius: 12px;
@@ -379,195 +40,114 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid transparent;
-            text-align: center;
         }
-
-        .mode-card:active {
+        
+        .card:active {
             transform: scale(0.95);
             background: rgba(255,255,255,0.25);
         }
-
-        .mode-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+        
+        .card-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .card-title { font-size: 1.3rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .card-desc { opacity: 0.9; font-size: 0.9rem; }
+        
+        .screen {
+            display: none;
+            min-height: 100vh;
+            width: 100%;
+            background: #f5f5f5;
+            color: #333;
         }
-
-        .mode-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .mode-description {
-            opacity: 0.9;
-            font-size: 0.9rem;
-        }
-
-        /* App Header */
-        .app-header {
+        
+        .screen.active { display: block; }
+        
+        .header {
             background: white;
             padding: 1rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
-
-        .header-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #2c5aa0;
-        }
-
-        .mode-switcher {
+        
+        .header-title { font-size: 1.3rem; font-weight: bold; color: #2c5aa0; }
+        .switch-btn {
             background: #2c5aa0;
             color: white;
             border: none;
             padding: 0.5rem 1rem;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 0.9rem;
         }
-
-        /* Container */
-        .app-container {
-            padding: 1rem;
-        }
-
-        /* Cards */
-        .feature-card {
+        
+        .container { padding: 1rem; }
+        
+        .feature {
             background: white;
             border-radius: 12px;
             padding: 1.5rem;
             margin-bottom: 1rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
+        
         .feature-title {
             font-size: 1.2rem;
             font-weight: bold;
             margin-bottom: 1rem;
             color: #2c5aa0;
         }
-
-        /* Stats Grid */
-        .stats-grid {
+        
+        .btn {
+            background: #2c5aa0;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+            background: #4CAF50;
+        }
+        
+        .action-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 1rem;
             margin-bottom: 1rem;
         }
-
-        .stat-card {
+        
+        .stat {
             background: white;
             padding: 1rem;
             border-radius: 12px;
             text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
+        
         .stat-number {
             font-size: 1.5rem;
             font-weight: bold;
             color: #2c5aa0;
         }
-
+        
         .stat-label {
             color: #666;
+            font-size: 0.8rem;
             margin-top: 0.3rem;
-            font-size: 0.8rem;
         }
-
-        /* Buttons */
-        .btn {
-            background: #2c5aa0;
-            color: white;
-            border: none;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            width: 100%;
-            margin: 0.5rem 0;
-            transition: all 0.2s ease;
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-            background: #4CAF50;
-        }
-
-        .btn-secondary {
-            background: #FF9800;
-        }
-
-        /* Community Actions */
-        .community-actions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-
-        .action-btn {
-            background: linear-gradient(135deg, #2c5aa0, #4CAF50);
-            color: white;
-            border: none;
-            padding: 1rem;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .action-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Feed */
-        .feed-container {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-bottom: 1rem;
-        }
-
-        .feed-item {
-            background: #f8f9fa;
-            padding: 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: 8px;
-            border-left: 3px solid #FF9800;
-        }
-
-        .feed-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .feed-source {
-            font-weight: bold;
-            color: #2c5aa0;
-        }
-
-        .feed-time {
-            font-size: 0.8rem;
-            color: #666;
-        }
-
-        .feed-reactions {
-            margin-top: 0.5rem;
-            font-size: 0.8rem;
-            color: #666;
-        }
-
-        /* Notification */
+        
         .notification {
             position: fixed;
             top: 20px;
@@ -577,77 +157,191 @@
             color: white;
             padding: 1rem;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             z-index: 1000;
-            animation: slideDown 0.3s ease;
-        }
-
-        .notification.error {
-            background: #f44336;
-        }
-
-        .notification.info {
-            background: #2196F3;
-        }
-
-        /* Notification styles */
-        .notification {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            background: #4CAF50;
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 1000;
-            animation: slideDown 0.3s ease;
             text-align: center;
-            font-size: 0.9rem;
-            line-height: 1.4;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-
-        .notification.error {
-            background: #f44336;
-        }
-
-        .notification.info {
-            background: #2196F3;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-100%); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Form */
-        .form-input {
+        
+        .form input {
             width: 100%;
             padding: 1rem;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 1rem;
             margin-bottom: 1rem;
-        }
-
-        /* Profile form */
-        .profile-form {
-            margin-top: 1rem;
+            font-size: 1rem;
         }
     </style>
 </head>
 <body>
-    <!-- Welcome Screen -->
-    <div id="welcome-screen" class="screen welcome-screen active">
+    <!-- Welcome -->
+    <div id="welcome">
         <div class="logo">⚽</div>
-        <h1 class="welcome-title">Soccer in a Box</h1>
-        <p class="welcome-subtitle">
-            L'ecosistema completo per l'analisi calcistica.<br>
-            Scegli la tua modalità per iniziare.
-        </p>
+        <h1 class="title">Soccer in a Box</h1>
+        <p class="subtitle">Scegli la tua modalità per iniziare.</p>
         
-        <div class="mode-selector">
-            <div class="mode-card" onclick="selectMode('coach')">
-                <div class="mode-icon">📊</div>
- 
+        <div class="cards">
+            <div class="card" onclick="goToCoach()">
+                <div class="card-icon">📊</div>
+                <h3 class="card-title">Allenatore/Scout</h3>
+                <p class="card-desc">Analisi tattica e valutazione giocatori</p>
+            </div>
+            
+            <div class="card" onclick="goToCommunity()">
+                <div class="card-icon">🎉</div>
+                <h3 class="card-title">Tifoso/Community</h3>
+                <p class="card-desc">Segui la squadra e connettiti con altri tifosi</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coach Screen -->
+    <div id="coach" class="screen">
+        <div class="header">
+            <div class="header-title">⚽ Match Analysis</div>
+            <button class="switch-btn" onclick="goToCommunity()">Community 🎉</button>
+        </div>
+        <div class="container">
+            <div class="feature">
+                <h3 class="feature-title">🏟️ Setup Match</h3>
+                <p>Configura squadre e inizia l'analisi.</p>
+                <button class="btn" onclick="alert('🏟️ Setup Match - Funzionalità Coach disponibile!')">Nuovo Match</button>
+            </div>
+            <div class="feature">
+                <h3 class="feature-title">👤 Giocatori</h3>
+                <p>Valuta e gestisci i giocatori.</p>
+                <button class="btn" onclick="alert('👤 Database Giocatori - Gestisci le valutazioni!')">Gestisci Giocatori</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Community Screen -->
+    <div id="community" class="screen">
+        <div class="header">
+            <div class="header-title">🎉 Community Hub</div>
+            <button class="switch-btn" onclick="goToCoach()">Coach 📊</button>
+        </div>
+        <div class="container">
+            <!-- Stats -->
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">15</div>
+                    <div class="stat-label">Partite</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">247</div>
+                    <div class="stat-label">Tifosi</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">89%</div>
+                    <div class="stat-label">Soddisfazione</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="emotions">0</div>
+                    <div class="stat-label">Tue Emozioni</div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="feature">
+                <h3 class="feature-title">⚡ Azioni Rapide</h3>
+                <div class="action-grid">
+                    <button class="btn" onclick="shareEmotion()">😍 Emozione</button>
+                    <button class="btn" onclick="votePoll()">🗳️ Sondaggio</button>
+                    <button class="btn" onclick="viewStats()">📈 Statistiche</button>
+                    <button class="btn" onclick="sendSupport()">💌 Supporto</button>
+                </div>
+            </div>
+
+            <!-- Profile -->
+            <div class="feature" id="profile-setup">
+                <h3 class="feature-title">👋 Il tuo Profilo</h3>
+                <div class="form">
+                    <input type="text" id="name" placeholder="Il tuo nome">
+                    <input type="text" id="team" placeholder="La tua squadra">
+                    <button class="btn" onclick="saveProfile()">💾 Salva</button>
+                </div>
+            </div>
+
+            <!-- Global -->
+            <div class="feature">
+                <h3 class="feature-title">🌍 Network Globale</h3>
+                <p>🇮🇹 Italia: 1,247 squadre<br>🇧🇷 Brasile: 892 squadre<br>🇪🇸 Spagna: 634 squadre</p>
+                <button class="btn" onclick="joinGlobal()">🌍 Partecipa</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let emotionCount = 0;
+        let userName = '';
+
+        function showNotification(message) {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.innerHTML = message;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 3000);
+        }
+
+        function goToCoach() {
+            document.getElementById('welcome').style.display = 'none';
+            document.getElementById('community').classList.remove('active');
+            document.getElementById('coach').classList.add('active');
+        }
+
+        function goToCommunity() {
+            document.getElementById('welcome').style.display = 'none';
+            document.getElementById('coach').classList.remove('active');
+            document.getElementById('community').classList.add('active');
+        }
+
+        function shareEmotion() {
+            const emotions = ['😍', '🔥', '⚡', '💪', '🎯', '👏'];
+            const emotion = emotions[Math.floor(Math.random() * emotions.length)];
+            emotionCount++;
+            document.getElementById('emotions').textContent = emotionCount;
+            showNotification(`Hai condiviso: ${emotion}<br><br>Emozione inviata alla community!`);
+        }
+
+        function votePoll() {
+            const polls = [
+                "Formazione 4-3-3 ✅",
+                "Capitano: Marco Rossi ✅", 
+                "Allenamento pomeriggio ✅"
+            ];
+            const poll = polls[Math.floor(Math.random() * polls.length)];
+            showNotification(`Sondaggio votato:<br><br>${poll}<br><br>Voto registrato!`);
+        }
+
+        function viewStats() {
+            showNotification(`📊 Statistiche:<br><br>🏈 Possesso: 62%<br>⚽ Tiri: 8<br>🎯 Precisione: 87%<br><br>😍 Tue emozioni: ${emotionCount}`);
+        }
+
+        function sendSupport() {
+            const messages = [
+                "Forza ragazzi! 💪",
+                "Crediamo in voi! 🏆",
+                "Grande squadra! ❤️"
+            ];
+            const msg = messages[Math.floor(Math.random() * messages.length)];
+            showNotification(`💌 Messaggio inviato:<br><br>"${msg}"<br><br>Staff riceverà il supporto!`);
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('name').value;
+            const team = document.getElementById('team').value;
+            if (!name || !team) {
+                showNotification('Compila tutti i campi!');
+                return;
+            }
+            userName = name;
+            document.getElementById('profile-setup').style.display = 'none';
+            showNotification(`Benvenuto ${name}!<br>Tifoso di ${team} 🎉`);
+        }
+
+        function joinGlobal() {
+            showNotification('🌍 Benvenuto nella Rete Globale!<br><br>Connesso con 3,247 squadre!');
+        }
+    </script>
+</body>
+</html>
