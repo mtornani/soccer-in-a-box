@@ -1,25 +1,43 @@
 {
-  "name": "Soccer in a Box",
-  "short_name": "SoccerBox",
-  "description": "Professional football analysis and community management platform",
+  "name": "Soccer in a Box - Professional Football Analysis",
+  "short_name": "Soccer Box",
+  "description": "Professional football analysis and community management platform for coaches, scouts and football professionals",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#2c5aa0",
-  "background_color": "#f5f5f5",
+  "background_color": "#f8f9fa",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",
   "dir": "ltr",
-  "categories": ["sports", "productivity", "utilities"],
+  "categories": ["sports", "productivity", "utilities", "business"],
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%232c5aa0'/><text x='96' y='140' font-size='120' text-anchor='middle' fill='white'>⚽</text></svg>",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'><rect width='72' height='72' fill='%232c5aa0' rx='16'/><text x='36' y='52' font-size='36' text-anchor='middle' fill='white'>⚽</text></svg>",
+      "sizes": "72x72",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%232c5aa0' rx='20'/><text x='48' y='68' font-size='48' text-anchor='middle' fill='white'>⚽</text></svg>",
+      "sizes": "96x96",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><rect width='128' height='128' fill='%232c5aa0' rx='28'/><text x='64' y='92' font-size='64' text-anchor='middle' fill='white'>⚽</text></svg>",
+      "sizes": "128x128",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%232c5aa0' rx='40'/><text x='96' y='140' font-size='96' text-anchor='middle' fill='white'>⚽</text></svg>",
       "sizes": "192x192",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%232c5aa0'/><text x='256' y='380' font-size='320' text-anchor='middle' fill='white'>⚽</text></svg>",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%232c5aa0' rx='110'/><text x='256' y='370' font-size='256' text-anchor='middle' fill='white'>⚽</text></svg>",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
@@ -27,39 +45,22 @@
   ],
   "shortcuts": [
     {
-      "name": "Coach Mode",
+      "name": "Quick Coach Analysis",
       "short_name": "Coach",
-      "description": "Start match analysis",
-      "url": "/?mode=coach",
+      "description": "Start immediate match analysis with timer and notes",
+      "url": "/?mode=coach&tab=live",
       "icons": [
         {
-          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%234CAF50'/><text x='48' y='70' font-size='60' text-anchor='middle' fill='white'>📊</text></svg>",
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%234CAF50' rx='20'/><text x='48' y='70' font-size='48' text-anchor='middle' fill='white'>📊</text></svg>",
           "sizes": "96x96"
         }
       ]
     },
     {
-      "name": "Community Mode",
-      "short_name": "Community",
-      "description": "Fan engagement tools",
-      "url": "/?mode=community",
+      "name": "Player Evaluation",
+      "short_name": "Players",
+      "description": "Quick player performance evaluation",
+      "url": "/?mode=coach&tab=players",
       "icons": [
         {
-          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%23FF9800'/><text x='48' y='70' font-size='60' text-anchor='middle' fill='white'>🚀</text></svg>",
-          "sizes": "96x96"
-        }
-      ]
-    }
-  ],
-  "prefer_related_applications": false,
-  "related_applications": [],
-  "screenshots": [
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'><rect width='390' height='844' fill='%23f5f5f5'/><rect x='20' y='40' width='350' height='120' rx='12' fill='%232c5aa0'/><text x='195' y='100' font-size='24' text-anchor='middle' fill='white'>Soccer in a Box</text><rect x='20' y='180' width='350' height='100' rx='12' fill='white'/><rect x='20' y='300' width='350' height='100' rx='12' fill='white'/></svg>",
-      "sizes": "390x844",
-      "type": "image/svg+xml",
-      "form_factor": "narrow",
-      "label": "Home screen showing mode selection"
-    }
-  ]
-}
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect
