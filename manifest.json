@@ -1,31 +1,25 @@
 {
-  "name": "Soccer in a Box - Piattaforma FSGC",
-  "short_name": "Soccer Box FSGC",
-  "description": "Piattaforma professionale per analisi calcistica e gestione community - Partnership Federazione Sammarinese Giuoco Calcio",
-  "version": "2.0.0-fsgc",
-  "start_url": "./",
+  "name": "Soccer in a Box",
+  "short_name": "SoccerBox",
+  "description": "Professional football analysis and community management platform",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#1e3a8a",
-  "theme_color": "#1e3a8a",
+  "theme_color": "#2c5aa0",
+  "background_color": "#f5f5f5",
   "orientation": "portrait-primary",
-  "scope": "./",
-  "lang": "it",
-  "categories": ["sports", "productivity", "business", "education"],
+  "scope": "/",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["sports", "productivity", "utilities"],
   "icons": [
     {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iMTYiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxjaXJjbGUgY3g9IjM2IiBjeT0iMzYiIHI9IjE4IiBmaWxsPSJ3aGl0ZSIgZmlsbC1vcGFjaXR5PSIwLjkiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHA+CjxwYXRoIGQ9Ik0xMiAyQzEzLjEgMiAxNCAyLjkgMTQgNFYyMEMxNCAyMS4xIDEzLjEgMjIgMTIgMjJDMTAuOSAyMiAxMCAyMS4xIDEwIDIwVjRDMTAgMi45IDEwLjkgMiAxMiAyWiIgZmlsbD0iIzFlM2E4YSIvPgo8L3A+CjxwYXRoIGQ9Ik0yIDEyQzIgMTAuOSAyLjkgMTAgNCA1MEgxMjBDMjEuMSAxMCAyMiAxMC45IDIyIDEyQzIyIDEzLjEgMjEuMSAxNCAyMCAxNEg0QzIuOSAxNCAyIDEzLjEgMiAxMloiIGZpbGw9IiMxZTNhOGEiLz4KPC9zdmc+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSI3MiIgeTI9IjcyIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiMxZTNhOGEiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjM2I4MmY2Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+",
-      "sizes": "72x72",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iNDgiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9IjQ4IiBmaWxsPSJ3aGl0ZSIgZmlsbC1vcGFjaXR5PSIwLjkiLz4KPHN2ZyB4PSI2NCIgeT0iNjQiIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHA+CjxwYXRoIGQ9Ik0xMiAyQzEzLjEgMiAxNCAyLjkgMTQgNFYyMEMxNCAyMS4xIDEzLjEgMjIgMTIgMjJDMTAuOSAyMiAxMCAyMS4xIDEwIDIwVjRDMTAgMi45IDEwLjkgMiAxMiAyWiIgZmlsbD0iIzFlM2E4YSIvPgo8L3A+CjxwYXRoIGQ9Ik0yIDEyQzIgMTAuOSAyLjkgMTAgNCA1MEgxMjBDMjEuMSAxMCAyMiAxMC45IDIyIDEyQzIyIDEzLjEgMjEuMSAxNCAyMCAxNEg0QzIuOSAxNCAyIDEzLjEgMiAxMloiIGZpbGw9IiMxZTNhOGEiLz4KPC9zdmc+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxOTIiIHkyPSIxOTIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzFlM2E4YSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMzYjgyZjYiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4=",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%232c5aa0'/><text x='96' y='140' font-size='120' text-anchor='middle' fill='white'>⚽</text></svg>",
       "sizes": "192x192",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTI4IiBmaWxsPSJ1cmwoI2dyYWRpZW50MF9saW5lYXJfMV8xKSIvPgo8Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjEyOCIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC45Ii8+CjxzdmcgeD0iMTkyIiB5PSIxOTIiIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiPgo8cD4KPHA+CjxwYXRoIGQ9Ik0xMiAyQzEzLjEgMiAxNCAyLjkgMTQgNFYyMEMxNCAyMS4xIDEzLjEgMjIgMTIgMjJDMTAuOSAyMiAxMCAyMS4xIDEwIDIwVjRDMTAgMi45IDEwLjkgMiAxMiAyWiIgZmlsbD0iIzFlM2E4YSIvPgo8L3A+CjxwYXRoIGQ9Ik0yIDEyQzIgMTAuOSAyLjkgMTAgNCA1MEgxMjBDMjEuMSAxMCAyMiAxMC45IDIyIDEyQzIyIDEzLjEgMjEuMSAxNCAyMCAxNEg0QzIuOSAxNCAyIDEzLjEgMiAxMloiIGZpbGw9IiMxZTNhOGEiLz4KPC9zdmc+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSI1MTIiIHkyPSI1MTIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzFlM2E4YSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMzYjgyZjYiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4=",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%232c5aa0'/><text x='256' y='380' font-size='320' text-anchor='middle' fill='white'>⚽</text></svg>",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
@@ -33,139 +27,39 @@
   ],
   "shortcuts": [
     {
-      "name": "Modalità Coach",
+      "name": "Coach Mode",
       "short_name": "Coach",
-      "description": "Accesso diretto all'analisi match professionale",
-      "url": "./?mode=coach",
+      "description": "Start match analysis",
+      "url": "/?mode=coach",
       "icons": [
         {
-          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjQiIGZpbGw9IiMxZTNhOGEiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0zIDNWMjFIMjFWM0gzWk01IDVIMTlWMTlINVY1Wk03IDdWOUgxN1Y3SDdaTTcgMTFWMTNIMTdWMTFIN1pNNyAxNVYxN0gxN1YxNUg3WiIvPgo8L3N2Zz4KPC9zdmc+",
-          "sizes": "96x96",
-          "type": "image/svg+xml"
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%234CAF50'/><text x='48' y='70' font-size='60' text-anchor='middle' fill='white'>📊</text></svg>",
+          "sizes": "96x96"
         }
       ]
     },
     {
-      "name": "Modalità Community",
+      "name": "Community Mode",
       "short_name": "Community",
-      "description": "Accesso diretto al coinvolgimento tifosi",
-      "url": "./?mode=community",
+      "description": "Fan engagement tools",
+      "url": "/?mode=community",
       "icons": [
         {
-          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjQiIGZpbGw9IiMxMGI5ODEiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xNiA0QzE2IDYuMjEgMTQuMjEgOCAxMiA4UzkuNzkgNi4yMSA4IDRTMTAuNzkgMCAxMiAwUzE2IDEuNzkgMTYgNFpNNCAxOUMyIDIwLjEgMi45IDIxIDQgMjFIMjBDMjEuMSAyMSAyMiAyMC4xIDIyIDE5VjE3QzIyIDEzLjY5IDE5LjMxIDExIDE2IDExSDhDNC42OSAxMSAyIDEzLjY5IDIgMTdWMTlaIi8+CjxjaXJjbGUgY3g9IjYiIGN5PSI2IiByPSIzIiBmaWxsPSJ3aGl0ZSIvPgo8Y2lyY2xlIGN4PSIxOCIgY3k9IjYiIHI9IjMiIGZpbGw9IndoaXRlIi8+CjwvcD4KPC9zdmc+Cjwvc3ZnPg==",
-          "sizes": "96x96",
-          "type": "image/svg+xml"
-        }
-      ]
-    },
-    {
-      "name": "Nuovo Match",
-      "short_name": "Match",
-      "description": "Avvia immediatamente l'analisi di una nuova partita",
-      "url": "./?action=new-match",
-      "icons": [
-        {
-          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjQiIGZpbGw9IiNmNTllMGIiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xOSAzSDVDMy45IDMgMyAzLjkgMyA1VjE5QzMgMjAuMSAzLjkgMjEgNSAyMUgxOUMyMC4xIDIxIDIxIDIwLjEgMjEgMTlWNUMyMSAzLjkgMjAuMSAzIDE5IDNaTTEzIDExSDExVjhIMTNWMTFaTTEzIDE2SDExVjEzSDEzVjE2WiIvPgo8L3N2Zz4KPC9zdmc+",
-          "sizes": "96x96",
-          "type": "image/svg+xml"
-        }
-      ]
-    },
-    {
-      "name": "Dashboard FSGC",
-      "short_name": "Dashboard",
-      "description": "Pannello di controllo federazione",
-      "url": "./?dashboard=fsgc",
-      "icons": [
-        {
-          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjQiIGZpbGw9IiNkYzI2MjYiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0zIDEzSDExTDEzIDE1SDE5TDIxIDEzSDI0TDIwIDEwTDE2IDEzSDE0TDEyIDExSDRMMCA4SDE2TDE4IDEwSDIyTDI0IDhWNkgwVjE1WiIvPgo8L3N2Zz4KPC9zdmc+",
-          "sizes": "96x96",
-          "type": "image/svg+xml"
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%23FF9800'/><text x='48' y='70' font-size='60' text-anchor='middle' fill='white'>🚀</text></svg>",
+          "sizes": "96x96"
         }
       ]
     }
   ],
-  "related_applications": [],
   "prefer_related_applications": false,
-  "dir": "ltr",
-  "iarc_rating_id": "",
+  "related_applications": [],
   "screenshots": [
     {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4MCIgaGVpZ2h0PSI3MjAiIHZpZXdCb3g9IjAgMCAxMjgwIDcyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyODAiIGhlaWdodD0iNzIwIiBmaWxsPSJ1cmwoI2dyYWRpZW50MF9saW5lYXJfMV8xKSIvPgo8dGV4dCB4PSI2NDAiIHk9IjM2MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtZmFtaWx5PSJBcmlhbCI+U29jY2VyIGluIGEgQm94IC0gRlNHQzwvdGV4dD4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQwX2xpbmVhcl8xXzEiIHgxPSIwIiB5MT0iMCIgeDI9IjEyODAiIHkyPSI3MjAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzFlM2E4YSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMzYjgyZjYiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4=",
-      "sizes": "1280x720",
-      "type": "image/svg+xml",
-      "form_factor": "wide",
-      "label": "Soccer in a Box - Dashboard professionale FSGC"
-    },
-    {
-      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzUwIiBoZWlnaHQ9IjEzMzQiIHZpZXdCb3g9IjAgMCA3NTAgMTMzNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijc1MCIgaGVpZ2h0PSIxMzM0IiBmaWxsPSJ1cmwoI2dyYWRpZW50MF9saW5lYXJfMV8xKSIvPgo8dGV4dCB4PSIzNzUiIHk9IjY2NyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMzYiIGZvbnQtZmFtaWx5PSJBcmlhbCI+U29jY2VyIGluIGEgQm94PC90ZXh0Pgo8dGV4dCB4PSIzNzUiIHk9IjcyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtZmFtaWx5PSJBcmlhbCIgb3BhY2l0eT0iMC44Ij5QaWF0dGFmb3JtYSBGU0dDPC90ZXh0Pgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDBfbGluZWFyXzFfMSIgeDE9IjAiIHkxPSIwIiB4Mj0iNzUwIiB5Mj0iMTMzNCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjMWUzYThhIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzNiODJmNiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPg==",
-      "sizes": "750x1334",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'><rect width='390' height='844' fill='%23f5f5f5'/><rect x='20' y='40' width='350' height='120' rx='12' fill='%232c5aa0'/><text x='195' y='100' font-size='24' text-anchor='middle' fill='white'>Soccer in a Box</text><rect x='20' y='180' width='350' height='100' rx='12' fill='white'/><rect x='20' y='300' width='350' height='100' rx='12' fill='white'/></svg>",
+      "sizes": "390x844",
       "type": "image/svg+xml",
       "form_factor": "narrow",
-      "label": "Soccer in a Box - App mobile per analisi FSGC"
+      "label": "Home screen showing mode selection"
     }
-  ],
-  "features": [
-    "Piattaforma professionale FSGC",
-    "Analisi match avanzata con AI",
-    "Sistema di rating giocatori FIFA-compliant",
-    "Export report professionali PDF/Excel",
-    "Community engagement e sentiment analysis",
-    "Dashboard federazione con KPI",
-    "Rete globale squadre e scout",
-    "Sincronizzazione cloud sicura",
-    "Conformità GDPR e privacy",
-    "Integrazione sistemi federazione"
-  ],
-  "protocol_handlers": [
-    {
-      "protocol": "web+soccerbox",
-      "url": "./?import=%s"
-    },
-    {
-      "protocol": "web+fsgc",
-      "url": "./?fsgc=%s"
-    }
-  ],
-  "share_target": {
-    "action": "./",
-    "method": "POST",
-    "enctype": "multipart/form-data",
-    "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url",
-      "files": [
-        {
-          "name": "match_data",
-          "accept": ["application/json", "text/csv", ".xlsx"]
-        }
-      ]
-    }
-  },
-  "file_handlers": [
-    {
-      "action": "./",
-      "accept": {
-        "application/json": [".json"],
-        "text/csv": [".csv"],
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
-        "application/pdf": [".pdf"],
-        "text/markdown": [".md"]
-      }
-    }
-  ],
-  "edge_side_panel": {
-    "preferred_width": 450
-  },
-  "launch_handler": {
-    "client_mode": "navigate-existing"
-  },
-  "display_override": ["window-controls-overlay", "standalone"],
-  "orientation": "any",
-  "permissions": [
-    "notifications",
-    "persistent-storage",
-    "background-sync"
   ]
 }
