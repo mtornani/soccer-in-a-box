@@ -1,661 +1,812 @@
-// Soccer in a Box - Main Application Logic
-class SoccerInABox {
-    constructor() {
-        // Stato dell'applicazione
-        this.matchData = {
-            homeTeam: '',
-            awayTeam: '',
-            date: '',
-            competition: '',
-            venue: '',
-            weather: '',
-            scoutingFocus: '',
-            startTime: null,
-            duration: 0
-        };
-        
-        this.liveNotes = [];
-        this.players = [];
-        this.timer = {
-            startTime: null,
-            elapsed: 0,
-            isRunning: false,
-            interval: null
-        };
-
-        // Inizializza l'app
-        this.init();
+// Language detection and translations
+const translations = {
+    'en': {
+        'partnership-text': 'Partnership FSGC - San Marino Football Federation',
+        'subtitle-text': 'Professional platform for football analysis and community management.',
+        'select-mode-text': 'Choose your mode to access the system.',
+        'coach-mode-title': 'Coach Mode',
+        'coach-mode-desc': 'Advanced tactical analysis, player evaluation, professional reports and scouting tools.',
+        'community-mode-title': 'Community Mode',
+        'community-mode-desc': 'Fan engagement, live polls, sentiment analysis and global network connection.',
+        'back-text': 'Back',
+        'match-setup-title': 'Match Setup',
+        'home-team-label': 'Home Team:',
+        'away-team-label': 'Away Team:',
+        'date-label': 'Date:',
+        'venue-label': 'Venue:',
+        'competition-label': 'Competition:',
+        'start-match-btn': 'Start Match Analysis',
+        'add-note-btn': 'Add Note',
+        'players-title': 'Player Evaluation',
+        'technical-label': 'Technical:',
+        'physical-label': 'Physical:',
+        'mental-label': 'Mental:',
+        'save-player-btn': 'Save Player',
+        'report-title': 'Match Report',
+        'notes-label': 'Notes',
+        'players-label': 'Players',
+        'duration-label': 'Duration',
+        'rating-label': 'Avg Rating',
+        'export-md-btn': 'Export Markdown',
+        'export-txt-btn': 'Export TXT',
+        'clear-btn': 'Clear All',
+        'community-title': 'Community Mode',
+        'community-desc': 'Community features in development. Come back soon for fan engagement, live polls and sentiment analysis!',
+        'back-home-btn': 'Back to Home'
+    },
+    'it': {
+        'partnership-text': 'Partnership FSGC - Federazione Sammarinese Giuoco Calcio',
+        'subtitle-text': 'Piattaforma professionale per l\'analisi calcistica e gestione community.',
+        'select-mode-text': 'Scegli la tua modalità per accedere al sistema.',
+        'coach-mode-title': 'Modalità Coach',
+        'coach-mode-desc': 'Analisi tattica avanzata, valutazione giocatori, report professionali e strumenti di scouting.',
+        'community-mode-title': 'Modalità Community',
+        'community-mode-desc': 'Engagement tifosi, sondaggi live, sentiment analysis e connessione con la rete globale.',
+        'back-text': 'Indietro',
+        'match-setup-title': 'Setup Partita',
+        'home-team-label': 'Squadra Casa:',
+        'away-team-label': 'Squadra Ospite:',
+        'date-label': 'Data:',
+        'venue-label': 'Venue:',
+        'competition-label': 'Competizione:',
+        'start-match-btn': 'Inizia Match Analysis',
+        'add-note-btn': 'Aggiungi Nota',
+        'players-title': 'Valutazione Giocatori',
+        'technical-label': 'Tecnica:',
+        'physical-label': 'Fisico:',
+        'mental-label': 'Mentale:',
+        'save-player-btn': 'Salva Giocatore',
+        'report-title': 'Report Partita',
+        'notes-label': 'Note',
+        'players-label': 'Giocatori',
+        'duration-label': 'Durata',
+        'rating-label': 'Rating Medio',
+        'export-md-btn': 'Esporta Markdown',
+        'export-txt-btn': 'Esporta TXT',
+        'clear-btn': 'Cancella Tutto',
+        'community-title': 'Modalità Community',
+        'community-desc': 'Funzionalità community in sviluppo. Torna presto per engagement tifosi, sondaggi live e sentiment analysis!',
+        'back-home-btn': 'Torna alla Home'
+    },
+    'es': {
+        'partnership-text': 'Partnership FSGC - Federación Sanmarinense de Fútbol',
+        'subtitle-text': 'Plataforma profesional para análisis futbolístico y gestión comunitaria.',
+        'select-mode-text': 'Elige tu modalidad para acceder al sistema.',
+        'coach-mode-title': 'Modo Entrenador',
+        'coach-mode-desc': 'Análisis táctico avanzado, evaluación de jugadores, reportes profesionales y herramientas de scouting.',
+        'community-mode-title': 'Modo Comunidad',
+        'community-mode-desc': 'Engagement de aficionados, encuestas en vivo, análisis de sentimientos y conexión con la red global.',
+        'back-text': 'Atrás',
+        'match-setup-title': 'Configuración del Partido',
+        'home-team-label': 'Equipo Local:',
+        'away-team-label': 'Equipo Visitante:',
+        'date-label': 'Fecha:',
+        'venue-label': 'Estadio:',
+        'competition-label': 'Competición:',
+        'start-match-btn': 'Iniciar Análisis del Partido',
+        'add-note-btn': 'Agregar Nota',
+        'players-title': 'Evaluación de Jugadores',
+        'technical-label': 'Técnica:',
+        'physical-label': 'Físico:',
+        'mental-label': 'Mental:',
+        'save-player-btn': 'Guardar Jugador',
+        'report-title': 'Reporte del Partido',
+        'notes-label': 'Notas',
+        'players-label': 'Jugadores',
+        'duration-label': 'Duración',
+        'rating-label': 'Rating Promedio',
+        'export-md-btn': 'Exportar Markdown',
+        'export-txt-btn': 'Exportar TXT',
+        'clear-btn': 'Limpiar Todo',
+        'community-title': 'Modo Comunidad',
+        'community-desc': 'Funcionalidades comunitarias en desarrollo. ¡Vuelve pronto para engagement de fans, encuestas en vivo y análisis de sentimientos!',
+        'back-home-btn': 'Volver al Inicio'
+    },
+    'fr': {
+        'partnership-text': 'Partnership FSGC - Fédération Saint-Marinaise de Football',
+        'subtitle-text': 'Plateforme professionnelle pour l\'analyse football et gestion communautaire.',
+        'select-mode-text': 'Choisissez votre mode pour accéder au système.',
+        'coach-mode-title': 'Mode Entraîneur',
+        'coach-mode-desc': 'Analyse tactique avancée, évaluation des joueurs, rapports professionnels et outils de scouting.',
+        'community-mode-title': 'Mode Communauté',
+        'community-mode-desc': 'Engagement des fans, sondages en direct, analyse de sentiment et connexion réseau global.',
+        'back-text': 'Retour',
+        'match-setup-title': 'Configuration du Match',
+        'home-team-label': 'Équipe à Domicile:',
+        'away-team-label': 'Équipe Visiteur:',
+        'date-label': 'Date:',
+        'venue-label': 'Stade:',
+        'competition-label': 'Compétition:',
+        'start-match-btn': 'Commencer l\'Analyse du Match',
+        'add-note-btn': 'Ajouter Note',
+        'players-title': 'Évaluation des Joueurs',
+        'technical-label': 'Technique:',
+        'physical-label': 'Physique:',
+        'mental-label': 'Mental:',
+        'save-player-btn': 'Sauvegarder Joueur',
+        'report-title': 'Rapport du Match',
+        'notes-label': 'Notes',
+        'players-label': 'Joueurs',
+        'duration-label': 'Durée',
+        'rating-label': 'Note Moyenne',
+        'export-md-btn': 'Exporter Markdown',
+        'export-txt-btn': 'Exporter TXT',
+        'clear-btn': 'Tout Effacer',
+        'community-title': 'Mode Communauté',
+        'community-desc': 'Fonctionnalités communautaires en développement. Revenez bientôt pour l\'engagement des fans, sondages en direct et analyse de sentiment!',
+        'back-home-btn': 'Retour à l\'Accueil'
+    },
+    'de': {
+        'partnership-text': 'Partnership FSGC - San-Marinesischer Fußballverband',
+        'subtitle-text': 'Professionelle Plattform für Fußballanalyse und Community-Management.',
+        'select-mode-text': 'Wählen Sie Ihren Modus für den Systemzugang.',
+        'coach-mode-title': 'Trainer-Modus',
+        'coach-mode-desc': 'Erweiterte taktische Analyse, Spielerbewertung, professionelle Berichte und Scouting-Tools.',
+        'community-mode-title': 'Community-Modus',
+        'community-mode-desc': 'Fan-Engagement, Live-Umfragen, Stimmungsanalyse und globale Netzwerkverbindung.',
+        'back-text': 'Zurück',
+        'match-setup-title': 'Spiel-Setup',
+        'home-team-label': 'Heimmannschaft:',
+        'away-team-label': 'Gastmannschaft:',
+        'date-label': 'Datum:',
+        'venue-label': 'Stadion:',
+        'competition-label': 'Wettbewerb:',
+        'start-match-btn': 'Spielanalyse starten',
+        'add-note-btn': 'Notiz hinzufügen',
+        'players-title': 'Spielerbewertung',
+        'technical-label': 'Technik:',
+        'physical-label': 'Körperlich:',
+        'mental-label': 'Mental:',
+        'save-player-btn': 'Spieler speichern',
+        'report-title': 'Spielbericht',
+        'notes-label': 'Notizen',
+        'players-label': 'Spieler',
+        'duration-label': 'Dauer',
+        'rating-label': 'Durchschnittsbewertung',
+        'export-md-btn': 'Markdown exportieren',
+        'export-txt-btn': 'TXT exportieren',
+        'clear-btn': 'Alles löschen',
+        'community-title': 'Community-Modus',
+        'community-desc': 'Community-Features in Entwicklung. Kommen Sie bald zurück für Fan-Engagement, Live-Umfragen und Stimmungsanalyse!',
+        'back-home-btn': 'Zurück zur Startseite'
     }
+};
 
-    init() {
-        // Carica dati salvati
-        this.loadData();
-        
-        // Setup event listeners
-        this.setupEventListeners();
-        
-        // Setup tabs
-        this.setupTabs();
-        
-        // Setup rating system
-        this.setupRatingSystem();
-        
-        // Aggiorna l'interfaccia
-        this.updateUI();
-        
-        // Imposta data corrente
-        document.getElementById('matchDate').value = new Date().toISOString().split('T')[0];
-        
-        console.log('⚽ Soccer in a Box inizializzato');
+// App state
+let appState = {
+    currentMode: 'home',
+    currentTab: 'setup',
+    match: {
+        homeTeam: '',
+        awayTeam: '',
+        date: '',
+        venue: '',
+        competition: '',
+        startTime: null,
+        duration: 0
+    },
+    timer: {
+        startTime: null,
+        elapsedTime: 0,
+        isRunning: false,
+        interval: null
+    },
+    notes: [],
+    players: [],
+    playerRatings: {}
+};
+
+// Language detection
+function detectLanguage() {
+    const userLang = navigator.language || navigator.userLanguage;
+    const langCode = userLang.substring(0, 2);
+    
+    if (translations[langCode]) {
+        return langCode;
     }
+    
+    // Default to Italian
+    return 'it';
+}
 
-    // === GESTIONE TABS ===
-    setupTabs() {
-        const tabButtons = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
+// Apply translations
+function applyTranslations(lang) {
+    const texts = translations[lang];
+    
+    Object.keys(texts).forEach(key => {
+        const element = document.getElementById(key);
+        if (element) {
+            element.textContent = texts[key];
+        }
+    });
+}
 
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const targetTab = button.dataset.tab;
-                
-                // Rimuovi classe active da tutti i tab
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                tabContents.forEach(content => content.classList.remove('active'));
-                
-                // Attiva il tab selezionato
-                button.classList.add('active');
-                document.getElementById(targetTab).classList.add('active');
+// Initialize app
+function initApp() {
+    const lang = detectLanguage();
+    applyTranslations(lang);
+    
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+                console.log('SW registered: ', registration);
+            })
+            .catch(registrationError => {
+                console.log('SW registration failed: ', registrationError);
             });
-        });
     }
+    
+    // Set current date
+    document.getElementById('match-date').value = new Date().toISOString().split('T')[0];
+    
+    // Load saved data
+    loadData();
+    
+    // Setup event listeners
+    setupEventListeners();
+    
+    // Auto-save every 30 seconds
+    setInterval(saveData, 30000);
+}
 
-    // === EVENT LISTENERS ===
-    setupEventListeners() {
-        // Match Setup Form
-        document.getElementById('matchForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.saveMatchData();
-        });
-
-        // Timer Controls
-        document.getElementById('startTimer').addEventListener('click', () => this.startTimer());
-        document.getElementById('pauseTimer').addEventListener('click', () => this.pauseTimer());
-        document.getElementById('resetTimer').addEventListener('click', () => this.resetTimer());
-
-        // Live Notes
-        document.getElementById('addNote').addEventListener('click', () => this.addLiveNote());
-        document.getElementById('liveNote').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && e.ctrlKey) {
-                this.addLiveNote();
-            }
-        });
-
-        // Quick Actions
-        document.querySelectorAll('.quick-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const action = btn.dataset.action;
-                this.addQuickAction(action);
-            });
-        });
-
-        // Player Evaluation
-        document.getElementById('savePlayer').addEventListener('click', () => this.savePlayerEvaluation());
-
-        // Export Functions
-        document.getElementById('exportMarkdown').addEventListener('click', () => this.exportReport('markdown'));
-        document.getElementById('exportText').addEventListener('click', () => this.exportReport('text'));
-        document.getElementById('clearData').addEventListener('click', () => this.clearAllData());
-    }
-
-    // === MATCH SETUP ===
-    saveMatchData() {
-        this.matchData = {
-            homeTeam: document.getElementById('homeTeam').value,
-            awayTeam: document.getElementById('awayTeam').value,
-            date: document.getElementById('matchDate').value,
-            competition: document.getElementById('competition').value,
-            venue: document.getElementById('venue').value,
-            weather: document.getElementById('weather').value,
-            scoutingFocus: document.getElementById('scoutingFocus').value,
-            startTime: new Date().toISOString(),
-            duration: 0
-        };
-
-        this.saveData();
-        this.showNotification('✅ Dati match salvati!');
-        
-        // Passa automaticamente al tab delle note live
-        document.querySelector('[data-tab="live-notes"]').click();
-    }
-
-    // === TIMER MANAGEMENT ===
-    startTimer() {
-        if (!this.timer.isRunning) {
-            this.timer.startTime = Date.now() - this.timer.elapsed;
-            this.timer.isRunning = true;
-            this.timer.interval = setInterval(() => this.updateTimer(), 1000);
-            
-            if (!this.matchData.startTime) {
-                this.matchData.startTime = new Date().toISOString();
-                this.saveData();
-            }
+// Event listeners
+function setupEventListeners() {
+    // Star ratings
+    document.querySelectorAll('.stars').forEach(starGroup => {
+        starGroup.addEventListener('click', handleStarClick);
+        starGroup.addEventListener('mouseover', handleStarHover);
+        starGroup.addEventListener('mouseout', handleStarOut);
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', handleKeyboard);
+    
+    // Note input enter key
+    document.getElementById('note-input').addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'Enter') {
+            addNote();
         }
-    }
+    });
+}
 
-    pauseTimer() {
-        if (this.timer.isRunning) {
-            this.timer.isRunning = false;
-            clearInterval(this.timer.interval);
-        }
-    }
-
-    resetTimer() {
-        this.timer.elapsed = 0;
-        this.timer.isRunning = false;
-        if (this.timer.interval) {
-            clearInterval(this.timer.interval);
-            this.timer.interval = null;
-        }
-        this.timer.startTime = null;
-        this.updateTimerDisplay();
+// Star rating handlers
+function handleStarClick(e) {
+    if (e.target.classList.contains('star')) {
+        const stars = e.currentTarget.querySelectorAll('.star');
+        const value = parseInt(e.target.dataset.value);
+        const category = e.currentTarget.dataset.category;
         
-        // Reset anche la durata del match
-        this.matchData.duration = 0;
-        this.updateReportStats();
-        this.saveData();
-    }
-
-    updateTimer() {
-        if (this.timer.isRunning) {
-            this.timer.elapsed = Date.now() - this.timer.startTime;
-            this.updateTimerDisplay();
-        }
-    }
-
-    updateTimerDisplay() {
-        const minutes = Math.floor(this.timer.elapsed / 60000);
-        const seconds = Math.floor((this.timer.elapsed % 60000) / 1000);
-        const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        document.getElementById('matchTime').textContent = display;
-        
-        // Aggiorna durata match
-        this.matchData.duration = minutes;
-    }
-
-    getCurrentMatchTime() {
-        // Se il timer non è mai stato avviato o è a zero
-        if (this.timer.elapsed === 0 && !this.timer.isRunning) {
-            // Se esiste un startTime del match, calcola il tempo reale trascorso
-            if (this.matchData.startTime) {
-                const now = new Date();
-                const startTime = new Date(this.matchData.startTime);
-                const realMinutes = Math.floor((now - startTime) / 60000);
-                return realMinutes > 0 ? `${realMinutes}'` : `Pre-Match`;
-            }
-            return `Pre-Match`;
-        }
-        
-        // Calcola i minuti dal timer elapsed
-        const minutes = Math.floor(this.timer.elapsed / 60000);
-        return `${minutes}'`;
-    }
-
-    // === LIVE NOTES ===
-    addLiveNote() {
-        const noteText = document.getElementById('liveNote').value.trim();
-        if (!noteText) return;
-
-        const note = {
-            id: Date.now(),
-            time: this.getCurrentMatchTime(),
-            timestamp: new Date().toISOString(),
-            text: noteText,
-            type: 'manual'
-        };
-
-        this.liveNotes.unshift(note);
-        this.updateNotesTimeline();
-        this.saveData();
-        
-        // Pulisci il campo input
-        document.getElementById('liveNote').value = '';
-        
-        this.showNotification('📝 Nota aggiunta');
-    }
-
-    addQuickAction(actionType) {
-        const actionNames = {
-            'goal': '⚽ Gol',
-            'card': '🟨 Ammonizione',
-            'substitution': '🔄 Cambio',
-            'tactical': '📋 Nota Tattica'
-        };
-
-        const note = {
-            id: Date.now(),
-            time: this.getCurrentMatchTime(),
-            timestamp: new Date().toISOString(),
-            text: `${actionNames[actionType]} - ${this.getCurrentMatchTime()}`,
-            type: actionType,
-            action: actionNames[actionType]
-        };
-
-        this.liveNotes.unshift(note);
-        this.updateNotesTimeline();
-        this.saveData();
-        
-        this.showNotification(`${actionNames[actionType]} registrato`);
-    }
-
-    updateNotesTimeline() {
-        const timeline = document.getElementById('notesTimeline');
-        timeline.innerHTML = '';
-
-        this.liveNotes.forEach(note => {
-            const noteElement = document.createElement('div');
-            noteElement.className = 'note-item';
-            
-            let actionBadge = '';
-            if (note.action) {
-                actionBadge = `<span class="note-action">${note.action}</span>`;
-            }
-            
-            noteElement.innerHTML = `
-                <div class="note-time">${note.time}</div>
-                <div class="note-text">${actionBadge}${note.text}</div>
-            `;
-            
-            timeline.appendChild(noteElement);
-        });
-    }
-
-    // === PLAYER EVALUATION ===
-    setupRatingSystem() {
-        document.querySelectorAll('.rating').forEach(rating => {
-            const stars = rating.querySelectorAll('.star');
-            
-            stars.forEach((star, index) => {
-                star.addEventListener('click', () => {
-                    // Rimuovi active da tutte le stelle
-                    stars.forEach(s => s.classList.remove('active'));
-                    
-                    // Attiva stelle fino a quella cliccata
-                    for (let i = 0; i <= index; i++) {
-                        stars[i].classList.add('active');
-                    }
-                    
-                    // Salva il rating
-                    rating.dataset.rating = index + 1;
-                });
-            });
-        });
-    }
-
-    savePlayerEvaluation() {
-        const playerName = document.getElementById('playerName').value.trim();
-        const playerNumber = document.getElementById('playerNumber').value;
-        const playerPosition = document.getElementById('playerPosition').value;
-        const playerNotes = document.getElementById('playerNotes').value.trim();
-
-        if (!playerName) {
-            this.showNotification('⚠️ Inserisci il nome del giocatore', 'warning');
-            return;
-        }
-
-        // Raccogli tutte le valutazioni
-        const ratings = {};
-        document.querySelectorAll('.rating[data-rating]').forEach(rating => {
-            const skill = rating.dataset.skill;
-            const value = parseInt(rating.dataset.rating);
-            ratings[skill] = value;
-        });
-
-        const player = {
-            id: Date.now(),
-            name: playerName,
-            number: playerNumber,
-            position: playerPosition,
-            ratings: ratings,
-            notes: playerNotes,
-            evaluationTime: new Date().toISOString()
-        };
-
-        // Controlla se il giocatore esiste già
-        const existingIndex = this.players.findIndex(p => 
-            p.name.toLowerCase() === playerName.toLowerCase() || 
-            (playerNumber && p.number === playerNumber)
-        );
-
-        if (existingIndex > -1) {
-            this.players[existingIndex] = player;
-            this.showNotification('🔄 Giocatore aggiornato');
-        } else {
-            this.players.push(player);
-            this.showNotification('✅ Giocatore salvato');
-        }
-
-        this.updateSavedPlayers();
-        this.clearPlayerForm();
-        this.saveData();
-    }
-
-    clearPlayerForm() {
-        document.getElementById('playerName').value = '';
-        document.getElementById('playerNumber').value = '';
-        document.getElementById('playerPosition').value = '';
-        document.getElementById('playerNotes').value = '';
-        
-        // Reset ratings
-        document.querySelectorAll('.rating .star').forEach(star => {
-            star.classList.remove('active');
-        });
-        document.querySelectorAll('.rating').forEach(rating => {
-            delete rating.dataset.rating;
-        });
-    }
-
-    updateSavedPlayers() {
-        const container = document.getElementById('savedPlayers');
-        container.innerHTML = '';
-
-        if (this.players.length === 0) {
-            container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Nessun giocatore valutato ancora</p>';
-            return;
-        }
-
-        this.players.forEach(player => {
-            const playerCard = document.createElement('div');
-            playerCard.className = 'player-card';
-
-            const ratingsHtml = Object.entries(player.ratings).map(([skill, rating]) => {
-                const skillNames = {
-                    'ball-control': 'Controllo',
-                    'passing': 'Passaggio',
-                    'speed': 'Velocità',
-                    'stamina': 'Resistenza',
-                    'decision': 'Decisione',
-                    'leadership': 'Leadership'
-                };
-                return `<div class="rating-display">${skillNames[skill]}: <span>${'⭐'.repeat(rating)}</span></div>`;
-            }).join('');
-
-            playerCard.innerHTML = `
-                <div class="player-header">
-                    <div class="player-name">${player.name} ${player.number ? `#${player.number}` : ''}</div>
-                    ${player.position ? `<div class="player-position">${player.position}</div>` : ''}
-                </div>
-                <div class="player-ratings">${ratingsHtml}</div>
-                ${player.notes ? `<div class="player-notes-display" style="font-size: 0.9rem; margin-top: 8px; font-style: italic;">"${player.notes}"</div>` : ''}
-            `;
-
-            container.appendChild(playerCard);
-        });
-    }
-
-    // === EXPORT & REPORTS ===
-    exportReport(format) {
-        const report = this.generateReport(format);
-        const filename = `match_report_${this.matchData.homeTeam}_vs_${this.matchData.awayTeam}_${new Date().toISOString().split('T')[0]}`;
-        
-        if (format === 'markdown') {
-            this.downloadFile(report, `${filename}.md`, 'text/markdown');
-        } else {
-            this.downloadFile(report, `${filename}.txt`, 'text/plain');
-        }
-    }
-
-    generateReport(format) {
-        const isMarkdown = format === 'markdown';
-        const h1 = isMarkdown ? '# ' : '';
-        const h2 = isMarkdown ? '## ' : '';
-        const h3 = isMarkdown ? '### ' : '';
-        const bold = (text) => isMarkdown ? `**${text}**` : text.toUpperCase();
-        const separator = isMarkdown ? '\n---\n' : '\n' + '='.repeat(50) + '\n';
-
-        let report = '';
-        
-        // Header
-        report += `${h1}⚽ MATCH ANALYSIS REPORT\n`;
-        report += `${bold('Soccer in a Box')} - Minimal Match Analysis Kit\n\n`;
-        
-        // Match Info
-        report += `${h2}📋 INFORMAZIONI MATCH\n`;
-        report += `${bold('Match')}: ${this.matchData.homeTeam} vs ${this.matchData.awayTeam}\n`;
-        report += `${bold('Data')}: ${this.matchData.date}\n`;
-        if (this.matchData.competition) report += `${bold('Competizione')}: ${this.matchData.competition}\n`;
-        if (this.matchData.venue) report += `${bold('Venue')}: ${this.matchData.venue}\n`;
-        if (this.matchData.weather) report += `${bold('Condizioni')}: ${this.matchData.weather}\n`;
-        report += `${bold('Focus Scouting')}: ${this.matchData.scoutingFocus}\n`;
-        report += `${bold('Durata Osservazione')}: ${this.matchData.duration} minuti\n`;
-        report += `${bold('Report Generato')}: ${new Date().toLocaleString('it-IT')}\n`;
-        
-        report += separator;
-        
-        // Live Notes
-        if (this.liveNotes.length > 0) {
-            report += `${h2}📝 NOTE LIVE (${this.liveNotes.length})\n\n`;
-            
-            this.liveNotes.slice().reverse().forEach(note => {
-                const actionText = note.action ? `[${note.action}] ` : '';
-                report += `${bold(note.time)} - ${actionText}${note.text}\n`;
-            });
-            
-            report += separator;
-        }
-        
-        // Player Evaluations
-        if (this.players.length > 0) {
-            report += `${h2}👥 VALUTAZIONI GIOCATORI (${this.players.length})\n\n`;
-            
-            this.players.forEach(player => {
-                report += `${h3}${player.name}`;
-                if (player.number) report += ` #${player.number}`;
-                if (player.position) report += ` (${player.position})`;
-                report += '\n';
-                
-                // Ratings
-                Object.entries(player.ratings).forEach(([skill, rating]) => {
-                    const skillNames = {
-                        'ball-control': 'Controllo Palla',
-                        'passing': 'Passaggio',
-                        'speed': 'Velocità',
-                        'stamina': 'Resistenza',
-                        'decision': 'Capacità Decisionale',
-                        'leadership': 'Leadership'
-                    };
-                    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
-                    report += `  ${skillNames[skill]}: ${stars} (${rating}/5)\n`;
-                });
-                
-                if (player.notes) {
-                    report += `  ${bold('Note')}: ${player.notes}\n`;
-                }
-                
-                report += '\n';
-            });
-            
-            report += separator;
-        }
-        
-        // Summary Statistics
-        report += `${h2}📊 STATISTICHE RIASSUNTIVE\n`;
-        report += `${bold('Note Totali')}: ${this.liveNotes.length}\n`;
-        report += `${bold('Giocatori Valutati')}: ${this.players.length}\n`;
-        report += `${bold('Durata Osservazione')}: ${this.matchData.duration} minuti\n`;
-        
-        // Action Statistics
-        const actionStats = {};
-        this.liveNotes.forEach(note => {
-            if (note.action) {
-                actionStats[note.action] = (actionStats[note.action] || 0) + 1;
+        stars.forEach((star, index) => {
+            if (index < value) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
             }
         });
         
-        if (Object.keys(actionStats).length > 0) {
-            report += `\n${bold('Eventi Registrati')}:\n`;
-            Object.entries(actionStats).forEach(([action, count]) => {
-                report += `  ${action}: ${count}\n`;
-            });
-        }
-        
-        report += separator;
-        report += `\n${bold('Report generato da Soccer in a Box')}\n`;
-        report += `${bold('Minimal Match Analysis Kit per contesti rurali')}\n`;
-        
-        return report;
-    }
-
-    downloadFile(content, filename, mimeType) {
-        const blob = new Blob([content], { type: mimeType });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        
-        this.showNotification(`📄 ${filename} scaricato`);
-    }
-
-    clearAllData() {
-        if (confirm('⚠️ Sei sicuro di voler cancellare tutti i dati? Questa azione non può essere annullata.')) {
-            localStorage.removeItem('soccerInABoxData');
-            location.reload();
-        }
-    }
-
-    // === GESTIONE DATI ===
-    saveData() {
-        const data = {
-            matchData: this.matchData,
-            liveNotes: this.liveNotes,
-            players: this.players,
-            timer: {
-                elapsed: this.timer.elapsed,
-                isRunning: false // Non salvare lo stato running
-            },
-            lastSaved: new Date().toISOString()
-        };
-        
-        localStorage.setItem('soccerInABoxData', JSON.stringify(data));
-    }
-
-    loadData() {
-        try {
-            const savedData = localStorage.getItem('soccerInABoxData');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                
-                this.matchData = { ...this.matchData, ...data.matchData };
-                this.liveNotes = data.liveNotes || [];
-                this.players = data.players || [];
-                
-                if (data.timer && data.timer.elapsed) {
-                    this.timer.elapsed = data.timer.elapsed;
-                    this.updateTimerDisplay();
-                }
-                
-                console.log('📁 Dati caricati dal localStorage');
-            }
-        } catch (error) {
-            console.error('Errore nel caricamento dati:', error);
-        }
-    }
-
-    // === UI UPDATES ===
-    updateUI() {
-        // Aggiorna form match con dati salvati
-        if (this.matchData.homeTeam) {
-            document.getElementById('homeTeam').value = this.matchData.homeTeam;
-            document.getElementById('awayTeam').value = this.matchData.awayTeam;
-            document.getElementById('matchDate').value = this.matchData.date;
-            document.getElementById('competition').value = this.matchData.competition;
-            document.getElementById('venue').value = this.matchData.venue;
-            document.getElementById('weather').value = this.matchData.weather;
-            document.getElementById('scoutingFocus').value = this.matchData.scoutingFocus;
-        }
-        
-        // Aggiorna timeline note
-        this.updateNotesTimeline();
-        
-        // Aggiorna giocatori salvati
-        this.updateSavedPlayers();
-        
-        // Aggiorna statistiche report
-        this.updateReportStats();
-        
-        // Aggiorna anteprima report
-        this.updateReportPreview();
-    }
-
-    updateReportStats() {
-        document.getElementById('totalNotes').textContent = this.liveNotes.length;
-        document.getElementById('totalPlayers').textContent = this.players.length;
-        document.getElementById('matchDuration').textContent = this.matchData.duration;
-    }
-
-    updateReportPreview() {
-        const preview = document.getElementById('reportPreview');
-        if (this.liveNotes.length > 0 || this.players.length > 0) {
-            const reportText = this.generateReport('text');
-            preview.textContent = reportText.substring(0, 500) + (reportText.length > 500 ? '...\n\n[Anteprima limitata - Esporta per report completo]' : '');
-        } else {
-            preview.textContent = 'Nessun dato disponibile per il report.\nInizia ad aggiungere note e valutazioni per vedere l\'anteprima.';
-        }
-    }
-
-    // === UTILITY ===
-    showNotification(message, type = 'success') {
-        // Crea elemento notifica
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: ${type === 'warning' ? '#f44336' : '#4CAF50'};
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 10000;
-            font-weight: 500;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Animazione entrata
-        setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 100);
-        
-        // Rimozione automatica
-        setTimeout(() => {
-            notification.style.transform = 'translateX(400px)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }, 3000);
+        appState.playerRatings[category] = value;
     }
 }
 
-// === INIZIALIZZAZIONE ===
-// Avvia l'app quando il DOM è caricato
-document.addEventListener('DOMContentLoaded', () => {
-    window.soccerApp = new SoccerInABox();
-});
-
-// Auto-save periodico (ogni 30 secondi)
-setInterval(() => {
-    if (window.soccerApp) {
-        window.soccerApp.saveData();
-        console.log('💾 Auto-save completato');
+function handleStarHover(e) {
+    if (e.target.classList.contains('star')) {
+        const stars = e.currentTarget.querySelectorAll('.star');
+        const value = parseInt(e.target.dataset.value);
+        
+        stars.forEach((star, index) => {
+            if (index < value) {
+                star.style.color = '#ffd700';
+            } else {
+                star.style.color = '#ddd';
+            }
+        });
     }
-}, 30000);
+}
+
+function handleStarOut(e) {
+    const stars = e.currentTarget.querySelectorAll('.star');
+    stars.forEach(star => {
+        if (star.classList.contains('active')) {
+            star.style.color = '#ffd700';
+        } else {
+            star.style.color = '#ddd';
+        }
+    });
+}
+
+// Keyboard shortcuts
+function handleKeyboard(e) {
+    if (e.ctrlKey) {
+        switch(e.key) {
+            case '1':
+                e.preventDefault();
+                addQuickNote('⚽ Gol');
+                break;
+            case '2':
+                e.preventDefault();
+                addQuickNote('🟨 Ammonizione');
+                break;
+            case '3':
+                e.preventDefault();
+                addQuickNote('🔄 Cambio');
+                break;
+            case '4':
+                e.preventDefault();
+                addQuickNote('🥅 Tiro');
+                break;
+        }
+    }
+}
+
+// Navigation functions
+function startMode(mode) {
+    appState.currentMode = mode;
+    
+    document.getElementById('home-screen').classList.add('hidden');
+    document.getElementById('coach-mode').classList.add('hidden');
+    document.getElementById('community-mode').classList.add('hidden');
+    
+    if (mode === 'coach') {
+        document.getElementById('coach-mode').classList.remove('hidden');
+        showTab('setup');
+    } else if (mode === 'community') {
+        document.getElementById('community-mode').classList.remove('hidden');
+    }
+}
+
+function goHome() {
+    appState.currentMode = 'home';
+    
+    document.getElementById('home-screen').classList.remove('hidden');
+    document.getElementById('coach-mode').classList.add('hidden');
+    document.getElementById('community-mode').classList.add('hidden');
+}
+
+function showTab(tabName) {
+    appState.currentTab = tabName;
+    
+    // Hide all tabs
+    document.querySelectorAll('.card[id$="-tab"]').forEach(tab => {
+        tab.classList.add('hidden');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName + '-tab').classList.remove('hidden');
+    
+    // Update tab buttons
+    document.querySelectorAll('.tab').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.getElementById('tab-' + tabName).classList.add('active');
+    
+    // Update stats if on report tab
+    if (tabName === 'report') {
+        updateStats();
+    }
+    
+    // Update players list if on players tab
+    if (tabName === 'players') {
+        updatePlayersList();
+    }
+}
+
+// Match functions
+function startMatch() {
+    appState.match.homeTeam = document.getElementById('home-team').value;
+    appState.match.awayTeam = document.getElementById('away-team').value;
+    appState.match.date = document.getElementById('match-date').value;
+    appState.match.venue = document.getElementById('venue').value;
+    appState.match.competition = document.getElementById('competition').value;
+    appState.match.startTime = new Date();
+    
+    saveData();
+    showTab('live');
+}
+
+// Timer functions
+function toggleTimer() {
+    if (appState.timer.isRunning) {
+        pauseTimer();
+    } else {
+        startTimer();
+    }
+}
+
+function startTimer() {
+    appState.timer.startTime = Date.now() - appState.timer.elapsedTime;
+    appState.timer.isRunning = true;
+    
+    appState.timer.interval = setInterval(updateTimerDisplay, 100);
+    
+    document.getElementById('timer-btn').textContent = '⏸️';
+}
+
+function pauseTimer() {
+    appState.timer.isRunning = false;
+    clearInterval(appState.timer.interval);
+    
+    document.getElementById('timer-btn').textContent = '▶️';
+}
+
+function resetTimer() {
+    pauseTimer();
+    appState.timer.elapsedTime = 0;
+    updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+    if (appState.timer.isRunning) {
+        appState.timer.elapsedTime = Date.now() - appState.timer.startTime;
+    }
+    
+    const minutes = Math.floor(appState.timer.elapsedTime / 60000);
+    const seconds = Math.floor((appState.timer.elapsedTime % 60000) / 1000);
+    
+    const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    document.getElementById('timer-display').textContent = display;
+}
+
+// Notes functions
+function addNote() {
+    const noteText = document.getElementById('note-input').value.trim();
+    if (!noteText) return;
+    
+    const note = {
+        id: Date.now(),
+        text: noteText,
+        timestamp: getTimestamp(),
+        time: appState.timer.elapsedTime
+    };
+    
+    appState.notes.unshift(note);
+    document.getElementById('note-input').value = '';
+    
+    updateTimeline();
+    saveData();
+}
+
+function addQuickNote(text) {
+    const note = {
+        id: Date.now(),
+        text: text,
+        timestamp: getTimestamp(),
+        time: appState.timer.elapsedTime
+    };
+    
+    appState.notes.unshift(note);
+    updateTimeline();
+    saveData();
+}
+
+function getTimestamp() {
+    const minutes = Math.floor(appState.timer.elapsedTime / 60000);
+    const seconds = Math.floor((appState.timer.elapsedTime % 60000) / 1000);
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function updateTimeline() {
+    const timeline = document.getElementById('timeline');
+    timeline.innerHTML = '';
+    
+    appState.notes.forEach(note => {
+        const item = document.createElement('div');
+        item.className = 'timeline-item';
+        item.innerHTML = `
+            <span class="timestamp">${note.timestamp}</span> - ${note.text}
+        `;
+        timeline.appendChild(item);
+    });
+}
+
+// Player functions
+function savePlayer() {
+    const name = document.getElementById('player-name').value.trim();
+    const number = document.getElementById('player-number').value;
+    const position = document.getElementById('player-position').value.trim();
+    const notes = document.getElementById('player-notes').value.trim();
+    
+    if (!name) return;
+    
+    const player = {
+        id: Date.now(),
+        name: name,
+        number: number,
+        position: position,
+        notes: notes,
+        ratings: { ...appState.playerRatings }
+    };
+    
+    appState.players.push(player);
+    
+    // Clear form
+    document.getElementById('player-name').value = '';
+    document.getElementById('player-number').value = '';
+    document.getElementById('player-position').value = '';
+    document.getElementById('player-notes').value = '';
+    
+    // Reset ratings
+    document.querySelectorAll('.star').forEach(star => {
+        star.classList.remove('active');
+    });
+    appState.playerRatings = {};
+    
+    updatePlayersList();
+    saveData();
+}
+
+function updatePlayersList() {
+    const list = document.getElementById('players-list');
+    list.innerHTML = '';
+    
+    appState.players.forEach(player => {
+        const card = document.createElement('div');
+        card.className = 'player-card';
+        
+        const avgRating = calculatePlayerAverage(player.ratings);
+        
+        card.innerHTML = `
+            <h4>${player.name} ${player.number ? '#' + player.number : ''}</h4>
+            <div class="player-info">${player.position}</div>
+            <div class="ratings">
+                <span>Tecnica: ${player.ratings.technical || 0}⭐</span>
+                <span>Fisico: ${player.ratings.physical || 0}⭐</span>
+                <span>Mentale: ${player.ratings.mental || 0}⭐</span>
+                <span>Media: ${avgRating.toFixed(1)}⭐</span>
+            </div>
+            ${player.notes ? `<div class="player-notes">${player.notes}</div>` : ''}
+        `;
+        
+        list.appendChild(card);
+    });
+}
+
+function calculatePlayerAverage(ratings) {
+    const values = Object.values(ratings).filter(v => v > 0);
+    if (values.length === 0) return 0;
+    return values.reduce((a, b) => a + b, 0) / values.length;
+}
+
+// Stats and reporting
+function updateStats() {
+    document.getElementById('notes-count').textContent = appState.notes.length;
+    document.getElementById('players-count').textContent = appState.players.length;
+    
+    const minutes = Math.floor(appState.timer.elapsedTime / 60000);
+    const seconds = Math.floor((appState.timer.elapsedTime % 60000) / 1000);
+    document.getElementById('match-duration').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    const avgRating = calculateOverallAverage();
+    document.getElementById('avg-rating').textContent = avgRating.toFixed(1);
+}
+
+function calculateOverallAverage() {
+    if (appState.players.length === 0) return 0;
+    
+    const totalAvg = appState.players.reduce((sum, player) => {
+        return sum + calculatePlayerAverage(player.ratings);
+    }, 0);
+    
+    return totalAvg / appState.players.length;
+}
+
+// Export functions
+function exportReport(format) {
+    const report = generateReport(format);
+    downloadFile(report.content, report.filename, report.type);
+}
+
+function generateReport(format) {
+    const matchInfo = `${appState.match.homeTeam} vs ${appState.match.awayTeam}`;
+    const date = appState.match.date || new Date().toISOString().split('T')[0];
+    
+    if (format === 'md') {
+        let content = `# Soccer in a Box - Match Report\n\n`;
+        content += `## Match Information\n`;
+        content += `- **Teams**: ${matchInfo}\n`;
+        content += `- **Date**: ${date}\n`;
+        content += `- **Venue**: ${appState.match.venue || 'N/A'}\n`;
+        content += `- **Competition**: ${appState.match.competition || 'N/A'}\n`;
+        content += `- **Duration**: ${document.getElementById('match-duration').textContent}\n\n`;
+        
+        content += `## Statistics\n`;
+        content += `- **Total Notes**: ${appState.notes.length}\n`;
+        content += `- **Players Evaluated**: ${appState.players.length}\n`;
+        content += `- **Average Rating**: ${calculateOverallAverage().toFixed(1)}/5\n\n`;
+        
+        if (appState.notes.length > 0) {
+            content += `## Match Timeline\n`;
+            appState.notes.forEach(note => {
+                content += `- **${note.timestamp}** - ${note.text}\n`;
+            });
+            content += '\n';
+        }
+        
+        if (appState.players.length > 0) {
+            content += `## Player Evaluations\n`;
+            appState.players.forEach(player => {
+                content += `### ${player.name} ${player.number ? '#' + player.number : ''}\n`;
+                content += `- **Position**: ${player.position}\n`;
+                content += `- **Technical**: ${player.ratings.technical || 0}/5\n`;
+                content += `- **Physical**: ${player.ratings.physical || 0}/5\n`;
+                content += `- **Mental**: ${player.ratings.mental || 0}/5\n`;
+                content += `- **Average**: ${calculatePlayerAverage(player.ratings).toFixed(1)}/5\n`;
+                if (player.notes) {
+                    content += `- **Notes**: ${player.notes}\n`;
+                }
+                content += '\n';
+            });
+        }
+        
+        content += `\n---\n*Generated by Soccer in a Box - ${new Date().toLocaleString()}*`;
+        
+        return {
+            content: content,
+            filename: `soccer-report-${date}.md`,
+            type: 'text/markdown'
+        };
+    } else {
+        let content = `SOCCER IN A BOX - MATCH REPORT\n`;
+        content += `=====================================\n\n`;
+        content += `MATCH INFORMATION\n`;
+        content += `-----------------\n`;
+        content += `Teams: ${matchInfo}\n`;
+        content += `Date: ${date}\n`;
+        content += `Venue: ${appState.match.venue || 'N/A'}\n`;
+        content += `Competition: ${appState.match.competition || 'N/A'}\n`;
+        content += `Duration: ${document.getElementById('match-duration').textContent}\n\n`;
+        
+        content += `STATISTICS\n`;
+        content += `----------\n`;
+        content += `Total Notes: ${appState.notes.length}\n`;
+        content += `Players Evaluated: ${appState.players.length}\n`;
+        content += `Average Rating: ${calculateOverallAverage().toFixed(1)}/5\n\n`;
+        
+        if (appState.notes.length > 0) {
+            content += `MATCH TIMELINE\n`;
+            content += `--------------\n`;
+            appState.notes.forEach(note => {
+                content += `${note.timestamp} - ${note.text}\n`;
+            });
+            content += '\n';
+        }
+        
+        if (appState.players.length > 0) {
+            content += `PLAYER EVALUATIONS\n`;
+            content += `------------------\n`;
+            appState.players.forEach(player => {
+                content += `${player.name} ${player.number ? '#' + player.number : ''}\n`;
+                content += `Position: ${player.position}\n`;
+                content += `Technical: ${player.ratings.technical || 0}/5\n`;
+                content += `Physical: ${player.ratings.physical || 0}/5\n`;
+                content += `Mental: ${player.ratings.mental || 0}/5\n`;
+                content += `Average: ${calculatePlayerAverage(player.ratings).toFixed(1)}/5\n`;
+                if (player.notes) {
+                    content += `Notes: ${player.notes}\n`;
+                }
+                content += '\n';
+            });
+        }
+        
+        content += `\nGenerated by Soccer in a Box - ${new Date().toLocaleString()}`;
+        
+        return {
+            content: content,
+            filename: `soccer-report-${date}.txt`,
+            type: 'text/plain'
+        };
+    }
+}
+
+function downloadFile(content, filename, type) {
+    const blob = new Blob([content], { type: type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Data persistence
+function saveData() {
+    try {
+        localStorage.setItem('soccerInABox', JSON.stringify(appState));
+    } catch (e) {
+        console.error('Failed to save data:', e);
+    }
+}
+
+function loadData() {
+    try {
+        const saved = localStorage.getItem('soccerInABox');
+        if (saved) {
+            const data = JSON.parse(saved);
+            appState = { ...appState, ...data };
+            
+            // Restore UI state
+            if (appState.notes.length > 0) {
+                updateTimeline();
+            }
+            
+            if (appState.players.length > 0) {
+                updatePlayersList();
+            }
+            
+            // Restore match form
+            if (appState.match.homeTeam) {
+                document.getElementById('home-team').value = appState.match.homeTeam;
+            }
+            if (appState.match.awayTeam) {
+                document.getElementById('away-team').value = appState.match.awayTeam;
+            }
+            if (appState.match.venue) {
+                document.getElementById('venue').value = appState.match.venue;
+            }
+            if (appState.match.competition) {
+                document.getElementById('competition').value = appState.match.competition;
+            }
+            
+            // Restore timer
+            if (appState.timer.elapsedTime > 0) {
+                updateTimerDisplay();
+            }
+        }
+    } catch (e) {
+        console.error('Failed to load data:', e);
+    }
+}
+
+function clearAll() {
+    if (confirm('Sei sicuro di voler cancellare tutti i dati?')) {
+        appState = {
+            currentMode: 'home',
+            currentTab: 'setup',
+            match: {
+                homeTeam: '',
+                awayTeam: '',
+                date: '',
+                venue: '',
+                competition: '',
+                startTime: null,
+                duration: 0
+            },
+            timer: {
+                startTime: null,
+                elapsedTime: 0,
+                isRunning: false,
+                interval: null
+            },
+            notes: [],
+            players: [],
+            playerRatings: {}
+        };
+        
+        localStorage.removeItem('soccerInABox');
+        
+        // Reset UI
+        document.getElementById('timeline').innerHTML = '';
+        document.getElementById('players-list').innerHTML = '';
+        updateStats();
+        resetTimer();
+        
+        // Clear forms
+        document.querySelectorAll('input, textarea').forEach(input => {
+            input.value = '';
+        });
+        
+        // Set current date
+        document.getElementById('match-date').value = new Date().toISOString().split('T')[0];
+        
+        goHome();
+    }
+}
+
+// Initialize app when DOM is loaded
+document.addEventListener('DOMContentLoaded', initApp);
+
+
+        
+        
