@@ -1,1079 +1,190 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#1e3a8a" />
-    <title>Soccer in a Box - Piattaforma FSGC</title>
-    <link rel="manifest" href="manifest.json" />
-    <meta name="description" content="Piattaforma completa per analisi calcistica e gestione community - Partnership FSGC" />
-
-    <!-- ===== CSS STYLES ===== -->
-    <style>
-        /* ===== FSGC DESIGN SYSTEM ===== */
-        :root {
-            --fsgc-blue: #1e3a8a;
-            --fsgc-light-blue: #3b82f6;
-            --fsgc-gold: #f59e0b;
-            --fsgc-green: #10b981;
-            --fsgc-red: #ef4444;
-            --white: #ffffff;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-600: #4b5563;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --border-radius: 12px;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            --font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --font-display: 'SF Pro Display', var(--font-system);
-        }
-
-        /* ===== GLOBAL RESET ===== */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        html {
-            -webkit-text-size-adjust: 100%;
-            font-feature-settings: "kern" 1;
-            text-rendering: optimizeLegibility;
-        }
-        body {
-            font-family: var(--font-system);
-            line-height: 1.6;
-            color: var(--gray-900);
-            background: var(--gray-50);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* ===== LAYOUT SYSTEM ===== */
-        .app-container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .screen {
-            display: none;
-            flex: 1;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .screen.active {
-            display: flex;
-            flex-direction: column;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* ===== HEADER SYSTEM ===== */
-        .app-header {
-            background: var(--white);
-            border-bottom: 1px solid var(--gray-200);
-            padding: 1rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            backdrop-filter: blur(8px);
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        /* ===== WELCOME SCREEN ===== */
-        .welcome-screen {
-            background: linear-gradient(135deg, var(--fsgc-blue) 0%, var(--fsgc-light-blue) 100%);
-            color: white;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* ===== BUTTONS & FORMS ===== */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary {
-            background: var(--fsgc-blue);
-            color: white;
-            box-shadow: var(--shadow);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--gray-300);
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        /* ===== SECTIONS ===== */
-        .main-content {
-            flex: 1;
-            padding: 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        .content-section {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--gray-200);
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-        .section-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--gray-200);
-            background: var(--gray-50);
-        }
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--fsgc-blue);
-            margin-bottom: 0.25rem;
-            font-family: var(--font-display);
-        }
-
-        /* ===== NOTIFICATIONS ===== */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            left: 20px;
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-lg);
-            padding: 1rem;
-            z-index: 100;
-            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            max-width: 400px;
-            margin-left: auto;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(100%); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soccer in a Box</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c5aa0">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="app-container">
+    <div class="container">
+        <!-- Home Screen -->
+        <div id="home-screen">
+            <div class="header">
+                <h1>⚽ Soccer in a Box</h1>
+                <p id="partnership-text">Partnership FSGC - Federazione Sammarinese Giuoco Calcio</p>
+            </div>
+            
+            <div class="card">
+                <p id="subtitle-text">Piattaforma professionale per l'analisi calcistica e gestione community.</p>
+                <p id="select-mode-text">Scegli la tua modalità per accedere al sistema.</p>
+            </div>
 
-        <!-- ===== WELCOME SCREEN ===== -->
-        <div id="welcome-screen" class="screen welcome-screen active">
-            <div class="welcome-content">
-                <div class="fsgc-badge">🏆 Partnership FSGC - Federazione Sammarinese Giuoco Calcio</div>
-                <div class="welcome-logo">⚽</div>
-                <h1 class="welcome-title">Soccer in a Box</h1>
-                <p class="welcome-subtitle">
-                    Piattaforma professionale per l'analisi calcistica e gestione community.<br>
-                    Scegli la tua modalità per accedere al sistema.
-                </p>
-                <div class="mode-selector">
-                    <div class="mode-card" onclick="selectMode('coach')" role="button"
-                        aria-label="Accedi alla modalità Coach">
-                        📊
-                        <h3 class="mode-title">Modalità Coach</h3>
-                        <p class="mode-description">
-                            Analisi tattica avanzata, valutazione giocatori, report professionali e strumenti di scouting.
-                        </p>
-                    </div>
-                    <div class="mode-card" onclick="selectMode('community')" role="button"
-                        aria-label="Accedi alla modalità Community">
-                        🎉
-                        <h3 class="mode-title">Modalità Community</h3>
-                        <p class="mode-description">
-                            Engagement tifosi, sondaggi live, sentiment analysis e connessione con la rete globale.
-                        </p>
-                    </div>
-                </div>
+            <div class="mode-selector">
+                <a href="#" class="mode-btn" onclick="startMode('coach')">
+                    <span class="icon">📊</span>
+                    <h3 id="coach-mode-title">Modalità Coach</h3>
+                    <p id="coach-mode-desc">Analisi tattica avanzata, valutazione giocatori, report professionali e strumenti di scouting.</p>
+                </a>
+
+                <a href="#" class="mode-btn" onclick="startMode('community')">
+                    <span class="icon">🚀</span>
+                    <h3 id="community-mode-title">Modalità Community</h3>
+                    <p id="community-mode-desc">Engagement tifosi, sondaggi live, sentiment analysis e connessione con la rete globale.</p>
+                </a>
             </div>
         </div>
 
-        <!-- ===== COACH SCREEN ===== -->
-        <div id="coach-screen" class="screen">
-            <header class="app-header">
-                <div class="header-brand">
-                    <div class="header-logo">📊</div>
-                    <div>
-                        <div class="header-title">Coach Dashboard</div>
-                        <div class="header-subtitle">Analisi Professionale FSGC</div>
-                    </div>
-                </div>
-                <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="switchMode()">🎉 Community</button>
-                </div>
-            </header>
-            <div class="main-content">
-                <!-- Match Setup -->
-                <div class="content-section">
-                    <div class="section-header">
-                        <h2 class="section-title">🏟️ Setup Partita</h2>
-                        <p class="section-subtitle">Configura una nuova analisi match professionale</p>
-                    </div>
-                    <div class="section-content">
-                        <input type="text" id="home-team" placeholder="Squadra Casa" class="form-input">
-                        <input type="text" id="away-team" placeholder="Squadra Ospite" class="form-input">
-                        <input type="date" id="match-date" class="form-input">
-                        <input type="text" id="venue" placeholder="Venue/Campo" class="form-input">
-                        <button class="btn btn-primary" onclick="startMatchAnalysis()" style="width: 100%;">📊 Inizia Analisi Match</button>
-                    </div>
-                </div>
+        <!-- Coach Mode -->
+        <div id="coach-mode" class="hidden">
+            <button class="btn back-btn" onclick="goHome()">← <span id="back-text">Indietro</span></button>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('setup')" id="tab-setup">Setup</button>
+                <button class="tab" onclick="showTab('live')" id="tab-live">Live</button>
+                <button class="tab" onclick="showTab('players')" id="tab-players">Giocatori</button>
+                <button class="tab" onclick="showTab('report')" id="tab-report">Report</button>
+            </div>
 
-                <!-- Current Match (Hidden initially) -->
-                <div id="current-match" class="content-section" style="display: none;">
-                    <div class="section-header">
-                        <h2 class="section-title">⏱️ Match Live</h2>
-                        <p class="section-subtitle" id="match-info">Analisi in corso...</p>
-                    </div>
-                    <div class="section-content">
-                        <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 1.5rem;">
-                            <div style="text-align: center;">
-                                <div style="font-size: 2rem; font-weight: bold; font-family: monospace; color: var(--fsgc-blue);" id="match-timer">00:00</div>
-                                <div style="font-size: 0.875rem; color: var(--gray-600);">Tempo di gioco</div>
-                            </div>
-                            <div style="display: flex; gap: 0.75rem;">
-                                <button class="btn btn-success" onclick="toggleTimer()" id="timer-btn"><span>▶️</span> Start</button>
-                                <button class="btn btn-secondary" onclick="resetTimer()"><span>🔄</span> Reset</button>
-                            </div>
-                        </div>
-                        <!-- Quick Actions -->
-                        <div style="margin-bottom: 1.5rem;">
-                            <h4 style="margin-bottom: 0.75rem;">Azioni Rapide:</h4>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem;">
-                                <button class="btn btn-secondary" onclick="addQuickNote('goal')">⚽ Gol</button>
-                                <button class="btn btn-secondary" onclick="addQuickNote('yellow')">🟨 Giallo</button>
-                                <button class="btn btn-secondary" onclick="addQuickNote('red')">🟥 Rosso</button>
-                                <button class="btn btn-secondary" onclick="addQuickNote('substitution')">🔄 Cambio</button>
-                                <button class="btn btn-secondary" onclick="addQuickNote('corner')">📐 Corner</button>
-                                <button class="btn btn-secondary" onclick="addQuickNote('foul')">🚫 Fallo</button>
-                            </div>
-                        </div>
-                        <!-- Note Input -->
-                        <div style="margin-bottom: 1.5rem;">
-                            <textarea id="match-notes" placeholder="Inserisci note dettagliate della partita..." style="width: 100%; height: 80px;"></textarea>
-                            <button class="btn btn-primary" onclick="addMatchNote()" style="margin-top: 0.5rem;"><span>💾</span> Aggiungi Nota</button>
-                        </div>
-                        <!-- Notes Timeline -->
-                        <div id="notes-timeline">
-                            <h4>Timeline Note:</h4>
-                            <div id="notes-list"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Player Evaluation -->
-                <div class="content-section">
-                    <div class="section-header">
-                        <h2 class="section-title">👤 Valutazione Giocatori</h2>
-                        <p class="section-subtitle">Sistema di rating professionale FSGC</p>
-                    </div>
-                    <div class="section-content">
-                        <input type="text" id="player-name" placeholder="Nome Giocatore" class="form-input">
-                        <input type="number" id="player-number" placeholder="Numero" min="1" max="99" class="form-input">
-                        <input type="text" id="player-position" placeholder="Ruolo" class="form-input">
-                        <!-- Skills Rating -->
-                        <div style="margin-bottom: 1rem;">
-                            <h4>Valutazioni Tecniche:</h4>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div class="skill-rating">
-                                    <label>Tecnica:</label>
-                                    <div class="stars" data-skill="technique">
-                                        <span class="star" data-rating="1">⭐</span>
-                                        <span class="star" data-rating="2">⭐</span>
-                                        <span class="star" data-rating="3">⭐</span>
-                                        <span class="star" data-rating="4">⭐</span>
-                                        <span class="star" data-rating="5">⭐</span>
-                                    </div>
-                                </div>
-                                <div class="skill-rating">
-                                    <label>Fisico:</label>
-                                    <div class="stars" data-skill="physical">
-                                        <span class="star" data-rating="1">⭐</span>
-                                        <span class="star" data-rating="2">⭐</span>
-                                        <span class="star" data-rating="3">⭐</span>
-                                        <span class="star" data-rating="4">⭐</span>
-                                        <span class="star" data-rating="5">⭐</span>
-                                    </div>
-                                </div>
-                                <div class="skill-rating">
-                                    <label>Mentale:</label>
-                                    <div class="stars" data-skill="mental">
-                                        <span class="star" data-rating="1">⭐</span>
-                                        <span class="star" data-rating="2">⭐</span>
-                                        <span class="star" data-rating="3">⭐</span>
-                                        <span class="star" data-rating="4">⭐</span>
-                                        <span class="star" data-rating="5">⭐</span>
-                                    </div>
-                                </div>
-                                <div class="skill-rating">
-                                    <label>Tattica:</label>
-                                    <div class="stars" data-skill="tactical">
-                                        <span class="star" data-rating="1">⭐</span>
-                                        <span class="star" data-rating="2">⭐</span>
-                                        <span class="star" data-rating="3">⭐</span>
-                                        <span class="star" data-rating="4">⭐</span>
-                                        <span class="star" data-rating="5">⭐</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <textarea id="player-notes" placeholder="Note specifiche sul giocatore..." style="width: 100%; height: 60px;"></textarea>
-                        <button class="btn btn-success" onclick="savePlayer()"><span>💾</span> Salva Valutazione</button>
-                        <div id="players-list">
-                            <h4>Giocatori Valutati:</h4>
-                            <div id="players-grid"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Export Reports -->
-                <div class="content-section">
-                    <div class="section-header">
-                        <h2 class="section-title">📊 Report e Analytics</h2>
-                        <p class="section-subtitle">Esportazione professionale per FSGC</p>
-                    </div>
-                    <div class="section-content">
-                        <button class="btn btn-primary" onclick="exportPDF()">📄 Export PDF</button>
-                        <button class="btn btn-secondary" onclick="exportExcel()">📊 Export Excel</button>
-                        <button class="btn btn-success" onclick="shareWithFSGC()">🏆 Invia a FSGC</button>
-                        <button class="btn btn-secondary" onclick="generateAnalytics()">📈 Analytics AI</button>
-                    </div>
+            <!-- Setup Tab -->
+            <div id="setup-tab" class="card">
+                <h3 id="match-setup-title">Setup Partita</h3>
+                <div class="match-setup">
+                    <label id="home-team-label">Squadra Casa:</label>
+                    <input type="text" id="home-team" placeholder="Nome squadra casa">
+                    
+                    <label id="away-team-label">Squadra Ospite:</label>
+                    <input type="text" id="away-team" placeholder="Nome squadra ospite">
+                    
+                    <label id="date-label">Data:</label>
+                    <input type="date" id="match-date">
+                    
+                    <label id="venue-label">Venue:</label>
+                    <input type="text" id="venue" placeholder="Stadio/Campo">
+                    
+                    <label id="competition-label">Competizione:</label>
+                    <input type="text" id="competition" placeholder="Campionato/Torneo">
+                    
+                    <button class="btn" onclick="startMatch()" id="start-match-btn">Inizia Match Analysis</button>
                 </div>
             </div>
-        </div>
 
-        <!-- ===== COMMUNITY SCREEN ===== -->
-        <div id="community-screen" class="screen">
-            <header class="app-header">
-                <div class="header-brand">
-                    <div class="header-logo">🎉</div>
-                    <div>
-                        <div class="header-title">Community Hub</div>
-                        <div class="header-subtitle">Engagement Tifosi FSGC</div>
+            <!-- Live Tab -->
+            <div id="live-tab" class="card hidden">
+                <div class="timer">
+                    <div class="timer-display" id="timer-display">00:00</div>
+                    <div class="timer-controls">
+                        <button class="btn btn-secondary" onclick="toggleTimer()" id="timer-btn">▶️</button>
+                        <button class="btn btn-danger" onclick="resetTimer()" id="reset-btn">🔄</button>
                     </div>
                 </div>
-                <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="switchMode()"><span>📊</span> Coach</button>
+
+                <div class="quick-actions">
+                    <button class="quick-btn" onclick="addQuickNote('⚽ Gol')">⚽ Gol</button>
+                    <button class="quick-btn" onclick="addQuickNote('🟨 Ammonizione')">🟨 Card</button>
+                    <button class="quick-btn" onclick="addQuickNote('🔄 Cambio')">🔄 Sub</button>
+                    <button class="quick-btn" onclick="addQuickNote('🥅 Tiro')">🥅 Shot</button>
                 </div>
-            </header>
-            <div class="main-content">
-                <!-- Community Stats -->
+
+                <div class="notes-section">
+                    <textarea id="note-input" placeholder="Scrivi una nota..."></textarea>
+                    <button class="btn" onclick="addNote()" id="add-note-btn">Aggiungi Nota</button>
+                </div>
+
+                <div class="timeline" id="timeline"></div>
+            </div>
+
+            <!-- Players Tab -->
+            <div id="players-tab" class="card hidden">
+                <h3 id="players-title">Valutazione Giocatori</h3>
+                <div class="player-form">
+                    <input type="text" id="player-name" placeholder="Nome giocatore">
+                    <input type="number" id="player-number" placeholder="Numero maglia">
+                    <input type="text" id="player-position" placeholder="Posizione">
+                    
+                    <div class="rating-section">
+                        <label id="technical-label">Tecnica:</label>
+                        <div class="stars" data-category="technical">
+                            <span class="star" data-value="1">★</span>
+                            <span class="star" data-value="2">★</span>
+                            <span class="star" data-value="3">★</span>
+                            <span class="star" data-value="4">★</span>
+                            <span class="star" data-value="5">★</span>
+                        </div>
+                    </div>
+
+                    <div class="rating-section">
+                        <label id="physical-label">Fisico:</label>
+                        <div class="stars" data-category="physical">
+                            <span class="star" data-value="1">★</span>
+                            <span class="star" data-value="2">★</span>
+                            <span class="star" data-value="3">★</span>
+                            <span class="star" data-value="4">★</span>
+                            <span class="star" data-value="5">★</span>
+                        </div>
+                    </div>
+
+                    <div class="rating-section">
+                        <label id="mental-label">Mentale:</label>
+                        <div class="stars" data-category="mental">
+                            <span class="star" data-value="1">★</span>
+                            <span class="star" data-value="2">★</span>
+                            <span class="star" data-value="3">★</span>
+                            <span class="star" data-value="4">★</span>
+                            <span class="star" data-value="5">★</span>
+                        </div>
+                    </div>
+
+                    <textarea id="player-notes" placeholder="Note sul giocatore..."></textarea>
+                    <button class="btn" onclick="savePlayer()" id="save-player-btn">Salva Giocatore</button>
+                </div>
+
+                <div id="players-list"></div>
+            </div>
+
+            <!-- Report Tab -->
+            <div id="report-tab" class="card hidden">
+                <h3 id="report-title">Report Partita</h3>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-number" id="community-fans">1,247</div>
-                        <div class="stat-label">Tifosi Attivi</div>
-                        <div class="stat-change positive">+8% oggi</div>
+                        <div class="stat-number" id="notes-count">0</div>
+                        <div class="stat-label" id="notes-label">Note</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="community-emotions">3,456</div>
-                        <div class="stat-label">Emozioni Condivise</div>
-                        <div class="stat-change positive">+15% ora</div>
+                        <div class="stat-number" id="players-count">0</div>
+                        <div class="stat-label" id="players-label">Giocatori</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="community-polls">89</div>
-                        <div class="stat-label">Sondaggi Attivi</div>
-                        <div class="stat-change positive">+12% settimana</div>
+                        <div class="stat-number" id="match-duration">00:00</div>
+                        <div class="stat-label" id="duration-label">Durata</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="avg-rating">0.0</div>
+                        <div class="stat-label" id="rating-label">Rating Medio</div>
                     </div>
                 </div>
 
-                <!-- User Profile Setup -->
-                <div id="profile-setup" class="content-section">
-                    <div class="section-header">
-                        <h2 class="section-title">👋 Benvenuto nella Community FSGC</h2>
-                        <p class="section-subtitle">Configura il tuo profilo per iniziare</p>
-                    </div>
-                    <div class="section-content">
-                        <input type="text" id="user-name" placeholder="Il tuo nome" class="form-input">
-                        <input type="text" id="favorite-team" placeholder="La tua squadra del cuore" class="form-input">
-                        <button class="btn btn-primary" onclick="saveUserProfile()">
-                            <span>💾</span> Salva Profilo
-                        </button>
-                    </div>
-                </div>
+                <button class="btn btn-accent" onclick="exportReport('md')" id="export-md-btn">Esporta Markdown</button>
+                <button class="btn btn-accent" onclick="exportReport('txt')" id="export-txt-btn">Esporta TXT</button>
+                <button class="btn btn-danger" onclick="clearAll()" id="clear-btn">Cancella Tutto</button>
+            </div>
+        </div>
 
-                <!-- Quick Actions -->
-                <div class="content-section">
-                    <div class="section-header">
-                        <h2 class="section-title">⚡ Azioni Rapide</h2>
-                        <p class="section-subtitle">Interagisci con la community</p>
-                    </div>
-                    <div class="section-content">
-                        <button class="btn btn-primary" onclick="shareEmotion()">😍 Condividi Emozione</button>
-                        <button class="btn btn-primary" onclick="votePoll()">🗳️ Vota Sondaggio</button>
-                        <button class="btn btn-primary" onclick="viewCommunityStats()">📈 Statistiche Live</button>
-                        <button class="btn btn-primary" onclick="sendSupportMessage()">💌 Supporto Squadra</button>
-                    </div>
-                </div>
-
-                <!-- Feed Live -->
-                <div class="content-section">
-                    <div class="section-header">
-                        <h2 class="section-title">📱 Feed Live Community</h2>
-                        <p class="section-subtitle">Aggiornamenti in tempo reale dalla community</p>
-                    </div>
-                    <div class="section-content">
-                        <div id="community-feed"></div>
-                        <button class="btn btn-secondary" onclick="refreshCommunityFeed()" style="width: 100%;">🔄 Aggiorna Feed</button>
-                    </div>
-                </div>
+        <!-- Community Mode -->
+        <div id="community-mode" class="hidden">
+            <button class="btn back-btn" onclick="goHome()">← <span id="back-text-2">Indietro</span></button>
+            
+            <div class="card">
+                <h3 id="community-title">Modalità Community</h3>
+                <p id="community-desc">Funzionalità community in sviluppo. Torna presto per engagement tifosi, sondaggi live e sentiment analysis!</p>
+                <button class="btn" onclick="goHome()" id="back-home-btn">Torna alla Home</button>
             </div>
         </div>
     </div>
 
-    <!-- ===== JAVASCRIPT APPLICATION ===== -->
-    <script>
-        // App logic goes here (from the second file)
-        class SoccerBoxApp {
-            constructor() {
-                this.currentMode = null;
-                this.currentMatch = null;
-                this.matchTimer = {
-                    startTime: null,
-                    elapsed: 0,
-                    isRunning: false,
-                    interval: null
-                };
-                this.matchNotes = [];
-                this.players = [];
-                this.userProfile = {
-                    name: '',
-                    favoriteTeam: '',
-                    emotionsShared: 0,
-                    pollsVoted: 0,
-                    joinDate: null
-                };
-                this.playerRatings = {};
-                this.communityStats = {
-                    fans: 1247,
-                    emotions: 3456,
-                    polls: 89
-                };
-                this.init();
-            }
-
-            init() {
-                console.log('🚀 Initializing Soccer in a Box FSGC Professional');
-                this.loadData();
-                this.setupEventListeners();
-                this.updateStats();
-                this.setupStarRatings();
-                if (this.userProfile.name) {
-                    document.getElementById('profile-setup').style.display = 'none';
-                }
-                console.log('✅ FSGC App initialized successfully');
-            }
-
-            loadData() {
-                try {
-                    const saved = localStorage.getItem('soccerbox_fsgc_data');
-                    if (saved) {
-                        const data = JSON.parse(saved);
-                        Object.assign(this, data);
-                    }
-                } catch (error) {
-                    console.warn('Failed to load saved data:', error);
-                }
-            }
-
-            saveData() {
-                try {
-                    const dataToSave = {
-                        userProfile: this.userProfile,
-                        players: this.players,
-                        matchNotes: this.matchNotes,
-                        communityStats: this.communityStats
-                    };
-                    localStorage.setItem('soccerbox_fsgc_data', JSON.stringify(dataToSave));
-                } catch (error) {
-                    console.warn('Failed to save data:', error);
-                }
-            }
-
-            setupEventListeners() {
-                document.addEventListener('keydown', (e) => {
-                    if (e.ctrlKey && e.key === 'Enter') {
-                        e.preventDefault();
-                        if (this.currentMode === 'coach') {
-                            addMatchNote();
-                        }
-                    }
-                    if (e.key === ' ' && !e.target.matches('input, textarea')) {
-                        e.preventDefault();
-                        if (this.currentMode === 'coach' && this.currentMatch) {
-                            toggleTimer();
-                        }
-                    }
-                });
-                setInterval(() => {
-                    this.saveData();
-                }, 30000);
-            }
-
-            setupStarRatings() {
-                document.querySelectorAll('.star').forEach(star => {
-                    star.style.cursor = 'pointer';
-                    star.style.transition = 'opacity 0.2s ease';
-                    star.style.opacity = '0.3';
-                    star.addEventListener('click', (e) => {
-                        const rating = parseInt(e.target.dataset.rating);
-                        const skillGroup = e.target.closest('.stars');
-                        const skill = skillGroup.dataset.skill;
-                        this.setPlayerRating(skill, rating);
-                        this.updateStarDisplay(skillGroup, rating);
-                    });
-                    star.addEventListener('mouseover', (e) => {
-                        const rating = parseInt(e.target.dataset.rating);
-                        const skillGroup = e.target.closest('.stars');
-                        this.previewStarRating(skillGroup, rating);
-                    });
-                });
-                document.querySelectorAll('.stars').forEach(group => {
-                    group.addEventListener('mouseleave', () => {
-                        const skill = group.dataset.skill;
-                        const currentRating = this.playerRatings[skill] || 0;
-                        this.updateStarDisplay(group, currentRating);
-                    });
-                });
-            }
-
-            setPlayerRating(skill, rating) {
-                this.playerRatings[skill] = rating;
-            }
-
-            updateStarDisplay(skillGroup, rating) {
-                const stars = skillGroup.querySelectorAll('.star');
-                stars.forEach((star, index) => {
-                    star.style.opacity = index < rating ? '1' : '0.3';
-                });
-            }
-
-            previewStarRating(skillGroup, rating) {
-                const stars = skillGroup.querySelectorAll('.star');
-                stars.forEach((star, index) => {
-                    star.style.opacity = index < rating ? '0.7' : '0.3';
-                });
-            }
-
-            updateStats() {
-                document.getElementById('coach-matches').textContent = this.matchNotes.length > 0 ? '1' : '0';
-                document.getElementById('coach-players').textContent = this.players.length;
-                document.getElementById('coach-reports').textContent = this.players.length;
-                document.getElementById('community-fans').textContent = this.communityStats.fans.toLocaleString();
-                document.getElementById('community-emotions').textContent = this.communityStats.emotions.toLocaleString();
-                document.getElementById('community-polls').textContent = this.communityStats.polls;
-            }
-
-            showNotification(title, message, type = 'info') {
-                const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
-                notification.innerHTML = `
-                    <div class="notification-header">
-                        <div class="notification-title">${title}</div>
-                        <button class="notification-close" onclick="this.closest('.notification').remove()">×</button>
-                    </div>
-                    <div class="notification-body">${message}</div>
-                `;
-                document.body.appendChild(notification);
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.style.animation = 'slideOut 0.3s ease';
-                        setTimeout(() => notification.remove(), 300);
-                    }
-                }, 5000);
-            }
-
-            formatTime(seconds) {
-                const mins = Math.floor(seconds / 60);
-                const secs = seconds % 60;
-                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-            }
-        }
-
-        const app = new SoccerBoxApp();
-
-        function selectMode(mode) {
-            app.currentMode = mode;
-            document.getElementById('welcome-screen').classList.remove('active');
-            document.getElementById(`${mode}-screen`).classList.add('active');
-            app.showNotification(
-                'Modalità Attivata',
-                `Benvenuto nella modalità ${mode === 'coach' ? 'Coach' : 'Community'}!`,
-                'success'
-            );
-            if (mode === 'community') {
-                refreshCommunityFeed();
-            }
-        }
-
-        function switchMode() {
-            const newMode = app.currentMode === 'coach' ? 'community' : 'coach';
-            document.getElementById(`${app.currentMode}-screen`).classList.remove('active');
-            selectMode(newMode);
-        }
-
-        function startMatchAnalysis() {
-            const homeTeam = document.getElementById('home-team').value.trim();
-            const awayTeam = document.getElementById('away-team').value.trim();
-            const matchDate = document.getElementById('match-date').value;
-            const venue = document.getElementById('venue').value.trim();
-            if (!homeTeam || !awayTeam) {
-                app.showNotification('Errore', 'Inserisci almeno i nomi delle squadre', 'error');
-                return;
-            }
-            app.currentMatch = {
-                id: Date.now(),
-                homeTeam,
-                awayTeam,
-                date: matchDate || new Date().toISOString().split('T')[0],
-                venue,
-                startTime: new Date().toISOString()
-            };
-            document.getElementById('current-match').style.display = 'block';
-            document.getElementById('match-info').textContent = `${homeTeam} vs ${awayTeam} - ${venue || 'Venue non specificato'}`;
-            app.showNotification('Match Avviato', `Analisi iniziata per ${homeTeam} vs ${awayTeam}`, 'success');
-            app.saveData();
-        }
-
-        function toggleTimer() {
-            if (app.matchTimer.isRunning) pauseTimer();
-            else startTimer();
-        }
-
-        function startTimer() {
-            app.matchTimer.startTime = Date.now() - app.matchTimer.elapsed * 1000;
-            app.matchTimer.isRunning = true;
-            app.matchTimer.interval = setInterval(() => {
-                app.matchTimer.elapsed = Math.floor((Date.now() - app.matchTimer.startTime) / 1000);
-                document.getElementById('match-timer').textContent = app.formatTime(app.matchTimer.elapsed);
-            }, 1000);
-            document.getElementById('timer-btn').innerHTML = '<span>⏸️</span> Pause';
-        }
-
-        function pauseTimer() {
-            if (app.matchTimer.interval) clearInterval(app.matchTimer.interval);
-            app.matchTimer.isRunning = false;
-            document.getElementById('timer-btn').innerHTML = '<span>▶️</span> Start';
-        }
-
-        function resetTimer() {
-            pauseTimer();
-            app.matchTimer.elapsed = 0;
-            app.matchTimer.startTime = null;
-            document.getElementById('match-timer').textContent = '00:00';
-        }
-
-        function addQuickNote(action) {
-            const actionTexts = {
-                goal: '⚽ GOL! Rete incredibile!',
-                yellow: '🟨 Cartellino giallo mostrato',
-                red: '🟥 Cartellino rosso! Espulsione!',
-                substitution: '🔄 Sostituzione effettuata',
-                corner: '📐 Calcio d\'angolo conquistato',
-                foul: '🚫 Fallo commesso'
-            };
-            addNoteWithText(actionTexts[action] || action);
-        }
-
-        function addMatchNote() {
-            const noteText = document.getElementById('match-notes').value.trim();
-            if (noteText) {
-                addNoteWithText(noteText);
-                document.getElementById('match-notes').value = '';
-            }
-        }
-
-        function addNoteWithText(text) {
-            const note = {
-                id: Date.now(),
-                timestamp: app.matchTimer.elapsed,
-                time: app.formatTime(app.matchTimer.elapsed),
-                text: text,
-                created: new Date().toISOString()
-            };
-            app.matchNotes.unshift(note);
-            refreshNotesTimeline();
-            app.saveData();
-            app.updateStats();
-        }
-
-        function refreshNotesTimeline() {
-            const notesList = document.getElementById('notes-list');
-            if (!notesList) return;
-            if (app.matchNotes.length === 0) {
-                notesList.innerHTML = '<div>Nessuna nota ancora inserita</div>';
-                return;
-            }
-            notesList.innerHTML = app.matchNotes.map(note => `
-                <div style="padding: 0.75rem; margin-bottom: 0.5rem; background: var(--gray-50);">
-                    <div style="font-weight: 600;">${note.time}</div>
-                    <div>${note.text}</div>
-                </div>
-            `).join('');
-        }
-
-        function savePlayer() {
-            const name = document.getElementById('player-name').value.trim();
-            const number = document.getElementById('player-number').value;
-            const position = document.getElementById('player-position').value.trim();
-            const notes = document.getElementById('player-notes').value.trim();
-            if (!name) {
-                app.showNotification('Errore', 'Inserisci il nome del giocatore', 'error');
-                return;
-            }
-            const player = {
-                id: Date.now(),
-                name,
-                number: number || null,
-                position,
-                notes,
-                ratings: { ...app.playerRatings },
-                matchId: app.currentMatch?.id,
-                evaluatedAt: new Date().toISOString()
-            };
-            app.players.push(player);
-            document.getElementById('player-name').value = '';
-            document.getElementById('player-number').value = '';
-            document.getElementById('player-position').value = '';
-            document.getElementById('player-notes').value = '';
-            app.playerRatings = {};
-            document.querySelectorAll('.stars').forEach(group => {
-                app.updateStarDisplay(group, 0);
-            });
-            refreshPlayersList();
-            app.showNotification('Giocatore Salvato', `Valutazione di ${name} salvata con successo!`, 'success');
-            app.saveData();
-            app.updateStats();
-        }
-
-        function refreshPlayersList() {
-            const playersGrid = document.getElementById('players-grid');
-            if (!playersGrid) return;
-            if (app.players.length === 0) {
-                playersGrid.innerHTML = '<div>Nessun giocatore valutato ancora</div>';
-                return;
-            }
-            playersGrid.innerHTML = app.players.map(player => {
-                const avgRating = Object.values(player.ratings).length > 0 
-                    ? (Object.values(player.ratings).reduce((a, b) => a + b, 0) / Object.values(player.ratings).length).toFixed(1)
-                    : 'N/A';
-                return `
-                    <div style="border: 1px solid var(--gray-200); border-radius: 8px; padding: 1rem;">
-                        <div style="font-weight: 600;">${player.name}</div>
-                        <div style="color: var(--gray-600);">${player.position || 'Posizione non specificata'}</div>
-                        <div>Rating Medio: ${avgRating}/5</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function exportPDF() {
-            app.showNotification('Export PDF', 'Generando report professionale in formato PDF...', 'info');
-            setTimeout(() => {
-                const reportData = generateReportData();
-                const blob = new Blob([reportData.markdown], { type: 'text/markdown' });
-                downloadFile(blob, `match-report-${Date.now()}.md`);
-                app.showNotification('Export Completato', 'Report PDF generato e scaricato con successo!', 'success');
-            }, 1500);
-        }
-
-        function exportExcel() {
-            app.showNotification('Export Excel', 'Creando foglio di calcolo con dati match...', 'info');
-            setTimeout(() => {
-                const csvData = generateCSVData();
-                const blob = new Blob([csvData], { type: 'text/csv' });
-                downloadFile(blob, `match-data-${Date.now()}.csv`);
-                app.showNotification('Export Completato', 'Dati Excel esportati con successo!', 'success');
-            }, 1200);
-        }
-
-        function shareWithFSGC() {
-            app.showNotification('Invio FSGC', 'Condividendo report con la Federazione Sammarinese...', 'info');
-            setTimeout(() => {
-                app.showNotification('Condivisione Completata', 'Report inviato con successo al database FSGC!', 'success');
-            }, 2000);
-        }
-
-        function generateAnalytics() {
-            app.showNotification('AI Analytics', 'Analizzando dati con intelligenza artificiale...', 'info');
-            setTimeout(() => {
-                const insights = generateAIInsights();
-                app.showNotification('Analisi Completata', insights, 'success');
-            }, 3000);
-        }
-
-        function generateReportData() {
-            const match = app.currentMatch;
-            if (!match) return { markdown: 'Nessun match attivo' };
-            return {
-                markdown: `# Report Match FSGC
-## Informazioni Partita
-- **Squadre:** ${match.homeTeam} vs ${match.awayTeam}
-- **Data:** ${match.date}
-- **Venue:** ${match.venue || 'Non specificato'}
-- **Durata:** ${app.formatTime(app.matchTimer.elapsed)}
-## Note Cronologiche
-${app.matchNotes.map(note => `- **${note.time}** - ${note.text}`).join('\n')}
-## Giocatori Valutati
-${app.players.map(player => `
-### ${player.name} ${player.number ? `#${player.number}` : ''}
-- **Posizione:** ${player.position || 'N/A'}
-- **Valutazioni:**
-${Object.entries(player.ratings).map(([skill, rating]) => `  - ${skill}: ${rating}/5 ⭐`).join('\n')}
-${player.notes ? `- **Note:** ${player.notes}` : ''}
-`).join('\n')}
-## Statistiche
-- **Total Note:** ${app.matchNotes.length}
-- **Players Evaluated:** ${app.players.length}
-- **Match Duration:** ${app.formatTime(app.matchTimer.elapsed)}
----
-*Generato da Soccer in a Box FSGC - ${new Date().toLocaleString()}*`
-            };
-        }
-
-        function generateCSVData() {
-            let csv = 'Nome,Numero,Posizione,Tecnica,Fisico,Mentale,Tattica,Note\n';
-            app.players.forEach(player => {
-                csv += `"${player.name}","${player.number || ''}","${player.position || ''}",`;
-                csv += `"${player.ratings.technique || 0}","${player.ratings.physical || 0}",`;
-                csv += `"${player.ratings.mental || 0}","${player.ratings.tactical || 0}",`;
-                csv += `"${player.notes || ''}"\n`;
-            });
-            return csv;
-        }
-
-        function generateAIInsights() {
-            const insights = [
-                '🎯 Raccomandazione tattica: La squadra mostra forte coesione nel centrocampo',
-                '📊 Trend performance: +15% di precisione nei passaggi rispetto alla media',
-                '⚡ Punto di forza: Transizioni difesa-attacco molto efficaci',
-                '🔄 Area di miglioramento: Finalizzazione negli ultimi 16 metri',
-                '📈 Proiezione FSGC: Squadra in crescita costante (+8% vs scorso mese)'
-            ];
-            return insights[Math.floor(Math.random() * insights.length)];
-        }
-
-        function downloadFile(blob, filename) {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function saveUserProfile() {
-            const name = document.getElementById('user-name').value.trim();
-            const team = document.getElementById('favorite-team').value.trim();
-            if (!name || !team) {
-                app.showNotification('Errore Profilo', 'Compila tutti i campi per continuare', 'error');
-                return;
-            }
-            app.userProfile.name = name;
-            app.userProfile.favoriteTeam = team;
-            app.userProfile.joinDate = new Date().toISOString();
-            document.getElementById('profile-setup').style.display = 'none';
-            app.saveData();
-            app.showNotification('Profilo Salvato', `Benvenuto ${name}! Ora fai parte della community FSGC.`, 'success');
-        }
-
-        function shareEmotion() {
-            const emotions = ['😍', '🔥', '⚡', '💪', '🎯', '👏', '❤️', '🚀', '⭐', '🎉', '🏆', '🙌'];
-            const emotion = emotions[Math.floor(Math.random() * emotions.length)];
-            app.userProfile.emotionsShared++;
-            app.communityStats.emotions++;
-            app.saveData();
-            app.updateStats();
-            addToCommunityFeed('emotion', `${app.userProfile.name || 'Tifoso'} ha condiviso: ${emotion}`, 'ora');
-            app.showNotification('Emozione Condivisa', `${emotion} inviata alla community FSGC!<br>Le tue emozioni aiutano lo staff tecnico.`, 'success');
-        }
-
-        function votePoll() {
-            const polls = [
-                {
-                    question: 'Quale formazione per la prossima partita?',
-                    options: ['4-3-3 Offensivo', '4-4-2 Classico', '3-5-2 Moderno', '4-2-3-1 Equilibrato'],
-                    results: [35, 28, 22, 15]
-                },
-                {
-                    question: 'Chi dovrebbe essere il capitano della squadra?',
-                    options: ['Marco Rossi', 'Giuseppe Bianchi', 'Andrea Verdi', 'Luca Neri'],
-                    results: [42, 31, 18, 9]
-                },
-                {
-                    question: 'Qual è la priorità per il mercato?',
-                    options: ['Difensore centrale', 'Centrocampista', 'Attaccante', 'Portiere'],
-                    results: [38, 29, 25, 8]
-                }
-            ];
-            const poll = polls[Math.floor(Math.random() * polls.length)];
-            const chosenOption = Math.floor(Math.random() * poll.options.length);
-            app.userProfile.pollsVoted++;
-            app.communityStats.polls++;
-            app.saveData();
-            app.updateStats();
-            addToCommunityFeed('poll', `Nuovo voto: "${poll.question}" - ${poll.options[chosenOption]}`, 'ora');
-            app.showNotification(
-                'Sondaggio Votato',
-                `<strong>${poll.question}</strong><br><br>✅ Hai votato: <strong>${poll.options[chosenOption]}</strong><br><br>Risultati aggiornati nel sistema FSGC!`,
-                'success'
-            );
-        }
-
-        function viewCommunityStats() {
-            const stats = `
-                <strong>📊 Statistiche Community FSGC</strong><br><br>
-                <strong>🏈 Match in corso:</strong><br>
-                • Intensità gara: Alta<br>
-                • Sentiment tifosi: +92% positivo<br>
-                • Engagement: +15% vs media<br><br>
-                <strong>😍 La tua attività:</strong><br>
-                • Emozioni condivise: ${app.userProfile.emotionsShared}<br>
-                • Sondaggi votati: ${app.userProfile.pollsVoted}<br>
-                • Livello community: ${app.userProfile.emotionsShared > 10 ? 'Esperto' : app.userProfile.emotionsShared > 5 ? 'Attivo' : 'Principiante'}<br><br>
-                <strong>🌍 Network FSGC:</strong><br>
-                • Tifosi attivi oggi: ${app.communityStats.fans.toLocaleString()}<br>
-                • Squadre connesse: 15 (San Marino)<br>
-                • Federazioni partner: 24 paesi
-            `;
-            app.showNotification('Statistiche Live', stats, 'info');
-        }
-
-        function sendSupportMessage() {
-            const messages = [
-                'Forza ragazzi! La FSGC è con voi! 💪🇸🇲',
-                'Orgogliosi di voi! Avanti San Marino! 🏆❤️',
-                'Il nostro cuore batte con voi! 💙⚽',
-                'Rappresentate tutti noi! Grande squadra! 🙌🎯',
-                'San Marino nel cuore! Vincete per tutti! 🚀👏'
-            ];
-            const message = messages[Math.floor(Math.random() * messages.length)];
-            addToCommunityFeed('support', `Messaggio di supporto: "${message}"`, 'ora');
-            app.showNotification(
-                'Supporto Inviato',
-                `<strong>💌 Il tuo messaggio:</strong><br><br>"${message}"<br><br>Lo staff tecnico e la FSGC riceveranno il tuo supporto!`,
-                'success'
-            );
-        }
-
-        function refreshCommunityFeed() {
-            generateCommunityFeed();
-            app.showNotification('Feed Aggiornato', 'Caricate le ultime attività dalla community FSGC', 'info');
-        }
-
-        function addToCommunityFeed(type, content, time) {
-            const feedContainer = document.getElementById('community-feed');
-            if (!feedContainer) return;
-            const feedItem = document.createElement('div');
-            feedItem.className = 'feed-item';
-            const typeIcons = {
-                emotion: '😍',
-                poll: '🗳️',
-                support: '💌',
-                match: '⚽',
-                system: '🏆'
-            };
-            feedItem.innerHTML = `
-                <div class="feed-header">
-                    <div class="feed-source">${typeIcons[type]} Community FSGC</div>
-                    <div class="feed-time">${time}</div>
-                </div>
-                <div class="feed-content">${content}</div>
-                <div class="feed-reactions">👍 ${Math.floor(Math.random() * 20) + 5} reazioni</div>
-            `;
-            feedContainer.insertBefore(feedItem, feedContainer.firstChild);
-            while (feedContainer.children.length > 10) {
-                feedContainer.removeChild(feedContainer.lastChild);
-            }
-        }
-
-        function generateCommunityFeed() {
-            const feedContainer = document.getElementById('community-feed');
-            if (!feedContainer) return;
-            const sampleFeed = [
-                { type: 'match', content: '<strong>78\'</strong> - Azione spettacolare! Cross perfetto dalla destra!', time: '2 min fa' },
-                { type: 'emotion', content: 'Marco_Tifoso ha condiviso: 🔥', time: '5 min fa' },
-                { type: 'poll', content: 'Sondaggio chiuso: "Migliore in campo" - Vince Andrea con 67% dei voti', time: '8 min fa' },
-                { type: 'support', content: 'Giulia_FSGC: "Forza San Marino! Siamo tutti con voi! 💪"', time: '12 min fa' },
-                { type: 'system', content: '🏆 Milestone raggiunta: 1000+ tifosi attivi oggi nella community!', time: '15 min fa' },
-                { type: 'match', content: '<strong>65\'</strong> - Sostituzioni: entra Francesco, esce Andrea', time: '18 min fa' },
-                { type: 'emotion', content: 'Community in fermento: +200% emozioni negli ultimi 10 minuti!', time: '22 min fa' }
-            ];
-            feedContainer.innerHTML = sampleFeed.map(item => `
-                <div class="feed-item">
-                    <div class="feed-header">
-                        <div class="feed-source">${item.type === 'match' ? '⚽' : item.type === 'emotion' ? '😍' : item.type === 'poll' ? '🗳️' : item.type === 'support' ? '💌' : '🏆'} Community FSGC</div>
-                        <div class="feed-time">${item.time}</div>
-                    </div>
-                    <div class="feed-content">${item.content}</div>
-                    <div class="feed-reactions">👍 ${Math.floor(Math.random() * 20) + 5} reazioni</div>
-                </div>
-            `).join('');
-        }
-
-        function joinGlobalNetwork() {
-            app.showNotification(
-                'Rete Globale FSGC',
-                `<strong>🌍 Benvenuto nella Rete Globale!</strong><br><br>
-                Ora sei connesso con:<br>
-                • <strong>15 squadre</strong> di San Marino<br>
-                • <strong>3,247 squadre</strong> in 24 paesi<br>
-                • <strong>12,483 tifosi</strong> online ora<br><br>
-                <strong>Federazioni partner:</strong><br>
-                🇸🇲 FSGC • 🇮🇹 FIGC • 🇪🇸 RFEF • 🇫🇷 FFF<br><br>
-                Potrai partecipare a tornei internazionali!`,
-                'success'
-            );
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('🏆 Soccer in a Box FSGC Professional Demo Ready');
-            setTimeout(() => {
-                if (document.getElementById('community-feed')) {
-                    generateCommunityFeed();
-                }
-            }, 500);
-            setTimeout(() => {
-                if (app.currentMode === 'community') {
-                    addToCommunityFeed('system', '🎉 Demo FSGC attiva! Benvenuto nella piattaforma professionale.', 'ora');
-                }
-            }, 2000);
-        });
-
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('mode')) {
-            setTimeout(() => {
-                selectMode(urlParams.get('mode'));
-            }, 100);
-        }
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
