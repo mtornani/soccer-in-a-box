@@ -1,7 +1,7 @@
 {
-  "name": "Soccer in a Box - Professional Football Analysis",
+  "name": "Soccer in a Box - Professional Football Analysis & Community",
   "short_name": "Soccer Box",
-  "description": "Professional football analysis and community management platform for coaches, scouts and football professionals",
+  "description": "Complete football analysis and community management platform for coaches, scouts and football professionals",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#2c5aa0",
@@ -10,7 +10,7 @@
   "scope": "/",
   "lang": "en",
   "dir": "ltr",
-  "categories": ["sports", "productivity", "utilities", "business"],
+  "categories": ["sports", "productivity", "utilities", "business", "social"],
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'><rect width='72' height='72' fill='%232c5aa0' rx='16'/><text x='36' y='52' font-size='36' text-anchor='middle' fill='white'>⚽</text></svg>",
@@ -57,10 +57,62 @@
       ]
     },
     {
+      "name": "Fan Engagement",
+      "short_name": "Community",
+      "description": "Manage fan engagement and community interactions",
+      "url": "/?mode=community&tab=engagement",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%23FF9800' rx='20'/><text x='48' y='70' font-size='48' text-anchor='middle' fill='white'>🚀</text></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Create Poll",
+      "short_name": "Poll",
+      "description": "Create instant fan polls and surveys",
+      "url": "/?mode=community&tab=polls",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%23673AB7' rx='20'/><text x='48' y='70' font-size='48' text-anchor='middle' fill='white'>📊</text></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
       "name": "Player Evaluation",
       "short_name": "Players",
       "description": "Quick player performance evaluation",
       "url": "/?mode=coach&tab=players",
       "icons": [
         {
-          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%232196F3' rx='20'/><text x='48' y='70' font-size='48' text-anchor='middle' fill='white'>⭐</text></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'><rect width='390' height='844' fill='%23f8f9fa'/><rect x='20' y='40' width='350' height='120' rx='12' fill='%232c5aa0'/><text x='195' y='100' font-size='20' text-anchor='middle' fill='white'>Soccer in a Box</text><rect x='20' y='180' width='350' height='100' rx='12' fill='white' stroke='%23e0e0e0'/><text x='195' y='235' font-size='16' text-anchor='middle' fill='%23333'>Coach Mode</text><rect x='20' y='300' width='350' height='100' rx='12' fill='white' stroke='%23e0e0e0'/><text x='195' y='355' font-size='16' text-anchor='middle' fill='%23333'>Community Mode</text></svg>",
+      "sizes": "390x844",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Home screen showing mode selection"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'><rect width='390' height='844' fill='%23f8f9fa'/><rect x='20' y='40' width='350' height='80' rx='12' fill='%23FF9800'/><text x='195' y='85' font-size='18' text-anchor='middle' fill='white'>Community Hub</text><rect x='20' y='140' width='110' height='80' rx='8' fill='white'/><rect x='140' y='140' width='110' height='80' rx='8' fill='white'/><rect x='260' y='140' width='110' height='80' rx='8' fill='white'/></svg>",
+      "sizes": "390x844",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Community engagement dashboard"
+    }
+  ],
+  "display_override": ["window-controls-overlay", "standalone"],
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
