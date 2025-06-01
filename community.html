@@ -1,0 +1,273 @@
+<!-- Community Mode - Complete HTML Template -->
+<!-- Replace the existing community-mode div in index.html with this -->
+
+<div id="community-mode" class="hidden">
+    <button class="btn back-btn" onclick="goHome()">← <span id="back-text-community">Indietro</span></button>
+    
+    <!-- Community Header -->
+    <div class="community-header">
+        <h2 id="fan-engagement-title">Hub Engagement Tifosi</h2>
+        <div class="community-live-stats">
+            <div class="live-stat">
+                <span class="live-indicator">🔴 LIVE</span>
+                <span id="online-fans-count">0</span>
+                <span id="online-fans-label">Tifosi Online</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Community Stats Overview -->
+    <div class="community-stats-grid">
+        <div class="community-stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number" id="online-fans-count-main">0</div>
+            <div class="stat-label" id="online-fans-label-main">Tifosi Online</div>
+        </div>
+        <div class="community-stat-card">
+            <div class="stat-icon">💬</div>
+            <div class="stat-number" id="total-engagement-count">0</div>
+            <div class="stat-label" id="total-engagement-label">Engagement Totale</div>
+        </div>
+        <div class="community-stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-number" id="active-polls-count">0</div>
+            <div class="stat-label" id="active-polls-label">Sondaggi Attivi</div>
+        </div>
+    </div>
+    
+    <!-- Community Tabs -->
+    <div class="community-tabs">
+        <button class="community-tab active" onclick="showCommunityTab('engagement')" id="engagement-tab">Engagement</button>
+        <button class="community-tab" onclick="showCommunityTab('polls')" id="polls-tab">Sondaggi</button>
+        <button class="community-tab" onclick="showCommunityTab('sentiment')" id="sentiment-tab">Sentiment</button>
+        <button class="community-tab" onclick="showCommunityTab('social')" id="social-tab">Social</button>
+    </div>
+
+    <!-- Engagement Tab -->
+    <div id="community-engagement-tab" class="community-tab-content card">
+        <h3>🎯 Fan Engagement Live</h3>
+        
+        <!-- Quick Actions for Community Managers -->
+        <div class="community-quick-actions">
+            <button class="community-quick-btn" onclick="addFanMessage('Great atmosphere in the stadium! 🏟️', 'positive')">
+                🎉 Positive Message
+            </button>
+            <button class="community-quick-btn" onclick="addFanMessage('What do you think about the team performance?', 'neutral')">
+                ❓ Ask Fans
+            </button>
+            <button class="community-quick-btn" onclick="addFanMessage('Thanks for your support! 💙', 'positive')">
+                💙 Thank Fans
+            </button>
+            <button class="community-quick-btn" onclick="addFanMessage('We need to improve our defense', 'negative')">
+                😞 Critical Feedback
+            </button>
+        </div>
+        
+        <!-- Live Fan Messages Feed -->
+        <div class="fan-messages-container">
+            <h4>💬 Live Fan Messages</h4>
+            <div id="fan-messages-feed" class="fan-messages-feed">
+                <!-- Fan messages will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Engagement Actions -->
+        <div class="engagement-actions">
+            <h4>🚀 Community Actions</h4>
+            <div class="action-buttons">
+                <button class="btn btn-accent" onclick="broadcastMessage()">📢 Broadcast Message</button>
+                <button class="btn btn-secondary" onclick="showCommunityTab('polls')">📊 Create Poll</button>
+                <button class="btn btn-primary" onclick="exportCommunityReport()">📋 Export Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Polls Tab -->
+    <div id="community-polls-tab" class="community-tab-content card hidden">
+        <h3>📊 Polls & Surveys</h3>
+        
+        <!-- Create New Poll -->
+        <div class="create-poll-section">
+            <h4>✨ Create New Poll</h4>
+            <div class="poll-creation-form">
+                <input type="text" id="poll-question" placeholder="Enter poll question..." class="poll-question-input">
+                
+                <div class="poll-options-section">
+                    <label>Poll Options:</label>
+                    <div id="poll-options-container">
+                        <div class="poll-option-input-container">
+                            <input type="text" class="poll-option-input" placeholder="Poll option 1">
+                        </div>
+                        <div class="poll-option-input-container">
+                            <input type="text" class="poll-option-input" placeholder="Poll option 2">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-small" onclick="addPollOption()" id="add-option-btn">+ Add Option</button>
+                </div>
+                
+                <div class="poll-actions">
+                    <button class="btn btn-accent" onclick="createPoll()" id="launch-poll-btn">🚀 Launch Poll</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Active Polls List -->
+        <div class="polls-section">
+            <h4>📋 Your Polls</h4>
+            <div id="polls-list" class="polls-list">
+                <!-- Polls will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Sentiment Tab -->
+    <div id="community-sentiment-tab" class="community-tab-content card hidden">
+        <h3>📈 Sentiment Analysis</h3>
+        
+        <!-- Sentiment Chart -->
+        <div id="sentiment-chart" class="sentiment-chart">
+            <!-- Sentiment analysis will be populated here -->
+        </div>
+        
+        <!-- Sentiment Timeline -->
+        <div class="sentiment-timeline-section">
+            <h4>⏱️ Sentiment Over Time</h4>
+            <div class="sentiment-timeline">
+                <div class="timeline-placeholder">
+                    📈 Real-time sentiment tracking will appear here during live events
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sentiment Insights Actions -->
+        <div class="sentiment-actions">
+            <h4>🎯 Sentiment Actions</h4>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="generateSentimentReport()">📊 Generate Report</button>
+                <button class="btn btn-accent" onclick="optimizeContent()">✨ Optimize Content</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social Tab -->
+    <div id="community-social-tab" class="community-tab-content card hidden">
+        <h3>🌐 Social Media Integration</h3>
+        
+        <!-- Social Media Feeds -->
+        <div class="social-feeds-section">
+            <h4>📱 Social Media Activity</h4>
+            <div class="social-platforms" id="social-feeds-container">
+                <div class="social-platform-card">
+                    <div class="platform-header">
+                        <span class="platform-icon">📘</span>
+                        <span class="platform-name">Facebook</span>
+                        <span class="platform-status connected">Connected</span>
+                    </div>
+                    <div class="platform-stats">
+                        <span>📝 Last post: 2 hours ago</span>
+                        <span>💬 Engagement: 234 interactions</span>
+                        <span>👥 Reach: 1,2K users</span>
+                    </div>
+                </div>
+                
+                <div class="social-platform-card">
+                    <div class="platform-header">
+                        <span class="platform-icon">🐦</span>
+                        <span class="platform-name">Twitter</span>
+                        <span class="platform-status connected">Connected</span>
+                    </div>
+                    <div class="platform-stats">
+                        <span>🐦 Last tweet: 45 minutes ago</span>
+                        <span>🔄 Engagement: 89 retweets, 156 likes</span>
+                        <span>👁️ Impressions: 2,3K</span>
+                    </div>
+                </div>
+                
+                <div class="social-platform-card">
+                    <div class="platform-header">
+                        <span class="platform-icon">📷</span>
+                        <span class="platform-name">Instagram</span>
+                        <span class="platform-status pending">Pending</span>
+                    </div>
+                    <div class="platform-stats">
+                        <span>🔗 Connect to enable integration</span>
+                        <span>📊 Stories and posts analytics</span>
+                    </div>
+                </div>
+                
+                <div class="social-platform-card">
+                    <div class="platform-header">
+                        <span class="platform-icon">📺</span>
+                        <span class="platform-name">TikTok</span>
+                        <span class="platform-status disconnected">Disconnected</span>
+                    </div>
+                    <div class="platform-stats">
+                        <span>🎵 Enable for video content</span>
+                        <span>🔥 Trending hashtags tracking</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Social Integration Actions -->
+        <div class="social-integration-actions">
+            <h5>🔗 Quick Actions</h5>
+            <div class="integration-buttons">
+                <button class="integration-btn facebook" onclick="connectPlatform('facebook')">
+                    📘 Connect Facebook
+                </button>
+                <button class="integration-btn twitter" onclick="connectPlatform('twitter')">
+                    🐦 Connect Twitter
+                </button>
+                <button class="integration-btn instagram" onclick="connectPlatform('instagram')">
+                    📷 Connect Instagram
+                </button>
+                <button class="integration-btn" onclick="schedulePosts()">
+                    ⏰ Schedule Posts
+                </button>
+            </div>
+        </div>
+        
+        <!-- Social Analytics -->
+        <div class="social-analytics">
+            <h5>📊 Social Analytics Overview</h5>
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <span class="analytics-number">2.4K</span>
+                    <span class="analytics-label">Total Followers</span>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-number">567</span>
+                    <span class="analytics-label">This Week</span>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-number">89%</span>
+                    <span class="analytics-label">Engagement Rate</span>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-number">12.3K</span>
+                    <span class="analytics-label">Total Reach</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Growth Indicators -->
+        <div class="growth-indicators">
+            <div class="growth-card">
+                <span class="growth-icon">📈</span>
+                <span class="growth-percentage positive">+12.5%</span>
+                <span class="growth-label">Follower Growth</span>
+            </div>
+            <div class="growth-card">
+                <span class="growth-icon">💬</span>
+                <span class="growth-percentage positive">+8.2%</span>
+                <span class="growth-label">Engagement Growth</span>
+            </div>
+            <div class="growth-card">
+                <span class="growth-icon">🎯</span>
+                <span class="growth-percentage neutral">+2.1%</span>
+                <span class="growth-label">Reach Growth</span>
+            </div>
+        </div>
+    </div>
+</div>
