@@ -1,7 +1,9 @@
 // Language detection and translations
+// Aggiorna solo la sezione translations nel tuo app.js esistente:
+
 const translations = {
     'en': {
-        'partnership-text': 'Partnership FSGC - San Marino Football Federation',
+        'tagline-text': 'Professional Football Analysis & Community Management',
         'subtitle-text': 'Professional platform for football analysis and community management.',
         'select-mode-text': 'Choose your mode to access the system.',
         'coach-mode-title': 'Coach Mode',
@@ -35,7 +37,7 @@ const translations = {
         'back-home-btn': 'Back to Home'
     },
     'it': {
-        'partnership-text': 'Partnership FSGC - Federazione Sammarinese Giuoco Calcio',
+        'tagline-text': 'Analisi Calcistica Professionale & Gestione Community',
         'subtitle-text': 'Piattaforma professionale per l\'analisi calcistica e gestione community.',
         'select-mode-text': 'Scegli la tua modalità per accedere al sistema.',
         'coach-mode-title': 'Modalità Coach',
@@ -69,7 +71,7 @@ const translations = {
         'back-home-btn': 'Torna alla Home'
     },
     'es': {
-        'partnership-text': 'Partnership FSGC - Federación Sanmarinense de Fútbol',
+        'tagline-text': 'Análisis Futbolístico Profesional & Gestión Comunitaria',
         'subtitle-text': 'Plataforma profesional para análisis futbolístico y gestión comunitaria.',
         'select-mode-text': 'Elige tu modalidad para acceder al sistema.',
         'coach-mode-title': 'Modo Entrenador',
@@ -103,7 +105,7 @@ const translations = {
         'back-home-btn': 'Volver al Inicio'
     },
     'fr': {
-        'partnership-text': 'Partnership FSGC - Fédération Saint-Marinaise de Football',
+        'tagline-text': 'Analyse Footballistique Professionnelle & Gestion Communautaire',
         'subtitle-text': 'Plateforme professionnelle pour l\'analyse football et gestion communautaire.',
         'select-mode-text': 'Choisissez votre mode pour accéder au système.',
         'coach-mode-title': 'Mode Entraîneur',
@@ -137,7 +139,7 @@ const translations = {
         'back-home-btn': 'Retour à l\'Accueil'
     },
     'de': {
-        'partnership-text': 'Partnership FSGC - San-Marinesischer Fußballverband',
+        'tagline-text': 'Professionelle Fußballanalyse & Community-Management',
         'subtitle-text': 'Professionelle Plattform für Fußballanalyse und Community-Management.',
         'select-mode-text': 'Wählen Sie Ihren Modus für den Systemzugang.',
         'coach-mode-title': 'Trainer-Modus',
@@ -171,7 +173,6 @@ const translations = {
         'back-home-btn': 'Zurück zur Startseite'
     }
 };
-
 // App state
 let appState = {
     currentMode: 'home',
