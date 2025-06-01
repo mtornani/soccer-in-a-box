@@ -1,379 +1,741 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soccer in a Box - Professional Football Analysis</title>
-    
-    <!-- PWA Manifest -->
+    <title>Soccer in a Box</title>
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a472a">
     
-    <!-- Favicon e Apple Icons -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='favicon' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%232c5aa0'/><stop offset='100%' stop-color='%231e3d72'/></linearGradient></defs><rect width='32' height='32' fill='url(%23favicon)' rx='6'/><circle cx='16' cy='14' r='6' fill='white' stroke='%23FF9800' stroke-width='1'/><polygon points='16,10 18,13 16,16 14,13' fill='%232c5aa0'/><polygon points='13,14 16,12 19,14 16,16' fill='%23FF9800'/><text x='16' y='26' font-size='4' text-anchor='middle' fill='white' font-weight='bold'>SB</text></svg>">
-    
-    <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><defs><linearGradient id='apple' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%232c5aa0'/><stop offset='100%' stop-color='%231e3d72'/></linearGradient></defs><rect width='180' height='180' fill='url(%23apple)' rx='38'/><circle cx='90' cy='78' r='34' fill='white' stroke='%23FF9800' stroke-width='5'/><polygon points='90,50 102,71 90,92 78,71' fill='%232c5aa0'/><polygon points='68,78 90,62 112,78 90,94' fill='%23FF9800'/><polygon points='78,56 102,56 90,44' fill='%234CAF50'/><polygon points='78,100 102,100 90,112' fill='%234CAF50'/><text x='90' y='146' font-size='14' text-anchor='middle' fill='white' font-weight='bold'>SOCCER BOX</text></svg>">
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#2c5aa0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Soccer Box">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Soccer Box">
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Professional football analysis and community management platform for coaches, scouts and football professionals worldwide">
-    <meta name="keywords" content="football analysis, soccer coaching, match analysis, player evaluation, football community, scouting tools, grassroots football">
-    
-    <!-- Social Media Meta Tags -->
-    <meta property="og:title" content="Soccer in a Box - Professional Football Analysis">
-    <meta property="og:description" content="Complete football analysis and community management platform for coaches, scouts and football professionals worldwide">
-    <meta property="og:image" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 630'><rect width='1200' height='630' fill='%232c5aa0'/><circle cx='600' cy='315' r='120' fill='white' stroke='%23FF9800' stroke-width='20'/><polygon points='600,220 640,290 600,360 560,290' fill='%232c5aa0'/><polygon points='520,315 600,250 680,315 600,380' fill='%23FF9800'/><text x='600' y='520' font-size='60' text-anchor='middle' fill='white' font-weight='bold'>SOCCER IN A BOX</text><text x='600' y='580' font-size='30' text-anchor='middle' fill='%23FFB74D'>Professional Football Analysis &amp; Community</text></svg>">
-    <meta property="og:type" content="website">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="community.css">
+    <!-- Stili principali -->
+    <style>
+        /* ===== RESET E BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #4ade80;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+        }
+
+        .mode-switcher {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.3rem;
+            border-radius: 25px;
+            backdrop-filter: blur(5px);
+        }
+
+        .mode-btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .mode-btn.active {
+            background: #4ade80;
+            color: #1a472a;
+            box-shadow: 0 4px 15px rgba(74, 222, 128, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .mode-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        /* ===== CONTAINER PRINCIPALE ===== */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .mode-container {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .mode-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CARDS ===== */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4ade80, #22d3ee, #a855f7);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(74, 222, 128, 0.5);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-content {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+
+        /* ===== BOTTONI ===== */
+        .btn {
+            background: linear-gradient(135deg, #4ade80, #22d3ee);
+            color: #1a472a;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 222, 128, 0.4);
+        }
+
+        .btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+        }
+
+        /* ===== AREA DI GIOCO (COACH MODE) ===== */
+        .field-container {
+            background: radial-gradient(circle at center, #22c55e, #16a34a);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+            aspect-ratio: 16/10;
+            min-height: 400px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .field {
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.8) 49%, rgba(255,255,255,0.8) 51%, transparent 51%),
+                linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.8) 49%, rgba(255,255,255,0.8) 51%, transparent 51%);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ===== COMMUNITY MODE RINNOVATO ===== */
+        .live-feed {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .live-event {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #4ade80;
+            transition: all 0.3s ease;
+        }
+
+        .live-event:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .event-time {
+            font-weight: bold;
+            color: #4ade80;
+            font-size: 0.9rem;
+        }
+
+        .event-text {
+            margin-top: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .fan-interactions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .interaction-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .interaction-btn:hover {
+            background: rgba(74, 222, 128, 0.2);
+            border-color: #4ade80;
+            transform: scale(1.05);
+        }
+
+        .interaction-btn.active {
+            background: rgba(74, 222, 128, 0.3);
+            border-color: #4ade80;
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
+        }
+
+        /* ===== MATCH STATUS ===== */
+        .match-status {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 2px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4ade80;
+            margin: 1rem 0;
+            text-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+        }
+
+        .teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .match-time {
+            background: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .mode-switcher {
+                order: -1;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .main-container {
+                padding: 1rem 0.5rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .fan-interactions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .score {
+                font-size: 2rem;
+            }
+        }
+
+        /* ===== ANIMAZIONI E EFFETTI ===== */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: rgba(74, 222, 128, 0.9);
+            color: #1a472a;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 200;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .text-green { color: #4ade80; }
+        .text-blue { color: #22d3ee; }
+        .text-purple { color: #a855f7; }
+        .mb-1 { margin-bottom: 1rem; }
+        .mb-2 { margin-bottom: 2rem; }
+        .mt-1 { margin-top: 1rem; }
+        .mt-2 { margin-top: 2rem; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Home Screen -->
-        <div id="home-screen">
-            <div class="header">
-                <h1>⚽ Soccer in a Box</h1>
-                <p id="tagline-text">Professional Football Analysis & Community Management</p>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">⚽ Soccer in a Box</div>
+            <div class="mode-switcher">
+                <button class="mode-btn active" data-mode="coach">👔 Coach</button>
+                <button class="mode-btn" data-mode="community">🏟️ Fan Zone</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTAINER PRINCIPALE -->
+    <div class="main-container">
+        
+        <!-- COACH MODE -->
+        <div id="coach-mode" class="mode-container active">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3 class="card-title">🎯 Analisi Live</h3>
+                    <div class="card-content">
+                        <p>Sistema di tracciamento eventi in tempo reale con classificazione automatica delle azioni.</p>
+                        <button class="btn">Avvia Sessione</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">📊 Metriche Avanzate</h3>
+                    <div class="card-content">
+                        <p>xG, passaggi progressivi, pressing intensity e heat maps situazionali.</p>
+                        <button class="btn secondary">Visualizza Dati</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">🧠 APES Integration</h3>
+                    <div class="card-content">
+                        <p>Collegamento diretto con il sistema di scouting cognitivo per profili giocatori.</p>
+                        <button class="btn secondary">Sincronizza APES</button>
+                    </div>
+                </div>
             </div>
             
+            <!-- CAMPO DA GIOCO -->
+            <div class="field-container">
+                <div class="field" id="tactical-field">
+                    <!-- Il campo tattico sarà popolato dinamicamente -->
+                </div>
+            </div>
+        </div>
+
+        <!-- COMMUNITY MODE - RINNOVATO COME FAN ZONE -->
+        <div id="community-mode" class="mode-container">
+            <!-- STATUS PARTITA -->
+            <div class="match-status">
+                <div class="match-time pulse">72'</div>
+                <div class="teams">
+                    <span>Juventus</span>
+                    <span class="score">2 - 1</span>
+                    <span>Inter</span>
+                </div>
+            </div>
+
+            <!-- FEED LIVE EVENTI -->
             <div class="card">
-                <p id="subtitle-text">Piattaforma professionale per l'analisi calcistica e gestione community.</p>
-                <p id="select-mode-text">Scegli la tua modalità per accedere al sistema.</p>
-            </div>
-
-            <div class="mode-selector">
-                <a href="#" class="mode-btn" onclick="startMode('coach')">
-                    <span class="icon">📊</span>
-                    <h3 id="coach-mode-title">Modalità Coach</h3>
-                    <p id="coach-mode-desc">Analisi tattica avanzata, valutazione giocatori, report professionali e strumenti di scouting.</p>
-                </a>
-
-                <a href="#" class="mode-btn" onclick="startMode('community')">
-                    <span class="icon">🚀</span>
-                    <h3 id="community-mode-title">Modalità Community</h3>
-                    <p id="community-mode-desc">Engagement tifosi, sondaggi live, sentiment analysis e connessione con la rete globale.</p>
-                </a>
-            </div>
-        </div>
-
-        <!-- Coach Mode -->
-        <div id="coach-mode" class="hidden">
-            <button class="btn back-btn" onclick="goHome()">← <span id="back-text">Indietro</span></button>
-            
-            <div class="tabs">
-                <button class="tab active" onclick="showTab('setup')" id="tab-setup">Setup</button>
-                <button class="tab" onclick="showTab('live')" id="tab-live">Live</button>
-                <button class="tab" onclick="showTab('players')" id="tab-players">Giocatori</button>
-                <button class="tab" onclick="showTab('report')" id="tab-report">Report</button>
-            </div>
-
-            <!-- Setup Tab -->
-            <div id="setup-tab" class="card">
-                <h3 id="match-setup-title">Setup Partita</h3>
-                <div class="match-setup">
-                    <label id="home-team-label">Squadra Casa:</label>
-                    <input type="text" id="home-team" placeholder="Nome squadra casa">
-                    
-                    <label id="away-team-label">Squadra Ospite:</label>
-                    <input type="text" id="away-team" placeholder="Nome squadra ospite">
-                    
-                    <label id="date-label">Data:</label>
-                    <input type="date" id="match-date">
-                    
-                    <label id="venue-label">Venue:</label>
-                    <input type="text" id="venue" placeholder="Stadio/Campo">
-                    
-                    <label id="competition-label">Competizione:</label>
-                    <input type="text" id="competition" placeholder="Campionato/Torneo">
-                    
-                    <button class="btn" onclick="startMatch()" id="start-match-btn">Inizia Match Analysis</button>
-                </div>
-            </div>
-
-            <!-- Live Tab -->
-            <div id="live-tab" class="card hidden">
-                <div class="timer">
-                    <div class="timer-display" id="timer-display">00:00</div>
-                    <div class="timer-controls">
-                        <button class="btn btn-secondary" onclick="toggleTimer()" id="timer-btn">▶️</button>
-                        <button class="btn btn-danger" onclick="resetTimer()" id="reset-btn">🔄</button>
+                <h3 class="card-title">📡 Live Feed</h3>
+                <div class="live-feed">
+                    <div class="live-event">
+                        <div class="event-time">72'</div>
+                        <div class="event-text">🔥 Occasione sprecata! Lautaro Martinez a tu per tu con Szczesny!</div>
                     </div>
-                </div>
-
-                <div class="quick-actions">
-                    <button class="quick-btn" onclick="addQuickNote('⚽ Gol')">⚽ Gol</button>
-                    <button class="quick-btn" onclick="addQuickNote('🟨 Ammonizione')">🟨 Card</button>
-                    <button class="quick-btn" onclick="addQuickNote('🔄 Cambio')">🔄 Sub</button>
-                    <button class="quick-btn" onclick="addQuickNote('🥅 Tiro')">🥅 Shot</button>
-                </div>
-
-                <div class="notes-section">
-                    <textarea id="note-input" placeholder="Scrivi una nota..."></textarea>
-                    <button class="btn" onclick="addNote()" id="add-note-btn">Aggiungi Nota</button>
-                </div>
-
-                <div class="timeline" id="timeline"></div>
-            </div>
-
-            <!-- Players Tab -->
-            <div id="players-tab" class="card hidden">
-                <h3 id="players-title">Valutazione Giocatori</h3>
-                <div class="player-form">
-                    <input type="text" id="player-name" placeholder="Nome giocatore">
-                    <input type="number" id="player-number" placeholder="Numero maglia">
-                    <input type="text" id="player-position" placeholder="Posizione">
-                    
-                    <div class="rating-section">
-                        <label id="technical-label">Tecnica:</label>
-                        <div class="stars" data-category="technical">
-                            <span class="star" data-value="1">★</span>
-                            <span class="star" data-value="2">★</span>
-                            <span class="star" data-value="3">★</span>
-                            <span class="star" data-value="4">★</span>
-                            <span class="star" data-value="5">★</span>
-                        </div>
+                    <div class="live-event">
+                        <div class="event-time">68'</div>
+                        <div class="event-text">⚡ Contropiede Juventus! Vlahovic serve Chiesa sulla destra</div>
                     </div>
-
-                    <div class="rating-section">
-                        <label id="physical-label">Fisico:</label>
-                        <div class="stars" data-category="physical">
-                            <span class="star" data-value="1">★</span>
-                            <span class="star" data-value="2">★</span>
-                            <span class="star" data-value="3">★</span>
-                            <span class="star" data-value="4">★</span>
-                            <span class="star" data-value="5">★</span>
-                        </div>
+                    <div class="live-event">
+                        <div class="event-time">65'</div>
+                        <div class="event-text">🟨 Ammonito Barella per fallo su Locatelli</div>
                     </div>
-
-                    <div class="rating-section">
-                        <label id="mental-label">Mentale:</label>
-                        <div class="stars" data-category="mental">
-                            <span class="star" data-value="1">★</span>
-                            <span class="star" data-value="2">★</span>
-                            <span class="star" data-value="3">★</span>
-                            <span class="star" data-value="4">★</span>
-                            <span class="star" data-value="5">★</span>
-                        </div>
-                    </div>
-
-                    <textarea id="player-notes" placeholder="Note sul giocatore..."></textarea>
-                    <button class="btn" onclick="savePlayer()" id="save-player-btn">Salva Giocatore</button>
-                </div>
-
-                <div id="players-list"></div>
-            </div>
-
-            <!-- Report Tab -->
-            <div id="report-tab" class="card hidden">
-                <h3 id="report-title">Report Partita</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number" id="notes-count">0</div>
-                        <div class="stat-label" id="notes-label">Note</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="players-count">0</div>
-                        <div class="stat-label" id="players-label">Giocatori</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="match-duration">00:00</div>
-                        <div class="stat-label" id="duration-label">Durata</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="avg-rating">0.0</div>
-                        <div class="stat-label" id="rating-label">Rating Medio</div>
-                    </div>
-                </div>
-
-                <button class="btn btn-accent" onclick="exportReport('md')" id="export-md-btn">Esporta Markdown</button>
-                <button class="btn btn-accent" onclick="exportReport('txt')" id="export-txt-btn">Esporta TXT</button>
-                <button class="btn btn-danger" onclick="clearAll()" id="clear-btn">Cancella Tutto</button>
-            </div>
-        </div>
-
-        <!-- Community Mode -->
-        <div id="community-mode" class="hidden">
-            <button class="btn back-btn" onclick="goHome()">← <span id="back-text-community">Indietro</span></button>
-            
-            <!-- Community Header -->
-            <div class="community-header">
-                <h2 id="fan-engagement-title">Hub Engagement Tifosi</h2>
-                <div class="community-live-stats">
-                    <div class="live-stat">
-                        <span class="live-indicator">🔴 LIVE</span>
-                        <span id="online-fans-count">0</span>
-                        <span id="online-fans-label">Tifosi Online</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Community Stats Overview -->
-            <div class="community-stats-grid">
-                <div class="community-stat-card">
-                    <div class="stat-icon">👥</div>
-                    <div class="stat-number" id="online-fans-count-main">0</div>
-                    <div class="stat-label" id="online-fans-label-main">Tifosi Online</div>
-                </div>
-                <div class="community-stat-card">
-                    <div class="stat-icon">💬</div>
-                    <div class="stat-number" id="total-engagement-count">0</div>
-                    <div class="stat-label" id="total-engagement-label">Engagement Totale</div>
-                </div>
-                <div class="community-stat-card">
-                    <div class="stat-icon">📊</div>
-                    <div class="stat-number" id="active-polls-count">0</div>
-                    <div class="stat-label" id="active-polls-label">Sondaggi Attivi</div>
-                </div>
-            </div>
-            
-            <!-- Community Tabs -->
-            <div class="community-tabs">
-                <button class="community-tab active" onclick="showCommunityTab('engagement')" id="engagement-tab">Engagement</button>
-                <button class="community-tab" onclick="showCommunityTab('polls')" id="polls-tab">Sondaggi</button>
-                <button class="community-tab" onclick="showCommunityTab('sentiment')" id="sentiment-tab">Sentiment</button>
-                <button class="community-tab" onclick="showCommunityTab('social')" id="social-tab">Social</button>
-            </div>
-
-            <!-- Engagement Tab -->
-            <div id="community-engagement-tab" class="community-tab-content card">
-                <h3>🎯 Fan Engagement Live</h3>
-                
-                <div class="community-quick-actions">
-                    <button class="community-quick-btn" onclick="addFanMessage('Great atmosphere in the stadium! 🏟️', 'positive')">🎉 Positive Message</button>
-                    <button class="community-quick-btn" onclick="addFanMessage('What do you think about the team performance?', 'neutral')">❓ Ask Fans</button>
-                    <button class="community-quick-btn" onclick="addFanMessage('Thanks for your support! 💙', 'positive')">💙 Thank Fans</button>
-                    <button class="community-quick-btn" onclick="addFanMessage('We need to improve our defense', 'negative')">😞 Critical Feedback</button>
-                </div>
-                
-                <div class="fan-messages-container">
-                    <h4>💬 Live Fan Messages</h4>
-                    <div id="fan-messages-feed" class="fan-messages-feed"></div>
-                </div>
-                
-                <div class="engagement-actions">
-                    <h4>🚀 Community Actions</h4>
-                    <div class="action-buttons">
-                        <button class="btn btn-accent" onclick="broadcastMessage()">📢 Broadcast Message</button>
-                        <button class="btn btn-secondary" onclick="showCommunityTab('polls')">📊 Create Poll</button>
-                        <button class="btn btn-primary" onclick="exportCommunityReport()">📋 Export Report</button>
+                    <div class="live-event">
+                        <div class="event-time">61'</div>
+                        <div class="event-text">⚽ GOOOOOL! Vlahovic! 2-1 per la Juventus!</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Polls Tab -->
-            <div id="community-polls-tab" class="community-tab-content card hidden">
-                <h3>📊 Polls & Surveys</h3>
-                
-                <div class="create-poll-section">
-                    <h4>✨ Create New Poll</h4>
-                    <div class="poll-creation-form">
-                        <input type="text" id="poll-question" placeholder="Enter poll question..." class="poll-question-input">
-                        
-                        <div class="poll-options-section">
-                            <label>Poll Options:</label>
-                            <div id="poll-options-container">
-                                <div class="poll-option-input-container">
-                                    <input type="text" class="poll-option-input" placeholder="Poll option 1">
-                                </div>
-                                <div class="poll-option-input-container">
-                                    <input type="text" class="poll-option-input" placeholder="Poll option 2">
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-secondary btn-small" onclick="addPollOption()" id="add-option-btn">+ Add Option</button>
-                        </div>
-                        
-                        <div class="poll-actions">
-                            <button class="btn btn-accent" onclick="createPoll()" id="launch-poll-btn">🚀 Launch Poll</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="polls-section">
-                    <h4>📋 Your Polls</h4>
-                    <div id="polls-list" class="polls-list"></div>
-                </div>
-            </div>
-
-            <!-- Sentiment Tab -->
-            <div id="community-sentiment-tab" class="community-tab-content card hidden">
-                <h3>📈 Sentiment Analysis</h3>
-                <div id="sentiment-chart" class="sentiment-chart"></div>
-                
-                <div class="sentiment-timeline-section">
-                    <h4>⏱️ Sentiment Over Time</h4>
-                    <div class="sentiment-timeline">
-                        <div class="timeline-placeholder">📈 Real-time sentiment tracking will appear here during live events</div>
+            <!-- INTERAZIONI FAN -->
+            <div class="card">
+                <h3 class="card-title">🎉 Partecipa alla Partita</h3>
+                <div class="card-content">
+                    <p>Esprimi le tue emozioni e interagisci con la community:</p>
+                    <div class="fan-interactions">
+                        <button class="interaction-btn" data-reaction="fire">🔥 Che azione!</button>
+                        <button class="interaction-btn" data-reaction="heart">❤️ Che classe!</button>
+                        <button class="interaction-btn" data-reaction="lightning">⚡ Velocissimi!</button>
+                        <button class="interaction-btn" data-reaction="eyes">👀 Incredibile!</button>
+                        <button class="interaction-btn" data-reaction="clap">👏 Bravi!</button>
+                        <button class="interaction-btn" data-reaction="nervous">😰 Che brivido!</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Social Tab -->
-            <div id="community-social-tab" class="community-tab-content card hidden">
-                <h3>🌐 Social Media Integration</h3>
-                
-                <div class="social-feeds-section">
-                    <h4>📱 Social Media Activity</h4>
-                    <div class="social-platforms" id="social-feeds-container">
-                        <div class="social-platform-card">
-                            <div class="platform-header">
-                                <span class="platform-icon">📘</span>
-                                <span class="platform-name">Facebook</span>
-                                <span class="platform-status connected">Connected</span>
-                            </div>
-                            <div class="platform-stats">
-                                <span>📝 Last post: 2 hours ago</span>
-                                <span>💬 Engagement: 234 interactions</span>
-                            </div>
-                        </div>
-                        
-                        <div class="social-platform-card">
-                            <div class="platform-header">
-                                <span class="platform-icon">🐦</span>
-                                <span class="platform-name">Twitter</span>
-                                <span class="platform-status connected">Connected</span>
-                            </div>
-                            <div class="platform-stats">
-                                <span>🐦 Last tweet: 45 minutes ago</span>
-                                <span>🔄 Engagement: 89 retweets, 156 likes</span>
-                            </div>
-                        </div>
-                        
-                        <div class="social-platform-card">
-                            <div class="platform-header">
-                                <span class="platform-icon">📷</span>
-                                <span class="platform-name">Instagram</span>
-                                <span class="platform-status pending">Pending</span>
-                            </div>
-                            <div class="platform-stats">
-                                <span>🔗 Connect to enable integration</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="social-integration-actions">
-                    <h5>🔗 Quick Actions</h5>
-                    <div class="integration-buttons">
-                        <button class="integration-btn facebook">📘 Connect Facebook</button>
-                        <button class="integration-btn twitter">🐦 Connect Twitter</button>
-                        <button class="integration-btn instagram">📷 Connect Instagram</button>
+            <!-- PREDIZIONI FAN -->
+            <div class="card">
+                <h3 class="card-title">🎯 Le Tue Predizioni</h3>
+                <div class="card-content">
+                    <p>Cosa succederà nei prossimi minuti?</p>
+                    <div class="fan-interactions">
+                        <button class="interaction-btn" data-prediction="goal">⚽ Gol in arrivo</button>
+                        <button class="interaction-btn" data-prediction="card">🟨 Cartellino</button>
+                        <button class="interaction-btn" data-prediction="sub">🔄 Sostituzione</button>
+                        <button class="interaction-btn" data-prediction="corner">⚡ Calcio d'angolo</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="app.js"></script>
-    <script src="community.js"></script>
+    <!-- NOTIFICATION SYSTEM -->
+    <div id="notification" class="notification"></div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // ===== SISTEMA DI NAVIGAZIONE =====
+        class SoccerInABox {
+            constructor() {
+                this.currentMode = 'coach';
+                this.liveEvents = [];
+                this.fanInteractions = new Map();
+                this.init();
+            }
+
+            init() {
+                this.setupModeNavigation();
+                this.setupFanInteractions();
+                this.startLiveSimulation();
+                this.registerServiceWorker();
+            }
+
+            // Navigazione tra modalità
+            setupModeNavigation() {
+                const modeButtons = document.querySelectorAll('.mode-btn');
+                const modeContainers = document.querySelectorAll('.mode-container');
+
+                modeButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const targetMode = btn.dataset.mode;
+                        
+                        // Aggiorna bottoni
+                        modeButtons.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        
+                        // Aggiorna contenitori
+                        modeContainers.forEach(container => {
+                            container.classList.remove('active');
+                        });
+                        
+                        document.getElementById(`${targetMode}-mode`).classList.add('active');
+                        this.currentMode = targetMode;
+                        
+                        this.showNotification(`Modalità ${targetMode} attivata`);
+                    });
+                });
+            }
+
+            // Sistema interazioni fan
+            setupFanInteractions() {
+                const interactionBtns = document.querySelectorAll('.interaction-btn');
+                
+                interactionBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const reaction = btn.dataset.reaction || btn.dataset.prediction;
+                        
+                        // Effetto visivo
+                        btn.classList.add('active');
+                        setTimeout(() => btn.classList.remove('active'), 1000);
+                        
+                        // Registra interazione
+                        this.recordFanInteraction(reaction, btn.textContent);
+                        
+                        // Feedback
+                        this.showNotification(`${btn.textContent} registrato!`);
+                    });
+                });
+            }
+
+            // Registra interazione fan
+            recordFanInteraction(type, text) {
+                const interaction = {
+                    type,
+                    text,
+                    timestamp: new Date(),
+                    matchTime: this.getCurrentMatchTime()
+                };
+                
+                if (!this.fanInteractions.has(type)) {
+                    this.fanInteractions.set(type, []);
+                }
+                
+                this.fanInteractions.get(type).push(interaction);
+                
+                // Invia al coach mode se necessario
+                this.notifyCoachMode(interaction);
+            }
+
+            // Notifica coach mode delle interazioni fan
+            notifyCoachMode(interaction) {
+                // Qui ci colleghiamo al sistema di analisi del coach
+                console.log('Fan interaction:', interaction);
+                
+                // Potremmo aggiungere indicatori visivi sul campo
+                // o aggiornare metriche di coinvolgimento
+            }
+
+            // Simulazione eventi live
+            startLiveSimulation() {
+                const events = [
+                    { time: 75, text: "🔄 Sostituzione Inter: entra Dzeko, esce Lautaro" },
+                    { time: 78, text: "⚡ Cross pericoloso di Chiesa, para Handanovic!" },
+                    { time: 82, text: "🟨 Ammonito Bremer per perdita di tempo" },
+                    { time: 85, text: "🔥 Ultimo tentativo Inter! Dzeko di testa!" }
+                ];
+
+                let eventIndex = 0;
+                const interval = setInterval(() => {
+                    if (eventIndex < events.length) {
+                        this.addLiveEvent(events[eventIndex]);
+                        eventIndex++;
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, 30000); // Nuovo evento ogni 30 secondi
+            }
+
+            // Aggiunge evento al feed live
+            addLiveEvent(event) {
+                const liveFeed = document.querySelector('.live-feed');
+                const eventEl = document.createElement('div');
+                eventEl.className = 'live-event';
+                eventEl.innerHTML = `
+                    <div class="event-time">${event.time}'</div>
+                    <div class="event-text">${event.text}</div>
+                `;
+                
+                liveFeed.insertBefore(eventEl, liveFeed.firstChild);
+                
+                // Limita a 10 eventi visibili
+                const events = liveFeed.querySelectorAll('.live-event');
+                if (events.length > 10) {
+                    events[events.length - 1].remove();
+                }
+
+                // Aggiorna tempo partita
+                this.updateMatchTime(event.time);
+            }
+
+            // Aggiorna tempo partita
+            updateMatchTime(time) {
+                const matchTimeEl = document.querySelector('.match-time');
+                if (matchTimeEl) {
+                    matchTimeEl.textContent = `${time}'`;
+                }
+            }
+
+            // Ottiene tempo corrente partita
+            getCurrentMatchTime() {
+                const matchTimeEl = document.querySelector('.match-time');
+                return matchTimeEl ? matchTimeEl.textContent : '0\'';
+            }
+
+            // Sistema notifiche
+            showNotification(message) {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+
+            // Service Worker per funzionalità offline
+            async registerServiceWorker() {
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const registration = await navigator.serviceWorker.register('/sw.js');
+                        console.log('Service Worker registrato:', registration);
+                    } catch (error) {
+                        console.log('Errore Service Worker:', error);
+                    }
+                }
+            }
+
+            // API per integrazione con APES e ICS
+            exportData() {
+                return {
+                    fanInteractions: Object.fromEntries(this.fanInteractions),
+                    liveEvents: this.liveEvents,
+                    currentMode: this.currentMode,
+                    timestamp: new Date().toISOString()
+                };
+            }
+
+            importData(data) {
+                this.fanInteractions = new Map(Object.entries(data.fanInteractions || {}));
+                this.liveEvents = data.liveEvents || [];
+                this.currentMode = data.currentMode || 'coach';
+            }
+        }
+
+        // ===== INIZIALIZZAZIONE =====
+        document.addEventListener('DOMContentLoaded', () => {
+            window.soccerApp = new SoccerInABox();
+            
+            // Binding globali per debug e integrazione
+            window.exportSoccerData = () => window.soccerApp.exportData();
+            window.importSoccerData = (data) => window.soccerApp.importData(data);
+        });
+
+        // ===== PWA INSTALLATION =====
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Mostra prompt di installazione personalizzato
+            const installBtn = document.createElement('button');
+            installBtn.textContent = '📱 Installa App';
+            installBtn.className = 'btn';
+            installBtn.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000;';
+            
+            installBtn.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('PWA installata');
+                    }
+                    deferredPrompt = null;
+                    installBtn.remove();
+                });
+            });
+            
+            document.body.appendChild(installBtn);
+        });
+    </script>
 </body>
 </html>
