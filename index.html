@@ -3,10 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soccer in a Box</title>
+    <title>Soccer in a Box - Professional Football Analysis</title>
+    
+    <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicon e Apple Icons -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='favicon' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%232c5aa0'/><stop offset='100%' stop-color='%231e3d72'/></linearGradient></defs><rect width='32' height='32' fill='url(%23favicon)' rx='6'/><circle cx='16' cy='14' r='6' fill='white' stroke='%23FF9800' stroke-width='1'/><polygon points='16,10 18,13 16,16 14,13' fill='%232c5aa0'/><polygon points='13,14 16,12 19,14 16,16' fill='%23FF9800'/><text x='16' y='26' font-size='4' text-anchor='middle' fill='white' font-weight='bold'>SB</text></svg>">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><defs><linearGradient id='apple' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%232c5aa0'/><stop offset='100%' stop-color='%231e3d72'/></linearGradient></defs><rect width='180' height='180' fill='url(%23apple)' rx='38'/><circle cx='90' cy='78' r='34' fill='white' stroke='%23FF9800' stroke-width='5'/><polygon points='90,50 102,71 90,92 78,71' fill='%232c5aa0'/><polygon points='68,78 90,62 112,78 90,94' fill='%23FF9800'/><polygon points='78,56 102,56 90,44' fill='%234CAF50'/><polygon points='78,100 102,100 90,112' fill='%234CAF50'/><text x='90' y='146' font-size='14' text-anchor='middle' fill='white' font-weight='bold'>SOCCER BOX</text></svg>">
+    
+    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2c5aa0">
-    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Soccer Box">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Soccer Box">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Professional football analysis and community management platform for coaches, scouts and football professionals worldwide">
+    <meta name="keywords" content="football analysis, soccer coaching, match analysis, player evaluation, football community, scouting tools, grassroots football">
+    
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="Soccer in a Box - Professional Football Analysis">
+    <meta property="og:description" content="Complete football analysis and community management platform for coaches, scouts and football professionals worldwide">
+    <meta property="og:image" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 630'><rect width='1200' height='630' fill='%232c5aa0'/><circle cx='600' cy='315' r='120' fill='white' stroke='%23FF9800' stroke-width='20'/><polygon points='600,220 640,290 600,360 560,290' fill='%232c5aa0'/><polygon points='520,315 600,250 680,315 600,380' fill='%23FF9800'/><text x='600' y='520' font-size='60' text-anchor='middle' fill='white' font-weight='bold'>SOCCER IN A BOX</text><text x='600' y='580' font-size='30' text-anchor='middle' fill='%23FFB74D'>Professional Football Analysis &amp; Community</text></svg>">
+    <meta property="og:type" content="website">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="style.css">
@@ -18,7 +42,7 @@
         <div id="home-screen">
             <div class="header">
                 <h1>⚽ Soccer in a Box</h1>
-                <p id="partnership-text">Partnership FSGC - Federazione Sammarinese Giuoco Calcio</p>
+                <p id="tagline-text">Professional Football Analysis & Community Management</p>
             </div>
             
             <div class="card">
@@ -176,7 +200,7 @@
             </div>
         </div>
 
-        <!-- Community Mode - Include the complete community.html content here -->
+        <!-- Community Mode -->
         <div id="community-mode" class="hidden">
             <button class="btn back-btn" onclick="goHome()">← <span id="back-text-community">Indietro</span></button>
             
