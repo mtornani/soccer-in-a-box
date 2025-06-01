@@ -808,6 +808,364 @@ function clearAll() {
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', initApp);
 
+// Aggiungi queste funzioni al tuo app.js esistente per collegare Coach e Community
 
+// Estendi startMatch per attivare community
+const originalStartMatch = window.startMatch;
+window.startMatch = function() {
+    // Chiama la funzione originale
+    if (originalStartMatch) {
+        originalStartMatch();
+    } else {
+        // Implementazione base se non esiste
+        appState.match.homeTeam = document.getElementById('home-team').value;
+        appState.match.awayTeam = document.getElementById('away-team').value;
+        appState.match.date = document.getElementById('match-date').value;
+        appState.match.venue = document.getElementById('venue').value;
+        appState.match.competition = document.getElementById('competition').value;
+        appState.match.startTime = new Date();
+        
+        saveData();
+        showTab('live');
+    }
+    
+    // Attiva community quando il coach inizia il match
+    if (appState.community) {
+        // Simula fan che si collegano
+        appState.community.liveStats.onlineFans = Math.floor(Math.random() * 500) + 100;
+        
+        // Aggiungi messaggio automatico
+        setTimeout(() => {
+            if (typeof addFanMessage === 'function') {
+                addFanMessage(`🔴 LIVE: ${appState.match.homeTeam} vs ${appState.match.awayTeam} is starting!`, 'positive');
+            }
+        }, 1000);
+    }
+};
+
+// Estendi addNote per generare engagement automatico
+const originalAddNote = window.addNote;
+window.addNote = function() {
+    // Chiama la funzione originale
+    if (originalAddNote) {
+        originalAddNote();
+    }
+    
+    // Genera reazione community automatica
+    if (appState.community && typeof addFanMessage === 'function') {
+        const noteText = document.getElementById('note-input')?.value?.toLowerCase() || '';
+        
+        // Reazioni basate sul contenuto della nota
+        setTimeout(() => {
+            if (noteText.includes('gol') || noteText.includes('goal')) {
+                addFanMessage('🎉 GOOOOOL! Amazing shot!', 'positive');
+            } else if (noteText.includes('card') || noteText.includes('ammonizione')) {
+                addFanMessage('🟨 That was a tough decision by the referee', 'neutral');
+            } else if (noteText.includes('cambio') || noteText.includes('sub')) {
+                addFanMessage('🔄 Good substitution, coach knows what to do!', 'positive');
+            } else {
+                // Reazione generale
+                const reactions = [
+                    { text: 'Great tactical observation! 📊', type: 'positive' },
+                    { text: 'Interesting point from the coaching staff', type: 'neutral' },
+                    { text: 'Thanks for keeping us updated! 👍', type: 'positive' }
+                ];
+                const reaction = reactions[Math.floor(Math.random() * reactions.length)];
+                addFanMessage(reaction.text, reaction.type);
+            }
+        }, Math.random() * 3000 + 1000); // Random delay 1-4 secondi
+    }
+};
+
+// Estendi addQuickNote per reazioni immediate
+const originalAddQuickNote = window.addQuickNote;
+window.addQuickNote = function(text) {
+    // Chiama la funzione originale
+    if (originalAddQuickNote) {
+        originalAddQuickNote(text);
+    } else {
+        // Implementazione base se non esiste
+        const note = {
+            id: Date.now(),
+            text: text,
+            timestamp: getTimestamp(),
+            time: appState.timer.elapsedTime
+        };
+        
+        appState.notes.unshift(note);
+        updateTimeline();
+        saveData();
+    }
+    
+    // Genera reazioni community immediate
+    if (appState.community && typeof addFanMessage === 'function') {
+        setTimeout(() => {
+            if (text.includes('⚽')) {
+                // Reazioni per i gol
+                const goalReactions = [
+                    'GOOOOOOOOOL! 🔥🔥🔥',
+                    'What a strike! Incredible! ⚡',
+                    'YES! That\'s why we support this team! 💙',
+                    'Amazing goal! The crowd goes wild! 🎉'
+                ];
+                const reaction = goalReactions[Math.floor(Math.random() * goalReactions.length)];
+                addFanMessage(reaction, 'positive');
+                
+                // Crea automaticamente un sondaggio per il gol
+                setTimeout(() => {
+                    if (appState.community.polls.filter(p => p.active).length < 2) {
+                        createAutoGoalPoll();
+                    }
+                }, 2000);
+                
+            } else if (text.includes('🟨')) {
+                // Reazioni per i cartellini
+                const cardReactions = [
+                    'Fair yellow card, deserved 🟨',
+                    'Referee is being strict today',
+                    'Come on, that was a soft card! 😤',
+                    'Good decision by the ref'
+                ];
+                const reaction = cardReactions[Math.floor(Math.random() * cardReactions.length)];
+                const sentiment = Math.random() > 0.5 ? 'neutral' : 'negative';
+                addFanMessage(reaction, sentiment);
+                
+            } else if (text.includes('🔄')) {
+                // Reazioni per i cambi
+                const subReactions = [
+                    'Smart substitution by the coach! 👏',
+                    'Let\'s see what the new player brings',
+                    'Good time for a change',
+                    'Hope this tactical change works!'
+                ];
+                const reaction = subReactions[Math.floor(Math.random() * subReactions.length)];
+                addFanMessage(reaction, 'positive');
+                
+            } else if (text.includes('🥅')) {
+                // Reazioni per i tiri
+                const shotReactions = [
+                    'So close! Great attempt! 😮',
+                    'What a shot! Keeper made a great save',
+                    'Keep shooting, boys! 💪',
+                    'Almost there! Next one will go in! 🎯'
+                ];
+                const reaction = shotReactions[Math.floor(Math.random() * shotReactions.length)];
+                addFanMessage(reaction, 'positive');
+            }
+        }, Math.random() * 2000 + 500); // Random delay 0.5-2.5 secondi
+    }
+};
+
+// Funzione per creare automaticamente sondaggi dopo eventi importanti
+function createAutoGoalPoll() {
+    if (!appState.community) return;
+    
+    const autoPoll = {
+        id: Date.now(),
+        question: "How would you rate that goal?",
+        options: [
+            { text: "🔥 Incredible strike!", votes: 0 },
+            { text: "👍 Good goal", votes: 0 },
+            { text: "😐 Lucky shot", votes: 0 },
+            { text: "⚽ Simple finish", votes: 0 }
+        ],
+        active: true,
+        createdAt: new Date().toLocaleString(),
+        totalVotes: 0
+    };
+    
+    appState.community.polls.unshift(autoPoll);
+    
+    // Simula voti automatici
+    setTimeout(() => {
+        simulatePollVotes(autoPoll.id);
+    }, 3000);
+    
+    // Aggiorna UI se siamo nella tab polls
+    if (appState.community.currentTab === 'polls') {
+        updatePollsList();
+    }
+    
+    saveData();
+}
+
+// Estendi savePlayer per feedback community
+const originalSavePlayer = window.savePlayer;
+window.savePlayer = function() {
+    const playerName = document.getElementById('player-name')?.value;
+    
+    // Chiama la funzione originale
+    if (originalSavePlayer) {
+        originalSavePlayer();
+    }
+    
+    // Genera feedback community per il giocatore valutato
+    if (appState.community && typeof addFanMessage === 'function' && playerName) {
+        setTimeout(() => {
+            const playerFeedback = [
+                `Great analysis on ${playerName}! 📊`,
+                `${playerName} is definitely one to watch! ⭐`,
+                `Thanks for the detailed evaluation of ${playerName}`,
+                `Interesting insights about ${playerName}'s performance`
+            ];
+            const feedback = playerFeedback[Math.floor(Math.random() * playerFeedback.length)];
+            addFanMessage(feedback, 'positive');
+        }, 1500);
+    }
+};
+
+// Funzione per sincronizzare timer con community
+const originalUpdateTimerDisplay = window.updateTimerDisplay;
+window.updateTimerDisplay = function() {
+    // Chiama la funzione originale
+    if (originalUpdateTimerDisplay) {
+        originalUpdateTimerDisplay();
+    }
+    
+    // Aggiorna stats community se il timer è attivo
+    if (appState.timer.isRunning && appState.community) {
+        // Aumenta engagement durante il match
+        appState.community.liveStats.totalEngagement += Math.floor(Math.random() * 10);
+        
+        // Aggiorna UI se necessario
+        if (appState.community.currentTab === 'engagement') {
+            updateStatsUI();
+        }
+    }
+};
+
+// Funzione per connettere Coach Mode con Community Mode
+function syncCoachToCommunity() {
+    if (!appState.community) return;
+    
+    // Sync match info
+    if (appState.match.homeTeam && appState.match.awayTeam) {
+        appState.community.matchInfo = {
+            homeTeam: appState.match.homeTeam,
+            awayTeam: appState.match.awayTeam,
+            date: appState.match.date,
+            venue: appState.match.venue
+        };
+    }
+    
+    // Sync timer status
+    appState.community.timerStatus = {
+        isRunning: appState.timer.isRunning,
+        elapsedTime: appState.timer.elapsedTime
+    };
+    
+    // Sync stats
+    appState.community.matchStats = {
+        totalNotes: appState.notes.length,
+        playersEvaluated: appState.players.length,
+        averageRating: calculateOverallAverage()
+    };
+}
+
+// Auto-sync ogni 5 secondi
+setInterval(syncCoachToCommunity, 5000);
+
+// Funzioni per migliorare l'integrazione
+function triggerCommunityEvent(eventType, data) {
+    if (!appState.community || typeof addFanMessage !== 'function') return;
+    
+    switch(eventType) {
+        case 'match_start':
+            addFanMessage(`🔴 LIVE: Match is starting! ${data.homeTeam} vs ${data.awayTeam}`, 'positive');
+            break;
+        case 'half_time':
+            addFanMessage('⏸️ Half-time break! What do you think about the first half?', 'neutral');
+            createHalfTimePoll();
+            break;
+        case 'match_end':
+            addFanMessage('⏱️ Full-time! Thanks for following the match with us!', 'positive');
+            createMatchRatingPoll();
+            break;
+        case 'milestone_note':
+            if (appState.notes.length % 10 === 0) {
+                addFanMessage(`📝 Coach team has taken ${appState.notes.length} notes so far! Great analysis!`, 'positive');
+            }
+            break;
+    }
+}
+
+function createHalfTimePoll() {
+    if (!appState.community) return;
+    
+    const halfTimePoll = {
+        id: Date.now(),
+        question: "How was the first half?",
+        options: [
+            { text: "🔥 Excellent performance!", votes: 0 },
+            { text: "👍 Good, but can improve", votes: 0 },
+            { text: "😐 Average half", votes: 0 },
+            { text: "😞 Disappointing", votes: 0 }
+        ],
+        active: true,
+        createdAt: new Date().toLocaleString(),
+        totalVotes: 0
+    };
+    
+    appState.community.polls.unshift(halfTimePoll);
+    setTimeout(() => simulatePollVotes(halfTimePoll.id), 2000);
+    saveData();
+}
+
+function createMatchRatingPoll() {
+    if (!appState.community) return;
+    
+    const matchRatingPoll = {
+        id: Date.now(),
+        question: "Overall match rating?",
+        options: [
+            { text: "⭐⭐⭐⭐⭐ Perfect!", votes: 0 },
+            { text: "⭐⭐⭐⭐ Very good", votes: 0 },
+            { text: "⭐⭐⭐ Good", votes: 0 },
+            { text: "⭐⭐ Could be better", votes: 0 },
+            { text: "⭐ Poor performance", votes: 0 }
+        ],
+        active: true,
+        createdAt: new Date().toLocaleString(),
+        totalVotes: 0
+    };
+    
+    appState.community.polls.unshift(matchRatingPoll);
+    setTimeout(() => simulatePollVotes(matchRatingPoll.id), 1000);
+    saveData();
+}
+
+// Trigger eventi automatici basati su timer
+const originalStartTimer = window.startTimer;
+window.startTimer = function() {
+    if (originalStartTimer) {
+        originalStartTimer();
+    }
+    
+    // Trigger community event
+    triggerCommunityEvent('match_start', {
+        homeTeam: appState.match.homeTeam,
+        awayTeam: appState.match.awayTeam
+    });
+    
+    // Auto-trigger half-time poll a 45 minuti
+    setTimeout(() => {
+        if (appState.timer.isRunning) {
+            triggerCommunityEvent('half_time', {});
+        }
+    }, 45 * 60 * 1000); // 45 minuti
+};
+
+// Trigger milestone notes
+const originalUpdateTimeline = window.updateTimeline;
+window.updateTimeline = function() {
+    if (originalUpdateTimeline) {
+        originalUpdateTimeline();
+    }
+    
+    // Trigger milestone event
+    triggerCommunityEvent('milestone_note', {});
+};
+
+console.log('Coach-Community integration loaded successfully!');
         
         
