@@ -152,5 +152,5 @@ Per bug o feedback durante la beta:
 
 ---
 
-**⚽ Ready per lunedì!** 
+**⚽ Ready to use!** 
 *Made with ❤️ for the football community*
