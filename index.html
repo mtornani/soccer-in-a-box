@@ -23,15 +23,6 @@
     <!-- CONTAINER PRINCIPALE -->
     <div class="main-container">
         
-        <!-- TEST BUTTON -->
-        <div style="text-align: center; margin: 2rem 0;">
-            <button onclick="testFunction()" style="background: red; color: white; padding: 1rem 2rem; font-size: 1.2rem; border: none; border-radius: 10px;">
-                🔥 TEST JAVASCRIPT
-            </button>
-            <button onclick="quickTest()" style="background: blue; color: white; padding: 1rem 2rem; font-size: 1.2rem; border: none; border-radius: 10px; margin-left: 1rem;">
-                🔵 CAMBIA LOGO
-            </button>
-        </div>
         
         <!-- COACH MODE -->
         <div id="coach-mode" class="mode-container active">
@@ -207,20 +198,250 @@
     <!-- NOTIFICATION SYSTEM -->
     <div id="notification" class="notification"></div>
 
-    <!-- TEST INLINE -->
+    <!-- JAVASCRIPT COMPLETO INLINE -->
     <script>
-        console.log('🔥 Script inline funziona!');
+        console.log('🔥 Script inline caricato!');
         
+        // Test functions
         function testFunction() {
             alert('✅ JavaScript inline OK!');
-            console.log('Test inline chiamato');
         }
         
         function quickTest() {
             document.querySelector('.logo').textContent = '⚽ JS FUNZIONA!';
         }
-    </script>
-    
-    <script src="script.js"></script>
-</body>
-</html>
+
+        // ===== SOCCER IN A BOX - MAIN CLASS =====
+        class SoccerInABox {
+            constructor() {
+                this.currentMode = 'coach';
+                this.fanProfile = {
+                    level: 1,
+                    points: 0,
+                    predictionsCorrect: 0,
+                    narrativesWritten: 0,
+                    badges: ['🆕 Rookie Detective']
+                };
+                this.currentSnapshot = null;
+                this.mysteryIndex = 0;
+                this.currentPrediction = null;
+                this.mysteries = [];
+                this.init();
+            }
+
+            init() {
+                this.setupModeNavigation();
+                this.setupImportSystem();
+                this.loadFanProfile();
+            }
+
+            // ===== NAVIGAZIONE =====
+            setupModeNavigation() {
+                const modeButtons = document.querySelectorAll('.mode-btn');
+                const modeContainers = document.querySelectorAll('.mode-container');
+
+                modeButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const targetMode = btn.dataset.mode;
+                        
+                        modeButtons.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        
+                        modeContainers.forEach(container => {
+                            container.classList.remove('active');
+                        });
+                        
+                        document.getElementById(`${targetMode}-mode`).classList.add('active');
+                        this.currentMode = targetMode;
+                        this.showNotification(`Modalità ${targetMode} attivata!`);
+                    });
+                });
+            }
+
+            // ===== EXPORT SNAPSHOT =====
+            exportSnapshot() {
+                const snapshot = {
+                    match: "Juventus vs Inter",
+                    timestamp: "75'",
+                    score: "2-1",
+                    mysteries: [
+                        {
+                            time: "65'",
+                            setup: "Chiesa riceve palla sulla fascia destra, a 25 metri dalla porta avversaria. Davanti a lui Bastoni in marcatura, alle spalle Vlahovic che chiede palla in area...",
+                            question: "Cosa succederà secondo te?",
+                            options: [
+                                { id: "cross", text: "🎯 Cross in area per Vlahovic", correct: true },
+                                { id: "dribbling", text: "⚡ Dribbling su Bastoni", correct: false },
+                                { id: "backward", text: "↩️ Passaggio indietro sicuro", correct: false },
+                                { id: "shot", text: "🚀 Tiro dalla distanza", correct: false }
+                            ],
+                            revelation: "⚽ Chiesa crossa perfettamente in area! Vlahovic svetta di testa ma Handanovic para in extremis!",
+                            points: 50
+                        }
+                    ]
+                };
+
+                const encoded = btoa(JSON.stringify(snapshot));
+                const shareLink = `soccer://snapshot/${encoded}`;
+                
+                document.getElementById('share-link').value = shareLink;
+                document.getElementById('share-link-container').classList.remove('hidden');
+                
+                this.showNotification('🔗 Link snapshot generato!', 'success');
+            }
+
+            // ===== IMPORT =====
+            setupImportSystem() {
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('prediction-btn')) {
+                        document.querySelectorAll('.prediction-btn').forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
+                        e.target.classList.add('selected');
+                        this.currentPrediction = e.target.dataset.option;
+                    }
+                });
+            }
+
+            importFromLink() {
+                const link = document.getElementById('snapshot-link').value.trim();
+                
+                if (!link.startsWith('soccer://snapshot/')) {
+                    this.showNotification('❌ Link non valido', 'error');
+                    return;
+                }
+                
+                try {
+                    const encoded = link.replace('soccer://snapshot/', '');
+                    const snapshot = JSON.parse(atob(encoded));
+                    this.loadSnapshot(snapshot);
+                } catch (error) {
+                    this.showNotification('❌ Errore nel decodificare il link', 'error');
+                }
+            }
+
+            loadSampleData() {
+                this.exportSnapshot();
+                const link = document.getElementById('share-link').value;
+                document.getElementById('snapshot-link').value = link;
+                this.importFromLink();
+            }
+
+            loadSnapshot(snapshot) {
+                this.currentSnapshot = snapshot;
+                this.mysteries = snapshot.mysteries || [];
+                this.mysteryIndex = 0;
+                
+                document.getElementById('import-container').classList.add('hidden');
+                document.getElementById('investigation-area').classList.remove('hidden');
+                
+                this.loadCurrentMystery();
+                this.showNotification(`🕵️ Analisi caricata: ${snapshot.match}`, 'success');
+            }
+
+            // ===== DETECTIVE GAMEPLAY =====
+            loadCurrentMystery() {
+                if (this.mysteryIndex >= this.mysteries.length) {
+                    this.completeInvestigation();
+                    return;
+                }
+
+                const mystery = this.mysteries[this.mysteryIndex];
+                
+                document.getElementById('prediction-result').classList.add('hidden');
+                document.getElementById('current-mystery').classList.remove('hidden');
+                
+                document.getElementById('mystery-time').textContent = mystery.time;
+                document.getElementById('mystery-description').innerHTML = 
+                    mystery.setup + '<br><br><strong>' + mystery.question + '</strong>';
+                
+                const optionsContainer = document.getElementById('prediction-options');
+                optionsContainer.innerHTML = '';
+                
+                mystery.options.forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.className = 'prediction-btn';
+                    btn.dataset.option = option.id;
+                    btn.textContent = option.text;
+                    optionsContainer.appendChild(btn);
+                });
+
+                this.currentPrediction = null;
+                this.updateProgress();
+            }
+
+            submitPrediction() {
+                if (!this.currentPrediction) {
+                    this.showNotification('🤔 Seleziona prima una predizione!', 'info');
+                    return;
+                }
+
+                const mystery = this.mysteries[this.mysteryIndex];
+                const selectedOption = mystery.options.find(opt => opt.id === this.currentPrediction);
+                const isCorrect = selectedOption.correct;
+                
+                document.querySelectorAll('.prediction-btn').forEach(btn => {
+                    const optionData = mystery.options.find(opt => opt.id === btn.dataset.option);
+                    if (optionData.correct) {
+                        btn.classList.add('correct');
+                    } else if (btn.dataset.option === this.currentPrediction) {
+                        btn.classList.add('wrong');
+                    }
+                });
+
+                if (isCorrect) {
+                    this.fanProfile.points += mystery.points;
+                    this.fanProfile.predictionsCorrect++;
+                }
+
+                this.showRevelation(mystery, isCorrect);
+                this.updateFanStats();
+                this.saveFanProfile();
+            }
+
+            showRevelation(mystery, isCorrect) {
+                const resultCard = document.getElementById('prediction-result');
+                const content = document.getElementById('revelation-content');
+                
+                const pointsText = isCorrect ? 
+                    `<div style="color: #22c55e; font-weight: bold;">+${mystery.points} punti! 🎉</div>` :
+                    `<div style="color: #ef4444;">Nessun punto questa volta 😔</div>`;
+                
+                content.innerHTML = `
+                    <div style="font-size: 1.1rem; margin-bottom: 1rem;">
+                        ${mystery.revelation}
+                    </div>
+                    ${pointsText}
+                `;
+                
+                document.getElementById('current-mystery').classList.add('hidden');
+                resultCard.classList.remove('hidden');
+            }
+
+            nextMystery() {
+                this.mysteryIndex++;
+                this.loadCurrentMystery();
+            }
+
+            // ===== GAMIFICATION =====
+            updateFanStats() {
+                document.getElementById('fan-level').textContent = this.fanProfile.level;
+                document.getElementById('fan-points').textContent = this.fanProfile.points;
+                document.getElementById('predictions-correct').textContent = this.fanProfile.predictionsCorrect;
+                document.getElementById('narratives-written').textContent = this.fanProfile.narrativesWritten;
+                
+                const newLevel = Math.floor(this.fanProfile.points / 100) + 1;
+                if (newLevel > this.fanProfile.level) {
+                    this.fanProfile.level = newLevel;
+                    this.showNotification(`🆙 Level UP! Ora sei livello ${newLevel}!`, 'success');
+                }
+            }
+
+            updateProgress() {
+                const progress = ((this.mysteryIndex) / this.mysteries.length) * 100;
+                document.getElementById('progress-fill').style.width = `${progress}%`;
+                document.getElementById('progress-text').textContent = 
+                    `${this.mysteryIndex}/${this.mysteries.length} eventi analizzati`;
+            }
+
+            // ===== 
