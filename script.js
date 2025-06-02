@@ -478,60 +478,66 @@ class SoccerInABox {
     }
 }
 
-// ===== FUNZIONI GLOBALI =====
+// ===== FUNZIONI GLOBALI (DEVONO ESSERE FUORI DALLA CLASSE) =====
 function startAnalysis() {
-    window.soccerApp.showNotification('🚀 Analisi avviata!', 'success');
+    if (window.soccerApp) {
+        window.soccerApp.showNotification('🚀 Analisi avviata!', 'success');
+    }
 }
 
 function exportSnapshot() {
-    window.soccerApp.exportSnapshot();
+    if (window.soccerApp) {
+        window.soccerApp.exportSnapshot();
+    }
 }
 
 function copyShareLink() {
-    window.soccerApp.copyShareLink();
+    if (window.soccerApp) {
+        window.soccerApp.copyShareLink();
+    }
 }
 
 function importFromLink() {
-    window.soccerApp.importFromLink();
+    if (window.soccerApp) {
+        window.soccerApp.importFromLink();
+    }
 }
 
 function loadSampleData() {
-    window.soccerApp.loadSampleData();
+    if (window.soccerApp) {
+        window.soccerApp.loadSampleData();
+    }
 }
 
 function submitPrediction() {
-    window.soccerApp.submitPrediction();
+    if (window.soccerApp) {
+        window.soccerApp.submitPrediction();
+    }
 }
 
 function nextMystery() {
-    window.soccerApp.nextMystery();
+    if (window.soccerApp) {
+        window.soccerApp.nextMystery();
+    }
 }
 
 function submitNarrative() {
-    window.soccerApp.submitNarrative();
+    if (window.soccerApp) {
+        window.soccerApp.submitNarrative();
+    }
 }
 
 // ===== INIZIALIZZAZIONE =====
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Soccer in a Box inizializzato!');
+    
+    // Crea l'app globalmente
     window.soccerApp = new SoccerInABox();
+    
+    // Test immediato
+    console.log('✅ App caricata:', window.soccerApp);
+    console.log('✅ Funzioni globali:', typeof exportSnapshot);
     
     // API globali per integrazione
     window.exportSoccerData = () => window.soccerApp.exportData();
-    window.importSoccerData = (data) => window.soccerApp.importData(data);
-    
-    // Debug: verifica che tutto sia collegato
-    console.log('✅ App caricata, bottoni dovrebbero funzionare');
-});
-
-// ===== PWA INSTALLATION =====
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    
-    const installBtn = document.createElement('button');
-    installBtn.textContent = '📱 Installa App';
-    installBtn.className = 'btn';
-    installBtn.style.cssText = 'position: fixed;
+    window.importSoccerData =
