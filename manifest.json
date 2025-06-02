@@ -1,111 +1,67 @@
 {
-  "name": "Soccer in a Box - Professional Football Analysis & Community",
-  "short_name": "Soccer Box",
-  "description": "Complete football analysis and community management platform for coaches, scouts and football professionals",
+  "name": "Soccer in a Box",
+  "short_name": "SoccerBox",
+  "description": "Analisi tattica offline per coach e fan detective",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#2c5aa0",
-  "background_color": "#f8f9fa",
-  "orientation": "portrait-primary",
+  "background_color": "#0f2027",
+  "theme_color": "#1a472a",
+  "orientation": "portrait",
   "scope": "/",
-  "lang": "en",
-  "dir": "ltr",
-  "categories": ["sports", "productivity", "utilities", "business", "social"],
+  "lang": "it",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%232c5aa0'/><stop offset='100%' stop-color='%231e3d72'/></linearGradient></defs><rect width='72' height='72' fill='url(%23bg)' rx='16'/><circle cx='36' cy='32' r='14' fill='white' stroke='%23FF9800' stroke-width='2'/><polygon points='36,24 40,30 36,36 32,30' fill='%232c5aa0'/><polygon points='30,32 36,28 42,32 36,36' fill='%23FF9800'/><text x='36' y='58' font-size='8' text-anchor='middle' fill='white' font-weight='bold'>SOCCER BOX</text></svg>",
-      "sizes": "72x72",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><defs><linearGradient id='bg96' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%232c5aa0'/><stop offset='100%' stop-color='%231e3d72'/></linearGradient><linearGradient id='ball96' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='white'/><stop offset='100%' stop-color='%23f0f0f0'/></linearGradient></defs><rect width='96' height='96' fill='url(%23bg96)' rx='20'/><circle cx='48' cy='42' r='18' fill='url(%23ball96)' stroke='%23FF9800' stroke-width='3'/><polygon points='48,28 54,38 48,48 42,38' fill='%232c5aa0'/><polygon points='36,42 48,34 60,42 48,50' fill='%23FF9800'/><polygon points='42,30 54,30 48,24' fill='%234CAF50'/><polygon points='42,54 54,54 48,60' fill='%234CAF50'/><text x='48' y='78' font-size='10' text-anchor='middle' fill='white' font-weight='bold'>SOCCER BOX</text></svg>",
-      "sizes": "96x96",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><defs><linearGradient id='bg128' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%232c5aa0'/><stop offset='100%' stop-color='%231e3d72'/></linearGradient><linearGradient id='ball128' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='white'/><stop offset='100%' stop-color='%23f0f0f0'/></linearGradient><filter id='shadow'><feDropShadow dx='2' dy='2' stdDeviation='3' flood-color='rgba(0,0,0,0.3)'/></filter></defs><rect width='128' height='128' fill='url(%23bg128)' rx='28'/><circle cx='64' cy='56' r='24' fill='url(%23ball128)' stroke='%23FF9800' stroke-width='4' filter='url(%23shadow)'/><polygon points='64,36 72,50 64,64 56,50' fill='%232c5aa0'/><polygon points='48,56 64,44 80,56 64,68' fill='%23FF9800'/><polygon points='56,40 72,40 64,32' fill='%234CAF50'/><polygon points='56,72 72,72 64,80' fill='%234CAF50'/><polygon points='50,48 58,56 50,64 42,56' fill='%23f44336'/><polygon points='78,48 86,56 78,64 70,56' fill='%23f44336'/><text x='64' y='104' font-size='12' text-anchor='middle' fill='white' font-weight='bold'>SOCCER BOX</text></svg>",
-      "sizes": "128x128",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='bg192' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%232c5aa0'/><stop offset='100%' stop-color='%231e3d72'/></linearGradient><linearGradient id='ball192' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='white'/><stop offset='100%' stop-color='%23f0f0f0'/></linearGradient><filter id='shadow192'><feDropShadow dx='3' dy='3' stdDeviation='4' flood-color='rgba(0,0,0,0.4)'/></filter></defs><rect width='192' height='192' fill='url(%23bg192)' rx='40'/><circle cx='96' cy='84' r='36' fill='url(%23ball192)' stroke='%23FF9800' stroke-width='6' filter='url(%23shadow192)'/><polygon points='96,54 108,75 96,96 84,75' fill='%232c5aa0'/><polygon points='72,84 96,66 120,84 96,102' fill='%23FF9800'/><polygon points='84,60 108,60 96,48' fill='%234CAF50'/><polygon points='84,108 108,108 96,120' fill='%234CAF50'/><polygon points='75,72 87,84 75,96 63,84' fill='%23f44336'/><polygon points='117,72 129,84 117,96 105,84' fill='%23f44336'/><polygon points='90,66 102,66 96,60' fill='%239C27B0'/><polygon points='90,102 102,102 96,108' fill='%239C27B0'/><text x='96' y='156' font-size='16' text-anchor='middle' fill='white' font-weight='bold'>SOCCER BOX</text><text x='96' y='172' font-size='10' text-anchor='middle' fill='%23FFB74D' font-weight='normal'>Match Analysis</text></svg>",
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='bg512' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%232c5aa0'/><stop offset='100%' stop-color='%231e3d72'/></linearGradient><linearGradient id='ball512' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='white'/><stop offset='100%' stop-color='%23f0f0f0'/></linearGradient><filter id='shadow512'><feDropShadow dx='8' dy='8' stdDeviation='12' flood-color='rgba(0,0,0,0.5)'/></filter><filter id='glow'><feGaussianBlur stdDeviation='3' result='coloredBlur'/><feMerge><feMergeNode in='coloredBlur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><rect width='512' height='512' fill='url(%23bg512)' rx='110'/><circle cx='256' cy='220' r='96' fill='url(%23ball512)' stroke='%23FF9800' stroke-width='16' filter='url(%23shadow512)'/><polygon points='256,144 288,200 256,256 224,200' fill='%232c5aa0'/><polygon points='192,220 256,176 320,220 256,264' fill='%23FF9800'/><polygon points='224,160 288,160 256,128' fill='%234CAF50'/><polygon points='224,280 288,280 256,312' fill='%234CAF50'/><polygon points='200,192 232,220 200,248 168,220' fill='%23f44336'/><polygon points='312,192 344,220 312,248 280,220' fill='%23f44336'/><polygon points='240,176 272,176 256,160' fill='%239C27B0'/><polygon points='240,264 272,264 256,280' fill='%239C27B0'/><polygon points='208,208 224,208 216,200' fill='%23795548'/><polygon points='288,208 304,208 296,200' fill='%23795548'/><polygon points='208,232 224,232 216,240' fill='%23795548'/><polygon points='288,232 304,232 296,240' fill='%23795548'/><text x='256' y='380' font-size='42' text-anchor='middle' fill='white' font-weight='bold' filter='url(%23glow)'>SOCCER BOX</text><text x='256' y='420' font-size='24' text-anchor='middle' fill='%23FFB74D' font-weight='normal'>Professional Analysis</text><text x='256' y='450' font-size='20' text-anchor='middle' fill='%2381C784' font-weight='normal'>Community Management</text></svg>",
+      "src": "icon-512.png", 
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "categories": ["sports", "education", "utilities"],
+  "screenshots": [
+    {
+      "src": "screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "screenshot-narrow.png", 
+      "sizes": "640x1136",
+      "type": "image/png",
+      "form_factor": "narrow"
     }
   ],
   "shortcuts": [
     {
-      "name": "Quick Coach Analysis",
+      "name": "Coach Mode",
       "short_name": "Coach",
-      "description": "Start immediate match analysis with timer and notes",
-      "url": "/?mode=coach&tab=live",
+      "description": "Modalità analisi per coach",
+      "url": "/?mode=coach",
       "icons": [
         {
-          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><defs><linearGradient id='coach' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%234CAF50'/><stop offset='100%' stop-color='%232E7D32'/></linearGradient></defs><rect width='96' height='96' fill='url(%23coach)' rx='20'/><rect x='20' y='30' width='56' height='36' fill='white' rx='4'/><rect x='24' y='34' width='12' height='8' fill='%234CAF50'/><rect x='40' y='34' width='12' height='8' fill='%23FF9800'/><rect x='56' y='34' width='12' height='8' fill='%23f44336'/><rect x='24' y='46' width='48' height='2' fill='%23E0E0E0'/><rect x='24' y='50' width='36' height='2' fill='%23E0E0E0'/><rect x='24' y='54' width='42' height='2' fill='%23E0E0E0'/><rect x='24' y='58' width='30' height='2' fill='%23E0E0E0'/><text x='48' y='82' font-size='10' text-anchor='middle' fill='white' font-weight='bold'>COACH</text></svg>",
+          "src": "coach-icon.png",
           "sizes": "96x96"
         }
       ]
     },
     {
-      "name": "Fan Engagement",
-      "short_name": "Community",
-      "description": "Manage fan engagement and community interactions",
-      "url": "/?mode=community&tab=engagement",
+      "name": "Detective Mode", 
+      "short_name": "Detective",
+      "description": "Modalità investigazione per fan",
+      "url": "/?mode=detective",
       "icons": [
         {
-          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><defs><linearGradient id='community' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23FF9800'/><stop offset='100%' stop-color='%23F57C00'/></linearGradient></defs><rect width='96' height='96' fill='url(%23community)' rx='20'/><circle cx='35' cy='35' r='8' fill='white'/><circle cx='60' cy='35' r='8' fill='white'/><circle cx='48' cy='55' r='8' fill='white'/><path d='M35 43 Q48 50 60 43' stroke='white' stroke-width='3' fill='none'/><path d='M25 60 Q48 70 70 60' stroke='white' stroke-width='3' fill='none'/><circle cx='48' cy='25' r='3' fill='%234CAF50'/><text x='48' y='85' font-size='10' text-anchor='middle' fill='white' font-weight='bold'>FANS</text></svg>",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "Create Poll",
-      "short_name": "Poll",
-      "description": "Create instant fan polls and surveys",
-      "url": "/?mode=community&tab=polls",
-      "icons": [
-        {
-          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><defs><linearGradient id='poll' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23673AB7'/><stop offset='100%' stop-color='%234527A0'/></linearGradient></defs><rect width='96' height='96' fill='url(%23poll)' rx='20'/><rect x='20' y='25' width='32' height='6' fill='%234CAF50' rx='3'/><rect x='20' y='35' width='48' height='6' fill='%23FF9800' rx='3'/><rect x='20' y='45' width='24' height='6' fill='%23f44336' rx='3'/><rect x='20' y='55' width='40' height='6' fill='%232196F3' rx='3'/><circle cx='58' cy='28' r='3' fill='white'/><circle cx='74' cy='38' r='3' fill='white'/><circle cx='50' cy='48' r='3' fill='white'/><circle cx='66' cy='58' r='3' fill='white'/><text x='48' y='80' font-size='10' text-anchor='middle' fill='white' font-weight='bold'>POLL</text></svg>",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "Player Evaluation",
-      "short_name": "Players",
-      "description": "Quick player performance evaluation",
-      "url": "/?mode=coach&tab=players",
-      "icons": [
-        {
-          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><defs><linearGradient id='players' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%232196F3'/><stop offset='100%' stop-color='%231565C0'/></linearGradient></defs><rect width='96' height='96' fill='url(%23players)' rx='20'/><circle cx='48' cy='35' r='12' fill='white'/><rect x='36' y='50' width='24' height='20' fill='white' rx='2'/><polygon points='42,25 48,30 54,25 48,20' fill='%23FFD700'/><polygon points='40,35 48,40 56,35 48,30' fill='%23FFD700'/><polygon points='44,45 48,50 52,45 48,40' fill='%23FFD700'/><text x='48' y='82' font-size='10' text-anchor='middle' fill='white' font-weight='bold'>STARS</text></svg>",
+          "src": "detective-icon.png",
           "sizes": "96x96"
         }
       ]
     }
-  ],
-  "prefer_related_applications": false,
-  "related_applications": [],
-  "screenshots": [
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'><rect width='390' height='844' fill='%23f8f9fa'/><rect x='20' y='40' width='350' height='120' rx='12' fill='url(%23bg192)'/><text x='195' y='100' font-size='20' text-anchor='middle' fill='white'>⚽ Soccer in a Box</text><rect x='20' y='180' width='350' height='100' rx='12' fill='white' stroke='%23e0e0e0'/><text x='40' y='210' font-size='24'>📊</text><text x='195' y='235' font-size='16' text-anchor='middle' fill='%23333'>Coach Mode</text><rect x='20' y='300' width='350' height='100' rx='12' fill='white' stroke='%23e0e0e0'/><text x='40' y='330' font-size='24'>🚀</text><text x='195' y='355' font-size='16' text-anchor='middle' fill='%23333'>Community Mode</text></svg>",
-      "sizes": "390x844",
-      "type": "image/svg+xml",
-      "form_factor": "narrow",
-      "label": "Home screen showing mode selection"
-    }
-  ],
-  "display_override": ["window-controls-overlay", "standalone"],
-  "edge_side_panel": {
-    "preferred_width": 400
-  }
+  ]
 }
