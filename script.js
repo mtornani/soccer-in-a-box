@@ -1,4 +1,11 @@
-// ===== SOCCER IN A BOX - DETECTIVE MODE =====
+// ===== TEST IMMEDIATO =====
+console.log('🔥 Script caricato!');
+
+// Test funzione semplice
+function testFunction() {
+    alert('✅ JavaScript funziona!');
+    console.log('Test function chiamata');
+}
 class SoccerInABox {
     constructor() {
         this.currentMode = 'coach';
@@ -536,8 +543,4 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Test immediato
     console.log('✅ App caricata:', window.soccerApp);
-    console.log('✅ Funzioni globali:', typeof exportSnapshot);
-    
-    // API globali per integrazione
-    window.exportSoccerData = () => window.soccerApp.exportData();
-    window.importSoccerData =
+    console.log('✅ Funzioni globali:', typeof e
