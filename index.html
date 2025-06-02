@@ -28,6 +28,9 @@
             <button onclick="testFunction()" style="background: red; color: white; padding: 1rem 2rem; font-size: 1.2rem; border: none; border-radius: 10px;">
                 🔥 TEST JAVASCRIPT
             </button>
+            <button onclick="quickTest()" style="background: blue; color: white; padding: 1rem 2rem; font-size: 1.2rem; border: none; border-radius: 10px; margin-left: 1rem;">
+                🔵 CAMBIA LOGO
+            </button>
         </div>
         
         <!-- COACH MODE -->
@@ -204,6 +207,20 @@
     <!-- NOTIFICATION SYSTEM -->
     <div id="notification" class="notification"></div>
 
+    <!-- TEST INLINE -->
+    <script>
+        console.log('🔥 Script inline funziona!');
+        
+        function testFunction() {
+            alert('✅ JavaScript inline OK!');
+            console.log('Test inline chiamato');
+        }
+        
+        function quickTest() {
+            document.querySelector('.logo').textContent = '⚽ JS FUNZIONA!';
+        }
+    </script>
+    
     <script src="script.js"></script>
 </body>
 </html>
