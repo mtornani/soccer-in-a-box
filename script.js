@@ -513,11 +513,15 @@ function submitNarrative() {
 
 // ===== INIZIALIZZAZIONE =====
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Soccer in a Box inizializzato!');
     window.soccerApp = new SoccerInABox();
     
     // API globali per integrazione
     window.exportSoccerData = () => window.soccerApp.exportData();
     window.importSoccerData = (data) => window.soccerApp.importData(data);
+    
+    // Debug: verifica che tutto sia collegato
+    console.log('✅ App caricata, bottoni dovrebbero funzionare');
 });
 
 // ===== PWA INSTALLATION =====
@@ -530,18 +534,4 @@ window.addEventListener('beforeinstallprompt', (e) => {
     const installBtn = document.createElement('button');
     installBtn.textContent = '📱 Installa App';
     installBtn.className = 'btn';
-    installBtn.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000;';
-    
-    installBtn.addEventListener('click', () => {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-                console.log('PWA installata');
-            }
-            deferredPrompt = null;
-            installBtn.remove();
-        });
-    });
-    
-    document.body.appendChild(installBtn);
-});
+    installBtn.style.cssText = 'position: fixed;
