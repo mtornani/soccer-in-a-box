@@ -1,12 +1,12 @@
 const CACHE_NAME = 'soccer-in-a-box-v1.1.0';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/community.css',
-  '/app.js',
-  '/community.js',
-  '/manifest.json'
+  './',
+  'index.html',
+  'style.css',
+  'community.css',
+  'app.js',
+  'community.js',
+  'manifest.json'
 ];
 
 // Install event - cache resources
@@ -89,7 +89,7 @@ self.addEventListener('fetch', event => {
           .catch(() => {
             // If network fails, try to return a fallback
             if (event.request.destination === 'document') {
-              return caches.match('/index.html');
+              return caches.match('index.html');
             }
           });
       })
