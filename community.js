@@ -1,6 +1,179 @@
 // Community Module - FIXED VERSION
 // ===================================
 
+// Helper Functions for Shared Analysis
+function getFormattedTimestamp(elapsedMs) {
+    if (isNaN(elapsedMs) || elapsedMs < 0) elapsedMs = 0;
+    const minutes = Math.floor(elapsedMs / 60000);
+    const seconds = Math.floor((elapsedMs % 60000) / 1000);
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function escapeHTML(str) {
+    if (str === null || str === undefined) {
+        return '';
+    }
+    return String(str).replace(/[&<>"']/g, function (match) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[match];
+    });
+}
+
+// Core Viewer Functions for Shared Analysis
+function clearSharedAnalysisDisplay() {
+    const displayArea = document.getElementById('shared-analysis-display-area');
+    if (displayArea) {
+        displayArea.innerHTML = '<p><em>No analysis loaded or cleared. Use the controls above to load an analysis.</em></p>';
+    }
+}
+
+function displaySharedAnalysis(data) {
+    const displayArea = document.getElementById('shared-analysis-display-area');
+    if (!displayArea) {
+        console.error('Shared analysis display area not found.');
+        return;
+    }
+    displayArea.innerHTML = ''; // Clear previous content
+
+    if (!data || typeof data !== 'object') {
+        displayArea.innerHTML = '<p><em>Error: Invalid analysis data format.</em></p>';
+        return;
+    }
+
+    let html = '<h4>Analysis Snapshot Details:</h4>';
+    html += `<p><strong>Snapshot Version:</strong> ${escapeHTML(data.snapshotVersion)}</p>`;
+    html += `<p><strong>Generated At:</strong> ${escapeHTML(new Date(data.generatedAt).toLocaleString())}</p>`;
+    html += `<p><strong>Source App:</strong> ${escapeHTML(data.sourceApp)}</p>`;
+
+    if (data.matchDetails) {
+        html += '<hr><h5>Match Details:</h5>';
+        html += `<p><strong>Teams:</strong> ${escapeHTML(data.matchDetails.homeTeam)} vs ${escapeHTML(data.matchDetails.awayTeam)}</p>`;
+        html += `<p><strong>Date:</strong> ${escapeHTML(data.matchDetails.date)}</p>`;
+        html += `<p><strong>Venue:</strong> ${escapeHTML(data.matchDetails.venue)}</p>`;
+        html += `<p><strong>Competition:</strong> ${escapeHTML(data.matchDetails.competition)}</p>`;
+        if (data.matchDetails.startTimeISO) {
+             html += `<p><strong>Start Time:</strong> ${escapeHTML(new Date(data.matchDetails.startTimeISO).toLocaleString())}</p>`;
+        }
+        html += `<p><strong>Final Duration:</strong> ${escapeHTML(data.matchDetails.finalDurationFormatted)}</p>`;
+    }
+
+    if (data.analysisSummary) {
+        html += '<hr><h5>Analysis Summary:</h5>';
+        html += `<p><strong>Total Notes:</strong> ${escapeHTML(data.analysisSummary.totalNotes)}</p>`;
+        html += `<p><strong>Players Evaluated:</strong> ${escapeHTML(data.analysisSummary.playersEvaluated)}</p>`;
+        html += `<p><strong>Overall Average Rating:</strong> ${escapeHTML(data.analysisSummary.overallAverageRating)}</p>`;
+    }
+
+    if (data.timelineEvents && data.timelineEvents.length > 0) {
+        html += '<hr><h5>Timeline Events:</h5>';
+        html += '<ul>';
+        data.timelineEvents.forEach(event => {
+            html += `<li><strong>${escapeHTML(event.timestampFormatted)}:</strong> ${escapeHTML(event.text)}</li>`;
+        });
+        html += '</ul>';
+    }
+
+    if (data.playerEvaluations && data.playerEvaluations.length > 0) {
+        html += '<hr><h5>Player Evaluations:</h5>';
+        data.playerEvaluations.forEach(player => {
+            html += `<div class="player-eval-card" style="border:1px solid #ccc; margin-bottom:10px; padding:10px; border-radius:5px;">`;
+            html += `<strong>${escapeHTML(player.name)} (#${escapeHTML(player.number)})</strong> - ${escapeHTML(player.position)}`;
+            html += `<p>Avg Rating: ${escapeHTML(player.averageRating)}⭐</p>`;
+            if (player.ratings) {
+                html += `<p>Technical: ${escapeHTML(player.ratings.technical)}⭐ | Physical: ${escapeHTML(player.ratings.physical)}⭐ | Mental: ${escapeHTML(player.ratings.mental)}⭐</p>`;
+            }
+            if (player.notes) {
+                html += `<p><em>Notes:</em> ${escapeHTML(player.notes)}</p>`;
+            }
+            html += `</div>`;
+        });
+    }
+    displayArea.innerHTML = html;
+}
+
+function handleSnapshotFile(file) {
+    if (!file) {
+        clearSharedAnalysisDisplay();
+        document.getElementById('shared-analysis-display-area').innerHTML = '<p><em>No file selected.</em></p>';
+        return;
+    }
+    if (file.type !== 'application/json') {
+        clearSharedAnalysisDisplay();
+        document.getElementById('shared-analysis-display-area').innerHTML = '<p><em>Error: Invalid file type. Please select a .json file.</em></p>';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        try {
+            const snapshotData = JSON.parse(event.target.result);
+            displaySharedAnalysis(snapshotData);
+        } catch (e) {
+            console.error("Error parsing snapshot JSON:", e);
+            clearSharedAnalysisDisplay();
+            document.getElementById('shared-analysis-display-area').innerHTML = `<p><em>Error: Could not parse the JSON file. ${escapeHTML(e.message)}</em></p>`;
+        }
+    };
+    reader.onerror = function(event) {
+        console.error("File reading error:", event);
+        clearSharedAnalysisDisplay();
+        document.getElementById('shared-analysis-display-area').innerHTML = '<p><em>Error: Could not read the file.</em></p>';
+    };
+    reader.readAsText(file);
+}
+
+function initSharedAnalysisView() {
+    console.log('Initializing Shared Analysis View');
+    const fileInput = document.getElementById('snapshot-file-input');
+    const loadFileBtn = document.getElementById('load-snapshot-btn');
+    const loadDemoBtn = document.getElementById('load-demo-community-analysis-btn');
+
+    if (loadFileBtn) {
+        loadFileBtn.onclick = function() { // Use onclick to avoid duplicate listeners if tab is re-entered
+            if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                handleSnapshotFile(fileInput.files[0]);
+            } else {
+                const displayArea = document.getElementById('shared-analysis-display-area');
+                if(displayArea) displayArea.innerHTML = '<p><em>Please select a file first.</em></p>';
+            }
+        };
+    }
+
+    if (loadDemoBtn) {
+        loadDemoBtn.onclick = function() { // Use onclick
+            const demoData = {
+                snapshotVersion: "2.0",
+                generatedAt: new Date().toISOString(),
+                sourceApp: "SoccerInABox/DemoSnapshot-v2.0",
+                matchDetails: {
+                    homeTeam: "Red Dragons", awayTeam: "Blue Eagles", date: "2024-08-01",
+                    venue: "Champions Stadium", competition: "Friendly Cup",
+                    startTimeISO: new Date().toISOString(), finalDurationFormatted: "92:30"
+                },
+                timelineEvents: [
+                    { id: 1, text: "Kick-off!", timestampFormatted: "00:00", elapsedTimeMs: 0 },
+                    { id: 2, text: "Goal by Red Dragons #9!", timestampFormatted: "15:32", elapsedTimeMs: 15 * 60000 + 32000 },
+                    { id: 3, text: "Yellow card for Blue Eagles #4.", timestampFormatted: "44:15", elapsedTimeMs: 44 * 60000 + 15000 }
+                ],
+                playerEvaluations: [
+                    { id: 101, name: "Alex Striker", number: 9, position: "Forward", notes: "Great goal, good off-ball movement.", ratings: { technical: 5, physical: 4, mental: 4 }, averageRating: "4.3" },
+                    { id: 102, name: "Midfield Maestro", number: 8, position: "Midfielder", notes: "Excellent passing range.", ratings: { technical: 5, physical: 3, mental: 5 }, averageRating: "4.3" }
+                ],
+                analysisSummary: { totalNotes: 3, playersEvaluated: 2, matchDurationFormatted: "92:30", overallAverageRating: "4.3" },
+                interactiveElements: {}
+            };
+            displaySharedAnalysis(demoData);
+        };
+    }
+     // Clear display area initially when tab is loaded
+    clearSharedAnalysisDisplay();
+}
+
 // Assicurati che appState esista
 if (typeof window !== 'undefined' && !window.appState) {
     window.appState = {
@@ -110,6 +283,9 @@ function showCommunityTab(tabName) {
             break;
         case 'social':
             updateSocialFeeds();
+            break;
+        case 'shared-analysis': // New case
+            initSharedAnalysisView();
             break;
     }
 }
@@ -698,15 +874,31 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Export functions to global scope
-window.showCommunityTab = showCommunityTab;
-window.addFanMessage = addFanMessage;
-window.createPoll = createPoll;
-window.addPollOption = addPollOption;
-window.removePollOption = removePollOption;
-window.votePoll = votePoll;
-window.closePoll = closePoll;
-window.deletePoll = deletePoll;
-window.broadcastMessage = broadcastMessage;
-window.exportCommunityReport = exportCommunityReport;
+window.community = {
+    showCommunityTab: showCommunityTab,
+    addFanMessage: addFanMessage,
+    createPoll: createPoll,
+    // initSharedAnalysisView might not need to be globally exposed if only called by showCommunityTab
+    // but if any future HTML directly calls it, it would be needed here.
+    // For now, keeping it internal to the module, callable by showCommunityTab.
+};
+
+// Keep existing direct window assignments if they are used by HTML onclick outside of window.community scope
+// For example, if HTML has onclick="addPollOption()" instead of onclick="window.community.addPollOption()"
+// However, the current structure suggests these are internal or on window.community
+// The prompt uses onclick="showCommunityTab(...)" which implies window.showCommunityTab
+// but also window.community.showCommunityTab later. Let's stick to window.community for consistency.
+
+// Make sure all functions called by HTML are on window.community
+window.community.addPollOption = addPollOption;
+window.community.removePollOption = removePollOption;
+window.community.votePoll = votePoll;
+window.community.closePoll = closePoll;
+window.community.deletePoll = deletePoll;
+window.community.broadcastMessage = broadcastMessage;
+window.community.exportCommunityReport = exportCommunityReport;
+// Exposing initSharedAnalysisView in case it's useful, though showCommunityTab calls it.
+window.community.initSharedAnalysisView = initSharedAnalysisView;
+
 
 console.log('Community module loaded successfully');

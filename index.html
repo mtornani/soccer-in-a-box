@@ -22,10 +22,10 @@
         <div id="home-screen">
             <h1>Soccer in a Box</h1>
             <p>Welcome! Select a mode:</p>
-            <button class="btn-mode-select" data-mode="coach">Coach Mode (Full)</button>
-            <button class="btn-mode-select" data-mode="community">Community Hub</button>
-            <button class="btn-mode-select" data-mode="detective">Detective Mode</button>
-            <button class="btn-mode-select" data-mode="simple_coach">Simple Snapshot Coach</button>
+            <button class="btn btn-mode-select" data-mode="coach">Coach Mode (Full)</button>
+            <button class="btn btn-mode-select" data-mode="community">Community Hub</button>
+            <button class="btn btn-mode-select" data-mode="detective">Detective Mode</button>
+            <button class="btn btn-mode-select" data-mode="simple_coach">Simple Snapshot Coach</button>
         </div>
         
         <!-- COACH MODE -->
@@ -185,6 +185,7 @@
 </div>
 <button class="btn" id="export-md-btn" onclick="window.app.exportReport('md')">Export Markdown</button>
 <button class="btn" id="export-txt-btn" onclick="window.app.exportReport('txt')">Export TXT</button>
+<button class="btn btn-accent" id="export-snapshot-btn" onclick="window.app.exportEnhancedSnapshot()">Share Full Analysis (JSON)</button>
 <button class="btn btn-danger" id="clear-btn" onclick="window.app.clearAll()">Clear All Data</button>
 </div>
         </div>
@@ -344,6 +345,7 @@
         <button class="community-tab" onclick="showCommunityTab('polls')" id="polls-tab">Sondaggi</button>
         <button class="community-tab" onclick="showCommunityTab('sentiment')" id="sentiment-tab">Sentiment</button>
         <button class="community-tab" onclick="showCommunityTab('social')" id="social-tab">Social</button>
+        <button class="community-tab" onclick="window.community.showCommunityTab('shared-analysis')" id="shared-analysis-nav-tab">Shared Analysis</button>
     </div>
 
     <!-- Engagement Tab -->
@@ -573,6 +575,21 @@
             </div>
         </div>
     </div>
+
+        <div id="community-shared-analysis-tab" class="community-tab-content card hidden">
+            <h3>View Shared Analysis</h3>
+            <div class="import-snapshot-controls card" style="margin-bottom: 1rem; padding: 1rem; background: rgba(0,0,0,0.1);">
+                <p>Load a shared analysis file (.json):</p>
+                <input type="file" id="snapshot-file-input" accept=".json" style="margin-bottom: 0.5rem; display: block;">
+                <button class="btn btn-primary" id="load-snapshot-btn">Load Analysis from File</button>
+                <p style="margin-top: 1rem;"><em>Or, load a demo:</em></p>
+                <button class="btn btn-secondary" id="load-demo-community-analysis-btn">Load Demo Community Analysis</button>
+            </div>
+            <hr style="margin: 1rem 0;">
+            <div id="shared-analysis-display-area" style="max-height: 60vh; overflow-y: auto; padding: 0.5rem;">
+                <p><em>No analysis loaded. Use the controls above to load an analysis.</em></p>
+            </div>
+        </div>
 </div>
     </div>
 

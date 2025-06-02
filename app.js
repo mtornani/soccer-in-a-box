@@ -539,6 +539,13 @@ function getTimestamp() {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
+function getTimestampMs(elapsedMs) { // Renamed to avoid conflict if a global getTimestamp exists without params
+    if (isNaN(elapsedMs) || elapsedMs < 0) elapsedMs = 0;
+    const minutes = Math.floor(elapsedMs / 60000);
+    const seconds = Math.floor((elapsedMs % 60000) / 1000);
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
 function updateTimeline() {
     const timeline = document.getElementById('timeline');
     timeline.innerHTML = '';
@@ -648,6 +655,60 @@ function calculateOverallAverage() {
 function exportReport(format) {
     const report = generateReport(format);
     downloadFile(report.content, report.filename, report.type);
+}
+
+function exportEnhancedSnapshot() {
+    const appVersion = "2.0-snapshot"; // Or some other version identifier
+
+    // 1. Match Details
+    const matchDetails = { ...appState.match };
+    if (matchDetails.startTime) {
+        matchDetails.startTimeISO = new Date(matchDetails.startTime).toISOString();
+    }
+    matchDetails.finalDurationFormatted = getTimestampMs(appState.timer.elapsedTime);
+
+    // 2. Timeline Events
+    const timelineEvents = appState.notes.map(note => ({
+        id: note.id,
+        text: note.text,
+        timestampFormatted: note.timestamp, // This is already formatted "MM:SS" from original getTimestamp()
+        elapsedTimeMs: note.time
+    }));
+
+    // 3. Player Evaluations
+    const playerEvaluations = appState.players.map(player => ({
+        id: player.id,
+        name: player.name,
+        number: player.number,
+        position: player.position,
+        notes: player.notes,
+        ratings: { ...player.ratings },
+        averageRating: calculatePlayerAverage(player.ratings).toFixed(1)
+    }));
+
+    // 4. Analysis Summary (from existing report stats)
+    const analysisSummary = {
+        totalNotes: appState.notes.length,
+        playersEvaluated: appState.players.length,
+        matchDurationFormatted: getTimestampMs(appState.timer.elapsedTime),
+        overallAverageRating: calculateOverallAverage().toFixed(1)
+    };
+
+    const snapshotV2 = {
+        snapshotVersion: "2.0",
+        generatedAt: new Date().toISOString(),
+        sourceApp: `SoccerInABox/${appVersion}`,
+        matchDetails: matchDetails,
+        timelineEvents: timelineEvents,
+        playerEvaluations: playerEvaluations,
+        analysisSummary: analysisSummary,
+        interactiveElements: {}, // Placeholder for future use
+        // rawAppState: { ...appState } // Optional: for full state debugging/backup
+    };
+
+    const filenameDate = appState.match.date || new Date().toISOString().split('T')[0];
+    const filename = `soccerbox_analysis_${filenameDate}_${Date.now()}.json`;
+    downloadFile(JSON.stringify(snapshotV2, null, 2), filename, 'application/json');
 }
 
 function generateReport(format) {
@@ -873,6 +934,7 @@ window.app.addNote = addNote;
 window.app.addQuickNote = addQuickNote;
 window.app.savePlayer = savePlayer;
 window.app.exportReport = exportReport;
+window.app.exportEnhancedSnapshot = exportEnhancedSnapshot;
 window.app.clearAll = clearAll;
 // Note: Player rating handlers (handleStarClick, etc.) are typically not called directly from HTML
 // and are fine as internal functions. `applyTranslations` is also usually internal.
