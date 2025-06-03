@@ -1,3 +1,41 @@
+:root {
+    /* Spacing - using rem for scalability */
+    --spacing-xs: 0.25rem;  /* 4px */
+    --spacing-sm: 0.5rem;   /* 8px */
+    --spacing-md: 1rem;     /* 16px */
+    --spacing-lg: 1.5rem;   /* 24px */
+    --spacing-xl: 2rem;     /* 32px */
+
+    /* Radius */
+    --radius-small: 8px;
+    --radius: 15px;
+
+    /* Shadows */
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 5px 15px rgba(0, 0, 0, 0.2);
+
+    /* Backgrounds & Borders */
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --border-light: rgba(255, 255, 255, 0.2);
+    --border-color: rgba(255, 255, 255, 0.3);
+
+    /* Text Colors */
+    --text-color: #ffffff;
+    --text-light: rgba(255, 255, 255, 0.8);
+    --text-muted: rgba(255, 255, 255, 0.6);
+
+    /* Font Sizes */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+
+    /* Specific Colors */
+    --danger-color: #ef4444;
+}
+
 /* ===== RESET E BASE ===== */
 * {
     margin: 0;
@@ -81,12 +119,8 @@ body {
 }
 
 .mode-container {
-    display: none;
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-.mode-container.active {
     display: block;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 @keyframes fadeIn {
@@ -662,6 +696,47 @@ body {
         max-width: none;
         font-size: 0.9rem;
     }
+}
+
+/* Styling for Home Screen Mode Selection Buttons */
+#home-screen {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+#home-screen h1 {
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    color: #4ade80;
+}
+
+#home-screen p {
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.btn.btn-mode-select { /* Targeting buttons with both classes */
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    margin: 0.75rem auto; /* Adjusted margin for auto centering */
+    min-width: 280px;
+    max-width: 90%; /* Ensure it doesn't get too wide on large screens */
+    display: block;
+    text-align: center;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #37474F, #263238);
+    color: #ffffff;
+    border: 2px solid #4ade80;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    /* transition is already on .btn */
+}
+
+.btn.btn-mode-select:hover {
+    background: linear-gradient(135deg, #455A64, #37474F);
+    border-color: #5efc9e;
+    transform: translateY(-3px); /* .btn has -2px, this overrides */
+    box-shadow: 0 8px 20px rgba(74, 222, 128, 0.3);
 }
 
 @media (max-width: 480px) {

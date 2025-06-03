@@ -6,6 +6,7 @@
     <title>Soccer in a Box</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="community.css">
     <meta name="theme-color" content="#1a472a">
 </head>
 <body>
@@ -13,19 +14,22 @@
     <header class="header">
         <div class="header-content">
             <div class="logo">⚽ Soccer in a Box</div>
-            <div class="mode-switcher">
-                <button class="mode-btn active" data-mode="coach">👔 Coach</button>
-                <button class="mode-btn" data-mode="detective">🕵️ Detective</button>
-            </div>
         </div>
     </header>
 
     <!-- CONTAINER PRINCIPALE -->
     <div class="main-container">
-        
+        <div id="home-screen">
+            <h1>Soccer in a Box</h1>
+            <p>Welcome! Select a mode:</p>
+            <button class="btn btn-mode-select" data-mode="coach">Coach Mode (Full)</button>
+            <button class="btn btn-mode-select" data-mode="community">Community Hub</button>
+            <button class="btn btn-mode-select" data-mode="detective">Detective Mode</button>
+            <button class="btn btn-mode-select" data-mode="simple_coach">Simple Snapshot Coach</button>
+        </div>
         
         <!-- COACH MODE -->
-        <div id="coach-mode" class="mode-container active">
+        <div id="soccerbox-coach-mode" class="mode-container hidden">
             <div class="dashboard-grid">
                 <div class="card">
                     <h3 class="card-title">🎯 Analisi Live</h3>
@@ -82,8 +86,112 @@
             </div>
         </div>
 
+        <div id="app-coach-mode" class="mode-container hidden">
+            <h2>Coach Mode (Full Application)</h2>
+            <p>This area will contain the detailed coach mode with Setup, Live, Players, and Report tabs.</p>
+            <!-- Navigation buttons for app.js coach mode -->
+            <button onclick="window.app.goHome()">Back to Home</button>
+            <div class="tabs">
+                <button class="tab" id="tab-setup">Setup</button>
+                <button class="tab" id="tab-live">Live</button>
+                <button class="tab" id="tab-players">Players</button>
+                <button class="tab" id="tab-report">Report</button>
+            </div>
+            <div id="setup-tab-content" class="tab-content">
+<h3 id="match-setup-title">Match Setup</h3>
+<div class="form-group">
+    <label for="home-team" id="home-team-label">Home Team:</label>
+    <input type="text" id="home-team">
+</div>
+<div class="form-group">
+    <label for="away-team" id="away-team-label">Away Team:</label>
+    <input type="text" id="away-team">
+</div>
+<div class="form-group">
+    <label for="match-date" id="date-label">Date:</label>
+    <input type="date" id="match-date">
+</div>
+<div class="form-group">
+    <label for="venue" id="venue-label">Venue:</label>
+    <input type="text" id="venue">
+</div>
+<div class="form-group">
+    <label for="competition" id="competition-label">Competition:</label>
+    <input type="text" id="competition">
+</div>
+<button class="btn" id="start-match-btn" onclick="window.app.startMatch()">Start Match Analysis</button>
+</div>
+            <div id="live-tab-content" class="tab-content hidden">
+<h3>Live Analysis</h3>
+<div id="timer-section">
+    <div id="timer-display">00:00</div>
+    <button id="timer-btn" onclick="window.app.toggleTimer()">▶️</button>
+    <button id="reset-timer-btn" onclick="window.app.resetTimer()">Reset</button>
+</div>
+<div id="notes-section">
+    <textarea id="note-input" placeholder="Take live notes... (Ctrl+Enter to add)"></textarea>
+    <button id="add-note-btn" onclick="window.app.addNote()">Add Note</button>
+    <h4>Timeline:</h4>
+    <div id="timeline"></div>
+</div>
+</div>
+            <div id="players-tab-content" class="tab-content hidden">
+<h3 id="players-title">Player Evaluation</h3>
+<div class="form-group">
+    <label for="player-name">Player Name:</label>
+    <input type="text" id="player-name">
+</div>
+<div class="form-group">
+    <label for="player-number">Number:</label>
+    <input type="number" id="player-number">
+</div>
+<div class="form-group">
+    <label for="player-position">Position:</label>
+    <input type="text" id="player-position">
+</div>
+<div class="rating-group">
+    <label id="technical-label">Technical:</label>
+    <div class="stars" data-category="technical">
+        <span class="star" data-value="1">☆</span><span class="star" data-value="2">☆</span><span class="star" data-value="3">☆</span><span class="star" data-value="4">☆</span><span class="star" data-value="5">☆</span>
+    </div>
+</div>
+<div class="rating-group">
+    <label id="physical-label">Physical:</label>
+    <div class="stars" data-category="physical">
+        <span class="star" data-value="1">☆</span><span class="star" data-value="2">☆</span><span class="star" data-value="3">☆</span><span class="star" data-value="4">☆</span><span class="star" data-value="5">☆</span>
+    </div>
+</div>
+<div class="rating-group">
+    <label id="mental-label">Mental:</label>
+    <div class="stars" data-category="mental">
+        <span class="star" data-value="1">☆</span><span class="star" data-value="2">☆</span><span class="star" data-value="3">☆</span><span class="star" data-value="4">☆</span><span class="star" data-value="5">☆</span>
+    </div>
+</div>
+<div class="form-group">
+    <label for="player-notes">Notes:</label>
+    <textarea id="player-notes"></textarea>
+</div>
+<button class="btn" id="save-player-btn" onclick="window.app.savePlayer()">Save Player</button>
+<h4>Evaluated Players:</h4>
+<div id="players-list"></div>
+</div>
+            <div id="report-tab-content" class="tab-content hidden">
+<h3 id="report-title">Match Report</h3>
+<div class="stats-overview">
+    <p><span id="notes-label">Notes</span>: <span id="notes-count">0</span></p>
+    <p><span id="players-label">Players</span> Evaluated: <span id="players-count">0</span></p>
+    <p><span id="duration-label">Duration</span>: <span id="match-duration">00:00</span></p>
+    <p><span id="rating-label">Avg Rating</span>: <span id="avg-rating">0.0</span></p>
+</div>
+<button class="btn" id="export-md-btn" onclick="window.app.exportReport('md')">Export Markdown</button>
+<button class="btn" id="export-txt-btn" onclick="window.app.exportReport('txt')">Export TXT</button>
+<button class="btn btn-accent" id="export-snapshot-btn" onclick="window.app.exportEnhancedSnapshot()">Share Full Analysis (JSON)</button>
+<button class="btn btn-danger" id="clear-btn" onclick="window.app.clearAll()">Clear All Data</button>
+</div>
+        </div>
+
         <!-- DETECTIVE MODE -->
-        <div id="detective-mode" class="mode-container">
+        <div id="detective-mode" class="mode-container hidden">
             
             <!-- IMPORTAZIONE SNAPSHOT -->
             <div class="import-container" id="import-container">
@@ -193,13 +301,308 @@
                 </div>
             </div>
         </div>
+
+        <!-- Community Mode - Complete HTML Template -->
+<!-- Replace the existing community-mode div in index.html with this -->
+
+<div id="community-mode" class="hidden">
+    <button class="btn back-btn" onclick="goHome()">← <span id="back-text-community">Indietro</span></button>
+
+    <!-- Community Header -->
+    <div class="community-header">
+        <h2 id="fan-engagement-title">Hub Engagement Tifosi</h2>
+        <div class="community-live-stats">
+            <div class="live-stat">
+                <span class="live-indicator">🔴 LIVE</span>
+                <span id="online-fans-count">0</span>
+                <span id="online-fans-label">Tifosi Online</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Community Stats Overview -->
+    <div class="community-stats-grid">
+        <div class="community-stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number" id="online-fans-count-main">0</div>
+            <div class="stat-label" id="online-fans-label-main">Tifosi Online</div>
+        </div>
+        <div class="community-stat-card">
+            <div class="stat-icon">💬</div>
+            <div class="stat-number" id="total-engagement-count">0</div>
+            <div class="stat-label" id="total-engagement-label">Engagement Totale</div>
+        </div>
+        <div class="community-stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-number" id="active-polls-count">0</div>
+            <div class="stat-label" id="active-polls-label">Sondaggi Attivi</div>
+        </div>
+    </div>
+
+    <!-- Community Tabs -->
+    <div class="community-tabs">
+        <button class="community-tab active" onclick="showCommunityTab('engagement')" id="engagement-tab">Engagement</button>
+        <button class="community-tab" onclick="showCommunityTab('polls')" id="polls-tab">Sondaggi</button>
+        <button class="community-tab" onclick="showCommunityTab('sentiment')" id="sentiment-tab">Sentiment</button>
+        <button class="community-tab" onclick="showCommunityTab('social')" id="social-tab">Social</button>
+        <button class="community-tab" onclick="window.community.showCommunityTab('shared-analysis')" id="shared-analysis-nav-tab">Shared Analysis</button>
+    </div>
+
+    <!-- Engagement Tab -->
+    <div id="community-engagement-tab" class="community-tab-content card">
+        <h3>🎯 Fan Engagement Live</h3>
+
+        <!-- Quick Actions for Community Managers -->
+        <div class="community-quick-actions">
+            <button class="community-quick-btn" onclick="addFanMessage('Great atmosphere in the stadium! 🏟️', 'positive')">
+                🎉 Positive Message
+            </button>
+            <button class="community-quick-btn" onclick="addFanMessage('What do you think about the team performance?', 'neutral')">
+                ❓ Ask Fans
+            </button>
+            <button class="community-quick-btn" onclick="addFanMessage('Thanks for your support! 💙', 'positive')">
+                💙 Thank Fans
+            </button>
+            <button class="community-quick-btn" onclick="addFanMessage('We need to improve our defense', 'negative')">
+                😞 Critical Feedback
+            </button>
+        </div>
+
+        <!-- Live Fan Messages Feed -->
+        <div class="fan-messages-container">
+            <h4>💬 Live Fan Messages</h4>
+            <div id="fan-messages-feed" class="fan-messages-feed">
+                <!-- Fan messages will be populated here -->
+            </div>
+        </div>
+
+        <!-- Engagement Actions -->
+        <div class="engagement-actions">
+            <h4>🚀 Community Actions</h4>
+            <div class="action-buttons">
+                <button class="btn btn-accent" onclick="broadcastMessage()">📢 Broadcast Message</button>
+                <button class="btn btn-secondary" onclick="showCommunityTab('polls')">📊 Create Poll</button>
+                <button class="btn btn-primary" onclick="exportCommunityReport()">📋 Export Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Polls Tab -->
+    <div id="community-polls-tab" class="community-tab-content card hidden">
+        <h3>📊 Polls & Surveys</h3>
+
+        <!-- Create New Poll -->
+        <div class="create-poll-section">
+            <h4>✨ Create New Poll</h4>
+            <div class="poll-creation-form">
+                <input type="text" id="poll-question" placeholder="Enter poll question..." class="poll-question-input">
+
+                <div class="poll-options-section">
+                    <label>Poll Options:</label>
+                    <div id="poll-options-container">
+                        <div class="poll-option-input-container">
+                            <input type="text" class="poll-option-input" placeholder="Poll option 1">
+                        </div>
+                        <div class="poll-option-input-container">
+                            <input type="text" class="poll-option-input" placeholder="Poll option 2">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-small" onclick="addPollOption()" id="add-option-btn">+ Add Option</button>
+                </div>
+
+                <div class="poll-actions">
+                    <button class="btn btn-accent" onclick="createPoll()" id="launch-poll-btn">🚀 Launch Poll</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Polls List -->
+        <div class="polls-section">
+            <h4>📋 Your Polls</h4>
+            <div id="polls-list" class="polls-list">
+                <!-- Polls will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Sentiment Tab -->
+    <div id="community-sentiment-tab" class="community-tab-content card hidden">
+        <h3>📈 Sentiment Analysis</h3>
+
+        <!-- Sentiment Chart -->
+        <div id="sentiment-chart" class="sentiment-chart">
+            <!-- Sentiment analysis will be populated here -->
+        </div>
+
+        <!-- Sentiment Timeline -->
+        <div class="sentiment-timeline-section">
+            <h4>⏱️ Sentiment Over Time</h4>
+            <div class="sentiment-timeline">
+                <div class="timeline-placeholder">
+                    📈 Real-time sentiment tracking will appear here during live events
+                </div>
+            </div>
+        </div>
+
+        <!-- Sentiment Insights Actions -->
+        <div class="sentiment-actions">
+            <h4>🎯 Sentiment Actions</h4>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="generateSentimentReport()">📊 Generate Report</button>
+                <button class="btn btn-accent" onclick="optimizeContent()">✨ Optimize Content</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social Tab -->
+    <div id="community-social-tab" class="community-tab-content card hidden">
+        <h3>🌐 Social Media Integration</h3>
+
+        <!-- Social Media Feeds -->
+        <div class="social-feeds-section">
+            <h4>📱 Social Media Activity</h4>
+            <div class="social-platforms" id="social-feeds-container">
+                <div class="social-platform-card">
+                    <div class="platform-header">
+                        <span class="platform-icon">📘</span>
+                        <span class="platform-name">Facebook</span>
+                        <span class="platform-status connected">Connected</span>
+                    </div>
+                    <div class="platform-stats">
+                        <span>📝 Last post: 2 hours ago</span>
+                        <span>💬 Engagement: 234 interactions</span>
+                        <span>👥 Reach: 1,2K users</span>
+                    </div>
+                </div>
+
+                <div class="social-platform-card">
+                    <div class="platform-header">
+                        <span class="platform-icon">🐦</span>
+                        <span class="platform-name">Twitter</span>
+                        <span class="platform-status connected">Connected</span>
+                    </div>
+                    <div class="platform-stats">
+                        <span>🐦 Last tweet: 45 minutes ago</span>
+                        <span>🔄 Engagement: 89 retweets, 156 likes</span>
+                        <span>👁️ Impressions: 2,3K</span>
+                    </div>
+                </div>
+
+                <div class="social-platform-card">
+                    <div class="platform-header">
+                        <span class="platform-icon">📷</span>
+                        <span class="platform-name">Instagram</span>
+                        <span class="platform-status pending">Pending</span>
+                    </div>
+                    <div class="platform-stats">
+                        <span>🔗 Connect to enable integration</span>
+                        <span>📊 Stories and posts analytics</span>
+                    </div>
+                </div>
+
+                <div class="social-platform-card">
+                    <div class="platform-header">
+                        <span class="platform-icon">📺</span>
+                        <span class="platform-name">TikTok</span>
+                        <span class="platform-status disconnected">Disconnected</span>
+                    </div>
+                    <div class="platform-stats">
+                        <span>🎵 Enable for video content</span>
+                        <span>🔥 Trending hashtags tracking</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Integration Actions -->
+        <div class="social-integration-actions">
+            <h5>🔗 Quick Actions</h5>
+            <div class="integration-buttons">
+                <button class="integration-btn facebook" onclick="connectPlatform('facebook')">
+                    📘 Connect Facebook
+                </button>
+                <button class="integration-btn twitter" onclick="connectPlatform('twitter')">
+                    🐦 Connect Twitter
+                </button>
+                <button class="integration-btn instagram" onclick="connectPlatform('instagram')">
+                    📷 Connect Instagram
+                </button>
+                <button class="integration-btn" onclick="schedulePosts()">
+                    ⏰ Schedule Posts
+                </button>
+            </div>
+        </div>
+
+        <!-- Social Analytics -->
+        <div class="social-analytics">
+            <h5>📊 Social Analytics Overview</h5>
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <span class="analytics-number">2.4K</span>
+                    <span class="analytics-label">Total Followers</span>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-number">567</span>
+                    <span class="analytics-label">This Week</span>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-number">89%</span>
+                    <span class="analytics-label">Engagement Rate</span>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-number">12.3K</span>
+                    <span class="analytics-label">Total Reach</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Growth Indicators -->
+        <div class="growth-indicators">
+            <div class="growth-card">
+                <span class="growth-icon">📈</span>
+                <span class="growth-percentage positive">+12.5%</span>
+                <span class="growth-label">Follower Growth</span>
+            </div>
+            <div class="growth-card">
+                <span class="growth-icon">💬</span>
+                <span class="growth-percentage positive">+8.2%</span>
+                <span class="growth-label">Engagement Growth</span>
+            </div>
+            <div class="growth-card">
+                <span class="growth-icon">🎯</span>
+                <span class="growth-percentage neutral">+2.1%</span>
+                <span class="growth-label">Reach Growth</span>
+            </div>
+        </div>
+    </div>
+
+        <div id="community-shared-analysis-tab" class="community-tab-content card hidden">
+            <h3>View Shared Analysis</h3>
+            <div class="import-snapshot-controls card" style="margin-bottom: 1rem; padding: 1rem; background: rgba(0,0,0,0.1);">
+                <p>Load a shared analysis file (.json):</p>
+                <input type="file" id="snapshot-file-input" accept=".json" style="margin-bottom: 0.5rem; display: block;">
+                <button class="btn btn-primary" id="load-snapshot-btn">Load Analysis from File</button>
+                <p style="margin-top: 1rem;"><em>Or, load a demo:</em></p>
+                <button class="btn btn-secondary" id="load-demo-community-analysis-btn">Load Demo Community Analysis</button>
+            </div>
+            <hr style="margin: 1rem 0;">
+            <div id="shared-analysis-display-area" style="max-height: 60vh; overflow-y: auto; padding: 0.5rem;">
+                <p><em>No analysis loaded. Use the controls above to load an analysis.</em></p>
+            </div>
+        </div>
+</div>
     </div>
 
     <!-- NOTIFICATION SYSTEM -->
     <div id="notification" class="notification"></div>
 
+fix/gh-pages-js-paths
     <script src="app.js" defer></script>
 
+=======
+    <script src="app.js"></script>
+    <script src="community.js"></script>
+  main
     <!-- JAVASCRIPT COMPLETO INLINE -->
     <script>
         // ===== SOCCER IN A BOX - MAIN CLASS =====
@@ -221,7 +624,7 @@
             }
 
             init() {
-                this.setupModeNavigation();
+                // this.setupModeNavigation();
                 this.setupImportSystem();
                 this.loadFanProfile();
             }

@@ -1,3 +1,5 @@
+window.app = {}; // Global access object
+
 // Language detection and translations
 // Aggiorna solo la sezione translations nel tuo app.js esistente:
 
@@ -217,7 +219,14 @@ function applyTranslations(lang) {
     Object.keys(texts).forEach(key => {
         const element = document.getElementById(key);
         if (element) {
-            element.textContent = texts[key];
+            if (element.tagName === 'INPUT' && element.type === 'submit') {
+                element.value = texts[key];
+            } else if (element.tagName === 'TEXTAREA' || (element.tagName === 'INPUT' && element.type === 'text')) {
+                element.placeholder = texts[key];
+            }
+            else {
+                element.textContent = texts[key];
+            }
         }
     });
 }
@@ -290,11 +299,25 @@ function initApp() {
     
     // Auto-save every 30 seconds
     setInterval(saveData, 30000);
+
+    // Add event listeners for home screen buttons
+    const modeButtons = document.querySelectorAll('#home-screen .btn-mode-select');
+    modeButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            const mode = event.target.dataset.mode;
+            if (mode) {
+                startMode(mode);
+            }
+        });
+    });
+
+    // Ensure app starts on the home screen
+    goHome();
 }
 
 // Event listeners
 function setupEventListeners() {
-    // Star ratings
+    // Star ratings (ensure elements exist before attaching)
     document.querySelectorAll('.stars').forEach(starGroup => {
         starGroup.addEventListener('click', handleStarClick);
         starGroup.addEventListener('mouseover', handleStarHover);
@@ -304,12 +327,15 @@ function setupEventListeners() {
     // Keyboard shortcuts
     document.addEventListener('keydown', handleKeyboard);
     
-    // Note input enter key
-    document.getElementById('note-input').addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key === 'Enter') {
-            addNote();
-        }
-    });
+    // Note input enter key (ensure element exists)
+    const noteInputElement = document.getElementById('note-input');
+    if (noteInputElement) {
+        noteInputElement.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                addNote();
+            }
+        });
+    }
 }
 
 // Star rating handlers
@@ -383,44 +409,71 @@ function handleKeyboard(e) {
 
 // Navigation functions
 function startMode(mode) {
-    appState.currentMode = mode;
-    
+    // Hide all top-level mode containers first
     document.getElementById('home-screen').classList.add('hidden');
-    document.getElementById('coach-mode').classList.add('hidden');
+    document.getElementById('app-coach-mode').classList.add('hidden');
     document.getElementById('community-mode').classList.add('hidden');
-    
+    document.getElementById('detective-mode').classList.add('hidden');
+    document.getElementById('soccerbox-coach-mode').classList.add('hidden');
+
+    appState.currentMode = mode;
+
     if (mode === 'coach') {
-        document.getElementById('coach-mode').classList.remove('hidden');
-        showTab('setup');
+        document.getElementById('app-coach-mode').classList.remove('hidden');
+        appState.currentMode = 'coach';
+        showTab('setup'); // Default tab for app coach mode
     } else if (mode === 'community') {
         document.getElementById('community-mode').classList.remove('hidden');
+        appState.currentMode = 'community';
+        if (window.community && typeof window.community.showCommunityTab === 'function') {
+            window.community.showCommunityTab('engagement');
+        }
+    } else if (mode === 'detective') {
+        document.getElementById('detective-mode').classList.remove('hidden');
+        appState.currentMode = 'detective';
+    } else if (mode === 'simple_coach') {
+        document.getElementById('soccerbox-coach-mode').classList.remove('hidden');
+        appState.currentMode = 'simple_coach';
+    } else {
+        // Default to home if mode is unknown
+        goHome();
     }
 }
 
 function goHome() {
-    appState.currentMode = 'home';
-    
     document.getElementById('home-screen').classList.remove('hidden');
-    document.getElementById('coach-mode').classList.add('hidden');
+    document.getElementById('app-coach-mode').classList.add('hidden');
     document.getElementById('community-mode').classList.add('hidden');
+    document.getElementById('detective-mode').classList.add('hidden');
+    document.getElementById('soccerbox-coach-mode').classList.add('hidden');
+    appState.currentMode = 'home';
 }
 
 function showTab(tabName) {
     appState.currentTab = tabName;
     
-    // Hide all tabs
-    document.querySelectorAll('.card[id$="-tab"]').forEach(tab => {
-        tab.classList.add('hidden');
-    });
-    
-    // Show selected tab
-    document.getElementById(tabName + '-tab').classList.remove('hidden');
-    
-    // Update tab buttons
-    document.querySelectorAll('.tab').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.getElementById('tab-' + tabName).classList.add('active');
+    // Hide all tab content within app-coach-mode
+    const coachModeContainer = document.getElementById('app-coach-mode');
+    if (coachModeContainer) {
+        coachModeContainer.querySelectorAll('.tab-content').forEach(tabContent => {
+            tabContent.classList.add('hidden');
+        });
+
+        // Show selected tab content
+        const selectedTabContent = document.getElementById(tabName + '-tab-content');
+        if (selectedTabContent) {
+            selectedTabContent.classList.remove('hidden');
+        }
+
+        // Update tab buttons active state within app-coach-mode
+        coachModeContainer.querySelectorAll('.tabs .tab').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        const activeTabButton = document.getElementById('tab-' + tabName);
+        if (activeTabButton) {
+            activeTabButton.classList.add('active');
+        }
+    }
     
     // Update stats if on report tab
     if (tabName === 'report') {
@@ -524,6 +577,13 @@ function addQuickNote(text) {
 function getTimestamp() {
     const minutes = Math.floor(appState.timer.elapsedTime / 60000);
     const seconds = Math.floor((appState.timer.elapsedTime % 60000) / 1000);
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function getTimestampMs(elapsedMs) { // Renamed to avoid conflict if a global getTimestamp exists without params
+    if (isNaN(elapsedMs) || elapsedMs < 0) elapsedMs = 0;
+    const minutes = Math.floor(elapsedMs / 60000);
+    const seconds = Math.floor((elapsedMs % 60000) / 1000);
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
@@ -636,6 +696,60 @@ function calculateOverallAverage() {
 function exportReport(format) {
     const report = generateReport(format);
     downloadFile(report.content, report.filename, report.type);
+}
+
+function exportEnhancedSnapshot() {
+    const appVersion = "2.0-snapshot"; // Or some other version identifier
+
+    // 1. Match Details
+    const matchDetails = { ...appState.match };
+    if (matchDetails.startTime) {
+        matchDetails.startTimeISO = new Date(matchDetails.startTime).toISOString();
+    }
+    matchDetails.finalDurationFormatted = getTimestampMs(appState.timer.elapsedTime);
+
+    // 2. Timeline Events
+    const timelineEvents = appState.notes.map(note => ({
+        id: note.id,
+        text: note.text,
+        timestampFormatted: note.timestamp, // This is already formatted "MM:SS" from original getTimestamp()
+        elapsedTimeMs: note.time
+    }));
+
+    // 3. Player Evaluations
+    const playerEvaluations = appState.players.map(player => ({
+        id: player.id,
+        name: player.name,
+        number: player.number,
+        position: player.position,
+        notes: player.notes,
+        ratings: { ...player.ratings },
+        averageRating: calculatePlayerAverage(player.ratings).toFixed(1)
+    }));
+
+    // 4. Analysis Summary (from existing report stats)
+    const analysisSummary = {
+        totalNotes: appState.notes.length,
+        playersEvaluated: appState.players.length,
+        matchDurationFormatted: getTimestampMs(appState.timer.elapsedTime),
+        overallAverageRating: calculateOverallAverage().toFixed(1)
+    };
+
+    const snapshotV2 = {
+        snapshotVersion: "2.0",
+        generatedAt: new Date().toISOString(),
+        sourceApp: `SoccerInABox/${appVersion}`,
+        matchDetails: matchDetails,
+        timelineEvents: timelineEvents,
+        playerEvaluations: playerEvaluations,
+        analysisSummary: analysisSummary,
+        interactiveElements: {}, // Placeholder for future use
+        // rawAppState: { ...appState } // Optional: for full state debugging/backup
+    };
+
+    const filenameDate = appState.match.date || new Date().toISOString().split('T')[0];
+    const filename = `soccerbox_analysis_${filenameDate}_${Date.now()}.json`;
+    downloadFile(JSON.stringify(snapshotV2, null, 2), filename, 'application/json');
 }
 
 function generateReport(format) {
@@ -870,6 +984,23 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('app.js: typeof exportReport:', typeof exportReport);
     console.log('app.js: typeof clearAll:', typeof clearAll);
 });
+
+// Expose functions to global app object
+window.app.goHome = goHome;
+window.app.startMode = startMode;
+window.app.showTab = showTab;
+// Assuming these might be called from HTML later or by other modules
+window.app.startMatch = startMatch;
+window.app.toggleTimer = toggleTimer;
+window.app.resetTimer = resetTimer;
+window.app.addNote = addNote;
+window.app.addQuickNote = addQuickNote;
+window.app.savePlayer = savePlayer;
+window.app.exportReport = exportReport;
+window.app.exportEnhancedSnapshot = exportEnhancedSnapshot;
+window.app.clearAll = clearAll;
+// Note: Player rating handlers (handleStarClick, etc.) are typically not called directly from HTML
+// and are fine as internal functions. `applyTranslations` is also usually internal.
 
 // Aggiungi queste funzioni al tuo app.js esistente per collegare Coach e Community
 
