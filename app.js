@@ -238,13 +238,54 @@ function initApp() {
     
     // Register Service Worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js')
+        navigator.serviceWorker.register('./sw.js') // Ensure this path is still './sw.js'
             .then(registration => {
-                console.log('SW registered: ', registration);
+                console.log('app.js: SW registered successfully. Scope: ', registration.scope);
+                // Log current SW states
+                if (registration.installing) {
+                    console.log('app.js: SW installing:', registration.installing);
+                } else if (registration.waiting) {
+                    console.log('app.js: SW waiting:', registration.waiting);
+                } else if (registration.active) {
+                    console.log('app.js: SW active:', registration.active);
+                }
+
+                registration.addEventListener('updatefound', () => {
+                    console.log('app.js: SW update found. New worker installing.');
+                    const newWorker = registration.installing;
+                    if (newWorker) {
+                        newWorker.addEventListener('statechange', () => {
+                            console.log('app.js: SW new worker state change:', newWorker.state);
+                            if (newWorker.state === 'installed') {
+                                if (navigator.serviceWorker.controller) {
+                                    // New worker installed, old one controlling.
+                                    console.log('app.js: SW new worker installed. Controller exists. Page reload might be needed to activate.');
+                                } else {
+                                    // New worker installed, no controller. Will activate on next load or claim.
+                                    console.log('app.js: SW new worker installed. No controller. Will activate.');
+                                }
+                            }
+                        });
+                    }
+                });
             })
             .catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
+                console.error('app.js: SW registration failed: ', registrationError);
             });
+
+        navigator.serviceWorker.addEventListener('controllerchange', () => { // Note: Corrected to `() =>`
+            console.log('app.js: SW controller changed. A new service worker has taken control.');
+            // It's often a good idea to reload the page when the controller changes.
+            // Consider adding window.location.reload(); if appropriate for the app.
+            // For now, just logging.
+        });
+
+        // Optional: Log current controller if any
+        if (navigator.serviceWorker.controller) {
+            console.log('app.js: Current page controller:', navigator.serviceWorker.controller);
+        } else {
+            console.log('app.js: No current page controller.');
+        }
     }
     
     // Set current date
@@ -920,7 +961,29 @@ function clearAll() {
 }
 
 // Initialize app when DOM is loaded
-document.addEventListener('DOMContentLoaded', initApp);
+document.addEventListener('DOMContentLoaded', () => {
+    initApp();
+    // Diagnostic logs
+    console.log('app.js: soccerApp instance:', window.soccerApp);
+    console.log('app.js: typeof startAnalysis:', typeof startAnalysis);
+    console.log('app.js: typeof exportSnapshot:', typeof exportSnapshot);
+    console.log('app.js: typeof copyShareLink:', typeof copyShareLink);
+    console.log('app.js: typeof importFromLink:', typeof importFromLink);
+    console.log('app.js: typeof loadSampleData:', typeof loadSampleData);
+    console.log('app.js: typeof submitPrediction:', typeof submitPrediction);
+    console.log('app.js: typeof nextMystery:', typeof nextMystery);
+    console.log('app.js: typeof submitNarrative:', typeof submitNarrative);
+    console.log('app.js: typeof startMode:', typeof startMode);
+    console.log('app.js: typeof goHome:', typeof goHome);
+    console.log('app.js: typeof showTab:', typeof showTab);
+    console.log('app.js: typeof toggleTimer:', typeof toggleTimer);
+    console.log('app.js: typeof resetTimer:', typeof resetTimer);
+    console.log('app.js: typeof addNote:', typeof addNote);
+    console.log('app.js: typeof addQuickNote:', typeof addQuickNote);
+    console.log('app.js: typeof savePlayer:', typeof savePlayer);
+    console.log('app.js: typeof exportReport:', typeof exportReport);
+    console.log('app.js: typeof clearAll:', typeof clearAll);
+});
 
 // Expose functions to global app object
 window.app.goHome = goHome;
