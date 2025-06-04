@@ -35,8 +35,8 @@
                     <h3 class="card-title">🎯 Analisi Live</h3>
                     <div class="card-content">
                         <p>Sistema di tracciamento eventi in tempo reale con classificazione automatica delle azioni.</p>
-                        <button class="btn" onclick="startAnalysis()">🚀 Avvia Analisi</button>
-                        <button class="btn secondary" onclick="exportSnapshot()">📤 Esporta Snapshot</button>
+                        <button class="btn" onclick="window.app.startSimpleCoachAnalysis()">🚀 Avvia Analisi</button>
+                        <button class="btn secondary" onclick="window.app.exportSimpleSnapshot()">📤 Esporta Snapshot</button>
                     </div>
                 </div>
                 
@@ -62,7 +62,7 @@
                         <p>Genera link condivisibili per fan e analisti. Ogni snapshot è autonomo e offline.</p>
                         <div id="share-link-container" class="hidden" style="margin-top: 1rem;">
                             <input type="text" id="share-link" readonly class="share-input">
-                            <button class="btn secondary" onclick="copyShareLink()" style="margin-top: 0.5rem;">📋 Copia Link</button>
+                            <button class="btn secondary" onclick="window.app.copySimpleShareLink()" style="margin-top: 0.5rem;">📋 Copia Link</button>
                         </div>
                     </div>
                 </div>
@@ -200,8 +200,8 @@
                 <input type="text" id="snapshot-link" class="import-input" 
                        placeholder="soccer://snapshot/JUV-INT-75min-abc123xyz...">
                 <div class="import-buttons">
-                    <button class="btn" onclick="importFromLink()">🔗 Importa da Link</button>
-                    <button class="btn secondary" onclick="loadSampleData()">🎮 Carica Demo</button>
+                    <button class="btn" onclick="window.app.detective.importDetectiveSnapshotFromLink()">🔗 Importa da Link</button>
+                    <button class="btn secondary" onclick="window.app.detective.loadDetectiveSampleData()">🎮 Carica Demo</button>
                 </div>
                 <div class="import-help">
                     Oppure trascina qui un file .json
@@ -251,7 +251,7 @@
                     </div>
                     
                     <div class="mt-1">
-                        <button class="btn" onclick="submitPrediction()" id="submit-prediction">🔮 Conferma Predizione</button>
+                        <button class="btn" id="submit-prediction" onclick="window.app.detective.submitDetectivePrediction()">🔮 Conferma Predizione</button>
                     </div>
                 </div>
 
@@ -261,7 +261,7 @@
                     <div class="card-content" id="revelation-content">
                         <!-- Popolato dinamicamente -->
                     </div>
-                    <button class="btn" onclick="nextMystery()">🔍 Prossimo Mistero</button>
+                    <button class="btn" onclick="window.app.detective.nextDetectiveMystery()">🔍 Prossimo Mistero</button>
                 </div>
 
                 <!-- MODALITÀ NARRATIVA -->
@@ -271,7 +271,7 @@
                         <p>Descrivi quello che è appena successo come un giornalista sportivo:</p>
                         <textarea class="narrative-input" id="user-narrative" 
                                   placeholder="Al 67° minuto, Chiesa riceve il pallone sulla destra e..."></textarea>
-                        <button class="btn" onclick="submitNarrative()">📰 Pubblica Cronaca</button>
+                        <button class="btn" onclick="window.app.detective.submitDetectiveNarrative()">📰 Pubblica Cronaca</button>
                         
                         <div class="narrative-comparison hidden" id="narrative-comparison">
                             <div class="narrative-box">
@@ -594,7 +594,7 @@
     </div>
 
     <!-- NOTIFICATION SYSTEM -->
-    <div id="notification" class="notification"></div>
+    <div id="notification-container" class="notification"></div>
 
     <script src="app.js"></script>
     <script src="community.js"></script>

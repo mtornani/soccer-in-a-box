@@ -604,28 +604,52 @@ body {
 }
 
 /* ===== NOTIFICATIONS ===== */
-.notification {
+/* Container for notifications */
+#notification-container {
     position: fixed;
-    top: 100px;
+    top: 80px; /* Adjusted from original .notification top */
     right: 20px;
-    background: rgba(74, 222, 128, 0.9);
+    width: 300px; /* Max-width from original .notification */
+    z-index: 1050; /* Ensure it's above most other elements */
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Spacing between notifications */
+}
+
+/* Individual notification messages */
+.notification { /* This class is added by JS to each new notification message */
+    background: rgba(74, 222, 128, 0.95); /* Default color, success-like */
     color: #1a472a;
-    padding: 1rem 1.5rem;
-    border-radius: 10px;
-    font-weight: 600;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    z-index: 200;
-    max-width: 300px;
+    padding: 0.75rem 1.25rem; /* Slightly adjusted padding */
+    border-radius: 8px; /* Adjusted radius */
+    font-weight: 500; /* Adjusted font-weight */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    opacity: 0; /* Start transparent for fade-in */
+    transform: translateX(100%); /* Start off-screen for slide-in */
+    animation: notificationSlideIn 0.5s forwards;
+    margin-bottom: 0; /* Remove margin if using gap in container */
 }
 
-.notification.show {
-    transform: translateX(0);
+@keyframes notificationSlideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
-.notification.success { background: rgba(34, 197, 94, 0.9); }
-.notification.error { background: rgba(239, 68, 68, 0.9); color: white; }
-.notification.info { background: rgba(59, 130, 246, 0.9); color: white; }
+/* Type-specific styles for individual notifications */
+.notification.notification-success { /* Matches JS: notification-success */
+    background-color: rgba(34, 197, 94, 0.95); /* Darker green */
+    color: white;
+}
+.notification.notification-error { /* Matches JS: notification-error */
+    background-color: rgba(239, 68, 68, 0.95); /* Red */
+    color: white;
+}
+.notification.notification-info { /* Matches JS: notification-info */
+    background-color: rgba(59, 130, 246, 0.95); /* Blue */
+    color: white;
+}
 
 /* ===== UTILITY ===== */
 .hidden { display: none !important; }
