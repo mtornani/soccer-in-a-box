@@ -1,7 +1,6 @@
 window.app = {}; // Global access object
 
 // Language detection and translations
-// Aggiorna solo la sezione translations nel tuo app.js esistente:
 
 const translations = {
     'en': {
@@ -204,7 +203,7 @@ let appState = {
         narrativesWritten: 0,
         badges: ['🆕 Rookie Detective']
     },
-    detective: { // Ensured structure for task 2a
+    detective: {
         currentSnapshot: null,
         mysteries: [],
         mysteryIndex: 0,
@@ -308,7 +307,7 @@ function initApp() {
                 console.error('app.js: SW registration failed: ', registrationError);
             });
 
-        navigator.serviceWorker.addEventListener('controllerchange', () => { // Note: Corrected to `() =>`
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
             console.log('app.js: SW controller changed. A new service worker has taken control.');
             // It's often a good idea to reload the page when the controller changes.
             // Consider adding window.location.reload(); if appropriate for the app.
@@ -745,7 +744,7 @@ function exportReport(format) {
 }
 
 function exportEnhancedSnapshot() {
-    const appVersion = "2.0-snapshot"; // Or some other version identifier
+    const appVersion = "2.0-snapshot";
 
     // 1. Match Details
     const matchDetails = { ...appState.match };
@@ -1011,47 +1010,503 @@ function clearAll() {
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     initApp();
-    // Diagnostic logs
-    console.log('app.js: soccerApp instance:', window.soccerApp);
-    console.log('app.js: typeof startAnalysis:', typeof startAnalysis);
-    console.log('app.js: typeof exportSnapshot:', typeof exportSnapshot);
-    console.log('app.js: typeof copyShareLink:', typeof copyShareLink);
-    console.log('app.js: typeof importFromLink:', typeof importFromLink);
-    console.log('app.js: typeof loadSampleData:', typeof loadSampleData);
-    console.log('app.js: typeof submitPrediction:', typeof submitPrediction);
-    console.log('app.js: typeof nextMystery:', typeof nextMystery);
-    console.log('app.js: typeof submitNarrative:', typeof submitNarrative);
-    console.log('app.js: typeof startMode:', typeof startMode);
-    console.log('app.js: typeof goHome:', typeof goHome);
-    console.log('app.js: typeof showTab:', typeof showTab);
-    console.log('app.js: typeof toggleTimer:', typeof toggleTimer);
-    console.log('app.js: typeof resetTimer:', typeof resetTimer);
-    console.log('app.js: typeof addNote:', typeof addNote);
-    console.log('app.js: typeof addQuickNote:', typeof addQuickNote);
-    console.log('app.js: typeof savePlayer:', typeof savePlayer);
-    console.log('app.js: typeof exportReport:', typeof exportReport);
-    console.log('app.js: typeof clearAll:', typeof clearAll);
+
+    // Create and assign DetectiveGameManager instance
+    if (window.app) {
+        window.app.gameManager = new DetectiveGameManager();
+    }
+
 });
 
-// ===== DETECTIVE MODE FUNCTIONS =====
+// ===== DETECTIVE GAME MANAGER CLASS =====
+class DetectiveGameManager {
+    // Note: Constructor and init are removed as per instructions.
+    // App state (userProfile, detective snapshot data) is accessed via window.app.appState
+
+    // ===== SNAPSHOT MANAGEMENT (soccer:// format) =====
+    exportSoccerProtocolSnapshot() {
+        // This logic is from SoccerInABox.exportSnapshot in script.js
+        // It creates the rich snapshot with mysteries for detective mode.
+        const snapshot = {
+            match: window.app.appState.match.homeTeam && window.app.appState.match.awayTeam ? `${window.app.appState.match.homeTeam} vs ${window.app.appState.match.awayTeam}` : "Demo Match",
+            timestamp: getTimestampMs(window.app.appState.timer.elapsedTime) || "00:00", // Use appState timer
+            score: "N/A", // Score not directly tracked in this appState structure for this snapshot type
+            events: window.app.appState.notes.map(n => ({ time: Math.floor(n.time/1000), description: n.text, type: "action" })) || [],
+            mysteries: [ // Default demo mysteries if none are loaded
+                {
+                    time: "65'",
+                    setup: "Chiesa riceve palla sulla fascia destra, a 25 metri dalla porta avversaria. Davanti a lui Bastoni in marcatura, alle spalle Vlahovic che chiede palla in area...",
+                    question: "Cosa succederà secondo te?",
+                    options: [
+                        { id: "cross", text: "🎯 Cross in area per Vlahovic", correct: true, points: 50 },
+                        { id: "dribbling", text: "⚡ Dribbling su Bastoni", correct: false, points: 0 },
+                        { id: "backward", text: "↩️ Passaggio indietro sicuro", correct: false, points: 0 },
+                        { id: "shot", text: "🚀 Tiro dalla distanza", correct: false, points: 0 }
+                    ],
+                    revelation: "⚽ Chiesa crossa perfettamente in area! Vlahovic svetta di testa ma Handanovic para in extremis!",
+                }
+            ],
+            narratives: [], // Narratives can be added if necessary
+            metadata: {
+                generated: new Date().toISOString(),
+                coachId: "app_js_coach",
+                matchId: window.app.appState.match.competition || "default_match"
+            }
+        };
+
+        // If a snapshot with mysteries is already loaded in detective mode, use those
+        if (window.app.appState.detective && window.app.appState.detective.currentSnapshot && window.app.appState.detective.currentSnapshot.mysteries) {
+            snapshot.mysteries = window.app.appState.detective.currentSnapshot.mysteries;
+            snapshot.match = window.app.appState.detective.currentSnapshot.match || snapshot.match;
+             if (window.app.appState.detective.currentSnapshot.narratives) {
+                snapshot.narratives = window.app.appState.detective.currentSnapshot.narratives;
+            }
+        }
+
+
+        const encoded = btoa(JSON.stringify(snapshot));
+        const shareLink = `soccer://snapshot/${encoded}`;
+
+        const shareLinkInput = document.getElementById('share-link'); // Used by simple_coach_mode UI
+        const shareLinkContainer = document.getElementById('share-link-container');
+
+        if (shareLinkInput && shareLinkContainer) {
+            shareLinkInput.value = shareLink;
+            shareLinkContainer.classList.remove('hidden');
+        } else {
+            // Fallback for detective mode if UI elements are different
+            const detectiveShareLinkInput = document.getElementById('snapshot-link'); // common input in detective mode
+             if(detectiveShareLinkInput) detectiveShareLinkInput.value = shareLink;
+        }
+
+        window.app.showNotification('🔗 Link snapshot (soccer://) generato!', 'success');
+        return shareLink; // Return for potential direct use
+    }
+
+    copyShareLink() {
+        // Assumes the link is in 'share-link' (simple_coach) or 'snapshot-link' (detective)
+        let linkInput = document.getElementById('share-link');
+        if (!linkInput || !linkInput.value) {
+            linkInput = document.getElementById('snapshot-link');
+        }
+
+        if (linkInput && linkInput.value) {
+            navigator.clipboard.writeText(linkInput.value)
+                .then(() => {
+                    window.app.showNotification('📋 Link copiato!', 'success');
+                })
+                .catch(err => {
+                    console.error('Impossibile copiare il link: ', err);
+                    window.app.showNotification('❌ Impossibile copiare il link.', 'error');
+                });
+        } else {
+            window.app.showNotification('❌ Nessun link da copiare.', 'info');
+        }
+    }
+
+    setupImportSystem() { // For drag & drop
+        const importContainer = document.getElementById('import-container');
+        if (!importContainer) return;
+
+        importContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            importContainer.classList.add('dragover');
+        });
+
+        importContainer.addEventListener('dragleave', () => {
+            importContainer.classList.remove('dragover');
+        });
+
+        importContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            importContainer.classList.remove('dragover');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                this.loadSnapshotFromFile(files[0]);
+            }
+        });
+    }
+
+    async loadSnapshotFromFile(file) {
+        try {
+            const text = await file.text();
+            const snapshot = JSON.parse(text);
+            this.loadSnapshot(snapshot); // Calls the class method
+        } catch (error) {
+            window.app.showNotification('❌ Errore nel caricamento del file: ' + error.message, 'error');
+        }
+    }
+
+    importFromLink() {
+        const linkInput = document.getElementById('snapshot-link'); // Detective mode uses 'snapshot-link'
+        if (!linkInput) {
+            window.app.showNotification('❌ Input field for link not found.', 'error');
+            return;
+        }
+        const link = linkInput.value.trim();
+
+        if (!link.startsWith('soccer://snapshot/')) {
+            window.app.showNotification('❌ Link non valido (deve iniziare con soccer://snapshot/)', 'error');
+            return;
+        }
+
+        try {
+            const encoded = link.replace('soccer://snapshot/', '');
+            const snapshot = JSON.parse(atob(encoded));
+            this.loadSnapshot(snapshot); // Calls the class method
+        } catch (error) {
+            window.app.showNotification('❌ Errore nel decodificare il link: ' + error.message, 'error');
+        }
+    }
+
+    loadSampleData() {
+        // This will now use the demo mysteries defined in exportSoccerProtocolSnapshot if no other snapshot is loaded.
+        // Or, use a more fixed demo snapshot like in app.js's original loadDetectiveSampleData
+         const demoSnapshot = {
+            match: "Demo Match: Team Alpha vs Team Beta",
+            mysteries: [
+                {
+                    time: "10'",
+                    setup: "Player A from Team Alpha receives the ball midfield.",
+                    question: "What will Player A do next?",
+                    options: [
+                        { id: "opt1", text: "Pass to teammate forward", correct: true, points: 10 },
+                        { id: "opt2", text: "Dribble past opponent", correct: false, points: 0 },
+                        { id: "opt3", text: "Shoot from distance", correct: false, points: 0 }
+                    ],
+                    revelation: "Player A makes a brilliant through pass to the striker!"
+                },
+                {
+                    time: "25'",
+                    setup: "Team Beta is on a counter-attack. Their winger is sprinting down the flank.",
+                    question: "What is the most likely outcome?",
+                    options: [
+                        { id: "optA", text: "A cross into the box", correct: true, points: 15 },
+                        { id: "optB", text: "Winger cuts inside to shoot", correct: false, points: 0 },
+                        { id: "optC", text: "Defender intercepts the ball", correct: false, points: 0 }
+                    ],
+                    revelation: "The winger delivers a precise cross, leading to a shot on goal!"
+                }
+            ]
+        };
+        this.loadSnapshot(demoSnapshot);
+        window.app.showNotification('🎮 Dati demo caricati per Detective Mode!', 'info');
+    }
+
+    loadSnapshot(snapshot) {
+        if (!snapshot || !snapshot.mysteries) {
+            window.app.showNotification('❌ Snapshot data is invalid or missing mysteries.', 'error');
+            return;
+        }
+        window.app.appState.detective.currentSnapshot = snapshot;
+        window.app.appState.detective.mysteries = snapshot.mysteries || [];
+        window.app.appState.detective.mysteryIndex = 0;
+        window.app.appState.detective.currentPrediction = null;
+
+        document.getElementById('import-container').classList.add('hidden');
+        document.getElementById('investigation-area').classList.remove('hidden');
+
+        this.loadCurrentMystery();
+        window.app.showNotification(`🕵️ Analisi caricata: ${snapshot.match || 'Snapshot'}`, 'success');
+        // No saveData() here, app.js handles global state saving
+    }
+
+    // ===== DETECTIVE GAMEPLAY =====
+    loadCurrentMystery() {
+        const { detective } = window.app.appState;
+        if (!detective || !detective.mysteries) {
+            console.error("Detective state or mysteries not initialized for loadCurrentMystery.");
+            return;
+        }
+
+        if (detective.mysteryIndex >= detective.mysteries.length) {
+            this.completeInvestigation();
+            return;
+        }
+
+        const mystery = detective.mysteries[detective.mysteryIndex];
+
+        const mysteryTimeEl = document.getElementById('mystery-time');
+        const mysteryDescriptionEl = document.getElementById('mystery-description');
+        const predictionOptionsContainer = document.getElementById('prediction-options');
+        const currentMysteryEl = document.getElementById('current-mystery');
+        const predictionResultEl = document.getElementById('prediction-result');
+
+        if (mysteryTimeEl) mysteryTimeEl.textContent = mystery.time || 'N/A';
+        if (mysteryDescriptionEl) mysteryDescriptionEl.innerHTML = `${mystery.setup || 'Mystery setup...'} <br><br><strong>${mystery.question || 'What happens next?'}</strong>`;
+
+        if (predictionOptionsContainer) {
+            predictionOptionsContainer.innerHTML = '';
+            if (mystery.options && Array.isArray(mystery.options)) {
+                mystery.options.forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.className = 'prediction-btn';
+                    btn.dataset.optionid = option.id; // Ensure this matches how it's read in submitPrediction
+                    btn.textContent = option.text;
+                    predictionOptionsContainer.appendChild(btn);
+                });
+            }
+        }
+
+        if (currentMysteryEl) currentMysteryEl.classList.remove('hidden');
+        if (predictionResultEl) predictionResultEl.classList.add('hidden');
+
+        detective.currentPrediction = null; // Reset current prediction for the new mystery
+        this.updateProgress();
+    }
+
+    submitPrediction() {
+        const { detective, userProfile } = window.app.appState;
+        if (!detective.currentPrediction) {
+            window.app.showNotification('🤔 Seleziona prima una predizione!', 'info');
+            return;
+        }
+
+        const mystery = detective.mysteries[detective.mysteryIndex];
+        const selectedOption = mystery.options.find(opt => opt.id === detective.currentPrediction);
+
+        if (!selectedOption) {
+            window.app.showNotification('Error: Selected option not found.', 'error');
+            return;
+        }
+
+        const isCorrect = selectedOption.correct || selectedOption.isCorrect; // Accommodate both spellings
+
+        if (isCorrect) {
+            userProfile.points += (mystery.points || 50); // Default points if not specified
+            userProfile.predictionsCorrect++;
+        }
+
+        this.showRevelation(mystery, isCorrect); // Shows correct/wrong UI too
+
+        this.updateFanStats(); // Updates display
+        this.checkForBadges(); // Checks and displays new badges
+        // No explicit saveFanProfile, global saveData in app.js handles it.
+    }
+
+    showRevelation(mystery, isCorrectGuess) {
+        const currentMysteryEl = document.getElementById('current-mystery');
+        const predictionResultEl = document.getElementById('prediction-result');
+        const revelationContentEl = document.getElementById('revelation-content');
+        const predictionOptionsContainer = document.getElementById('prediction-options');
+
+        if (currentMysteryEl) currentMysteryEl.classList.add('hidden');
+
+        if (predictionOptionsContainer) {
+            predictionOptionsContainer.querySelectorAll('.prediction-btn').forEach(btn => {
+                const optionId = btn.dataset.optionid;
+                const optionData = mystery.options.find(opt => opt.id === optionId);
+                if (optionData) {
+                    if (optionData.correct || optionData.isCorrect) {
+                        btn.classList.add('correct');
+                    } else if (optionId === window.app.appState.detective.currentPrediction && !isCorrectGuess) {
+                        btn.classList.add('wrong');
+                    }
+                }
+                btn.disabled = true; // Disable after selection
+            });
+        }
+
+        if (revelationContentEl) {
+            const pointsAwarded = mystery.points || 0;
+            const pointsText = isCorrectGuess ?
+                `<div style="color: #22c55e; font-weight: bold;">+${pointsAwarded} punti! 🎉</div>` :
+                `<div style="color: #ef4444;">Nessun punto questa volta 😔</div>`;
+
+            revelationContentEl.innerHTML = `
+                <div style="font-size: 1.1rem; margin-bottom: 1rem;">
+                    ${mystery.revelation || 'The outcome is revealed!'}
+                </div>
+                ${pointsText}
+            `;
+        }
+        if (predictionResultEl) predictionResultEl.classList.remove('hidden');
+    }
+
+    nextMystery() {
+        const { detective } = window.app.appState;
+        if (!detective) return;
+        detective.mysteryIndex++;
+
+        const predictionOptionsContainer = document.getElementById('prediction-options');
+        if (predictionOptionsContainer) {
+            predictionOptionsContainer.querySelectorAll('.prediction-btn').forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('correct', 'wrong', 'selected');
+            });
+        }
+        this.loadCurrentMystery();
+    }
+
+    completeInvestigation() {
+        window.app.showNotification(
+            `🏆 Investigazione completata! ${window.app.appState.userProfile.predictionsCorrect}/${window.app.appState.detective.mysteries.length} corrette`,
+            'success'
+        );
+
+        document.getElementById('investigation-area').classList.add('hidden');
+        document.getElementById('import-container').classList.remove('hidden');
+        const snapshotLinkInput = document.getElementById('snapshot-link');
+        if(snapshotLinkInput) snapshotLinkInput.value = '';
+    }
+
+    // ===== NARRATIVE MODE =====
+    submitNarrative() {
+        const userNarrativeEl = document.getElementById('user-narrative');
+        if (!userNarrativeEl) {
+            window.app.showNotification("Error: Narrative input area missing.", "error");
+            return;
+        }
+        const userText = userNarrativeEl.value.trim();
+
+        if (!userText) {
+            window.app.showNotification('📝 Scrivi prima una cronaca!', 'info');
+            return;
+        }
+
+        const { detective, userProfile } = window.app.appState;
+        let officialText = "Official narrative not available for this event.";
+        if (detective.currentSnapshot && detective.currentSnapshot.narratives && detective.mysteries.length > 0) {
+            // Simplistic: try to find a narrative for the current mystery.
+            // This assumes mystery objects might have an ID or a way to link to narratives.
+            // For now, using a placeholder or the first narrative if available.
+            const currentMysteryEventKey = detective.mysteries[detective.mysteryIndex]?.event; // Assuming 'event' key
+            const narrativeEntry = detective.currentSnapshot.narratives.find(n => n.event === currentMysteryEventKey);
+            if (narrativeEntry) {
+                officialText = narrativeEntry.official;
+            } else if (detective.currentSnapshot.narratives.length > 0) {
+                officialText = detective.currentSnapshot.narratives[0].official; // Fallback
+            }
+        }
+
+
+        const userNarrativeDisplayEl = document.getElementById('user-narrative-display');
+        const officialNarrativeEl = document.getElementById('official-narrative');
+        const narrativeComparisonEl = document.getElementById('narrative-comparison');
+
+        if (userNarrativeDisplayEl) userNarrativeDisplayEl.textContent = userText;
+        if (officialNarrativeEl) officialNarrativeEl.textContent = officialText;
+        if (narrativeComparisonEl) narrativeComparisonEl.classList.remove('hidden');
+
+        userProfile.narrativesWritten = (userProfile.narrativesWritten || 0) + 1;
+        userProfile.points = (userProfile.points || 0) + 25;
+
+        this.updateFanStats();
+        this.checkForBadges();
+
+        window.app.showNotification('📰 Cronaca pubblicata! +25 punti creatività', 'success');
+    }
+
+    // ===== GAMIFICATION SYSTEM =====
+    updateFanStats() { // Updates the display
+        const { userProfile } = window.app.appState;
+        const fanLevelEl = document.getElementById('fan-level');
+        const fanPointsEl = document.getElementById('fan-points');
+        const predictionsCorrectEl = document.getElementById('predictions-correct');
+        const narrativesWrittenEl = document.getElementById('narratives-written');
+
+        if (fanLevelEl) fanLevelEl.textContent = userProfile.level;
+        if (fanPointsEl) fanPointsEl.textContent = userProfile.points;
+        if (predictionsCorrectEl) predictionsCorrectEl.textContent = userProfile.predictionsCorrect;
+        if (narrativesWrittenEl) narrativesWrittenEl.textContent = userProfile.narrativesWritten;
+
+        const newLevel = Math.floor(userProfile.points / 100) + 1; // Example: 100 points per level
+        if (newLevel > userProfile.level) {
+            userProfile.level = newLevel;
+            window.app.showNotification(`🆙 Level UP! Ora sei livello ${newLevel}!`, 'success');
+        }
+    }
+
+    checkForBadges() {
+        const { userProfile } = window.app.appState;
+        const newBadgesEarned = [];
+
+        // Define badge criteria
+        const badgeCriteria = {
+            '🎯 Profeta': () => userProfile.predictionsCorrect >= 5,
+            '👁️ Occhio Clinico': () => userProfile.predictionsCorrect >= 3 && userProfile.narrativesWritten >= 2,
+            '📝 Narratore': () => userProfile.narrativesWritten >= 5,
+            '⭐ Analista': () => userProfile.points >= 500,
+            '🧐 Detective Junior': () => userProfile.predictionsCorrect >= 1,
+            '✍️ Scrittore Recluta': () => userProfile.narrativesWritten >= 1
+        };
+
+        for (const badgeName in badgeCriteria) {
+            if (badgeCriteria[badgeName]() && !userProfile.badges.includes(badgeName)) {
+                userProfile.badges.push(badgeName);
+                newBadgesEarned.push(badgeName);
+            }
+        }
+
+        if (newBadgesEarned.length > 0) {
+            newBadgesEarned.forEach(badge => {
+                window.app.showNotification(`🏆 Nuovo Badge: ${badge}!`, 'success');
+            });
+            this.updateBadgesDisplay();
+        }
+    }
+
+    updateBadgesDisplay() {
+        const { userProfile } = window.app.appState;
+        const container = document.getElementById('badges-container');
+        if (!container) return;
+
+        container.innerHTML = ''; // Clear existing badges
+        userProfile.badges.forEach(badge => {
+            const badgeEl = document.createElement('div');
+            badgeEl.className = 'badge';
+            badgeEl.textContent = badge;
+            container.appendChild(badgeEl);
+        });
+    }
+
+    updateProgress() {
+        const { detective } = window.app.appState;
+        if (!detective || !detective.mysteries || !document.getElementById('progress-fill') || !document.getElementById('progress-text')) return;
+
+        const mysteriesCount = detective.mysteries.length;
+        if (mysteriesCount === 0) {
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('progress-text').textContent = '0/0 eventi analizzati';
+            return;
+        }
+        const progress = ((detective.mysteryIndex) / mysteriesCount) * 100;
+        document.getElementById('progress-fill').style.width = `${progress}%`;
+        document.getElementById('progress-text').textContent =
+            `${detective.mysteryIndex}/${mysteriesCount} eventi analizzati`;
+    }
+}
+
+
+// ===== DETECTIVE MODE FUNCTIONS (now delegating to DetectiveGameManager) =====
 window.app.detective = {}; // Namespace for detective mode functions
 
-function updateDetectiveProgress() {
+// This function is ALREADY in app.js, just ensure it's using appState correctly.
+// The version in app.js is fine, DetectiveGameManager.updateProgress is the one migrated.
+function updateDetectiveProgress() { // This is the UI update function from app.js, NOT the class method.
     if (!appState.detective || !appState.detective.mysteries || !document.getElementById('progress-fill') || !document.getElementById('progress-text')) return;
 
-    const mysteriesCount = appState.detective.mysteries.length;
+    // This UI update function remains in app.js global scope.
+    // The DetectiveGameManager will have its own updateProgress that modifies appState.
+    const { detective } = window.app.appState; // Access appState correctly
+    if (!detective || !detective.mysteries || !document.getElementById('progress-fill') || !document.getElementById('progress-text')) return;
+
+    const mysteriesCount = detective.mysteries.length;
     if (mysteriesCount === 0) {
         document.getElementById('progress-fill').style.width = '0%';
         document.getElementById('progress-text').textContent = '0/0 eventi analizzati';
         return;
     }
-    const progress = ((appState.detective.mysteryIndex) / mysteriesCount) * 100;
+    const progress = ((detective.mysteryIndex) / mysteriesCount) * 100;
     document.getElementById('progress-fill').style.width = `${progress}%`;
     document.getElementById('progress-text').textContent =
-        `${appState.detective.mysteryIndex}/${mysteriesCount} eventi analizzati`;
+        `${detective.mysteryIndex}/${detective.mysteries.length} eventi analizzati`;
 }
 
-function completeDetectiveInvestigation() {
+// This function remains in app.js as it manipulates global UI directly.
+// DetectiveGameManager.completeInvestigation will handle internal state logic.
+function completeDetectiveInvestigation() { // UI part
     console.log("All mysteries completed!");
     const investigationArea = document.getElementById('investigation-area');
     const currentMysteryEl = document.getElementById('current-mystery');
@@ -1062,120 +1517,59 @@ function completeDetectiveInvestigation() {
 
     if (investigationArea) {
         investigationArea.innerHTML = '<h3><span class="emoji-placeholder">🏆</span> Investigation Complete!</h3><p>You have analyzed all available events. Check your final stats and badges!</p>';
+        // Consider adding a button to go back to import or home.
     }
-    if(window.app && window.app.showNotification) window.app.showNotification("Investigation Complete!", "success");
+    // The actual state clearing or specific "completion" logic is in gameManager.completeInvestigation
+    if (window.app.gameManager) {
+      window.app.gameManager.completeInvestigation(); // Call the logic part
+    }
 }
 
+
+// loadDetectiveSnapshot is now primarily handled by DetectiveGameManager.loadSnapshot
+// This function in app.js can be a simple wrapper if needed or removed if UI calls gameManager directly.
+// For now, let's assume UI might still call this, so it delegates.
 function loadDetectiveSnapshot(snapshot) {
-    if (!snapshot || !snapshot.mysteries) {
-        if(window.app && window.app.showNotification) window.app.showNotification('❌ Snapshot data is invalid or missing mysteries.', 'error');
-        return;
-    }
-    appState.detective.currentSnapshot = snapshot;
-    appState.detective.mysteries = snapshot.mysteries || [];
-    appState.detective.mysteryIndex = 0;
-    appState.detective.currentPrediction = null;
-
-    document.getElementById('import-container').classList.add('hidden');
-    document.getElementById('investigation-area').classList.remove('hidden');
-
-    window.app.detective.loadCurrentMystery(); // Call the namespaced function
-    if(window.app && window.app.showNotification) window.app.showNotification(`🕵️ Analisi caricata: ${snapshot.match || 'Snapshot'}`, 'success');
-    saveData();
-}
-
-function importDetectiveSnapshotFromLink() {
-    const linkInput = document.getElementById('snapshot-link');
-    if (!linkInput) return;
-    const link = linkInput.value.trim();
-
-    if (!link.startsWith('soccer://snapshot/')) {
-        if(window.app && window.app.showNotification) window.app.showNotification('❌ Link non valido.', 'error');
-        return;
-    }
-    try {
-        const encoded = link.replace('soccer://snapshot/', '');
-        const snapshot = JSON.parse(atob(encoded));
-        loadDetectiveSnapshot(snapshot); // Use the internal loader
-    } catch (error) {
-        console.error("Error decoding snapshot from link:", error);
-        if(window.app && window.app.showNotification) window.app.showNotification('❌ Errore nel decodificare il link.', 'error');
+    if (window.app.gameManager) {
+        window.app.gameManager.loadSnapshot(snapshot);
+    } else {
+        window.app.showNotification('❌ Game Manager non inizializzato.', 'error');
     }
 }
 
-function loadDetectiveSampleData() {
-    const demoSnapshot = {
-        match: "Demo Match: Team Alpha vs Team Beta",
-        mysteries: [
-            {
-                time: "10'",
-                setup: "Player A from Team Alpha receives the ball midfield.",
-                question: "What will Player A do next?",
-                options: [
-                    { id: "opt1", text: "Pass to teammate forward", isCorrect: true, points: 10 },
-                    { id: "opt2", text: "Dribble past opponent", isCorrect: false, points: 0 },
-                    { id: "opt3", text: "Shoot from distance", isCorrect: false, points: 0 }
-                ],
-                revelation: "Player A makes a brilliant through pass to the striker!"
-            },
-            {
-                time: "25'",
-                setup: "Team Beta is on a counter-attack. Their winger is sprinting down the flank.",
-                question: "What is the most likely outcome?",
-                options: [
-                    { id: "optA", text: "A cross into the box", isCorrect: true, points: 15 },
-                    { id: "optB", text: "Winger cuts inside to shoot", isCorrect: false, points: 0 },
-                    { id: "optC", text: "Defender intercepts the ball", isCorrect: false, points: 0 }
-                ],
-                revelation: "The winger delivers a precise cross, leading to a shot on goal!"
-            }
-        ]
-    };
-    loadDetectiveSnapshot(demoSnapshot); // Use the internal loader
-}
+// These functions will now delegate to DetectiveGameManager instance
+window.app.detective.importDetectiveSnapshotFromLink = function() {
+    if (window.app.gameManager) window.app.gameManager.importFromLink();
+    else window.app.showNotification('❌ Game Manager non inizializzato.', 'error');
+};
 
-function loadCurrentMystery() {
-    if (!appState.detective || !appState.detective.mysteries) {
-        console.error("Detective state or mysteries not initialized for loadCurrentMystery.");
-        return;
-    }
+window.app.detective.loadDetectiveSampleData = function() {
+    if (window.app.gameManager) window.app.gameManager.loadSampleData();
+    else window.app.showNotification('❌ Game Manager non inizializzato.', 'error');
+};
 
-    if (appState.detective.mysteryIndex >= appState.detective.mysteries.length) {
-        completeDetectiveInvestigation();
-        return;
-    }
+window.app.detective.loadCurrentMystery = function() {
+    if (window.app.gameManager) window.app.gameManager.loadCurrentMystery();
+    else window.app.showNotification('❌ Game Manager non inizializzato.', 'error');
+};
 
-    const mystery = appState.detective.mysteries[appState.detective.mysteryIndex];
+window.app.detective.submitDetectivePrediction = function() {
+    if (window.app.gameManager) window.app.gameManager.submitPrediction();
+    else window.app.showNotification('❌ Game Manager non inizializzato.', 'error');
+};
 
-    const mysteryTimeEl = document.getElementById('mystery-time');
-    const mysteryDescriptionEl = document.getElementById('mystery-description');
-    const predictionOptionsContainer = document.getElementById('prediction-options');
-    const currentMysteryEl = document.getElementById('current-mystery');
-    const predictionResultEl = document.getElementById('prediction-result');
+window.app.detective.nextDetectiveMystery = function() {
+    if (window.app.gameManager) window.app.gameManager.nextMystery();
+    else window.app.showNotification('❌ Game Manager non inizializzato.', 'error');
+};
 
-    if (mysteryTimeEl) mysteryTimeEl.textContent = mystery.time || 'N/A';
-    if (mysteryDescriptionEl) mysteryDescriptionEl.innerHTML = `${mystery.setup || 'Mystery setup...'} <br><br><strong>${mystery.question || 'What happens next?'}</strong>`;
+window.app.detective.submitDetectiveNarrative = function() {
+    if (window.app.gameManager) window.app.gameManager.submitNarrative();
+    else window.app.showNotification('❌ Game Manager non inizializzato.', 'error');
+};
 
-    if (predictionOptionsContainer) {
-        predictionOptionsContainer.innerHTML = ''; // Clear previous options
-        if (mystery.options && Array.isArray(mystery.options)) {
-            mystery.options.forEach(option => {
-                const btn = document.createElement('button');
-                btn.className = 'prediction-btn';
-                btn.dataset.optionid = option.id;
-                btn.textContent = option.text;
-                predictionOptionsContainer.appendChild(btn);
-            });
-        }
-    }
 
-    if (currentMysteryEl) currentMysteryEl.classList.remove('hidden');
-    if (predictionResultEl) predictionResultEl.classList.add('hidden');
-
-    appState.detective.currentPrediction = null;
-    updateDetectiveProgress();
-}
-
+// This UI helper remains in app.js
 function handlePredictionOptionClick(event) {
     const clickedButton = event.target.closest('.prediction-btn');
     if (clickedButton) {
@@ -1186,195 +1580,48 @@ function handlePredictionOptionClick(event) {
             });
         }
         clickedButton.classList.add('selected');
-        appState.detective.currentPrediction = clickedButton.dataset.optionid;
+        // Update appState directly, as gameManager reads from it upon submission
+        window.app.appState.detective.currentPrediction = clickedButton.dataset.optionid;
     }
 }
 
+// This UI setup remains in app.js
 function setupDetectiveListeners() {
     const predictionOptionsContainer = document.getElementById('prediction-options');
     if (predictionOptionsContainer) {
-        // Assign internal helper directly, no need to put on window.app.detective for this
         predictionOptionsContainer.onclick = handlePredictionOptionClick;
     }
+    // Drag and drop for snapshot import should also be initialized here if not handled by gameManager's setupImportSystem
+    if (window.app.gameManager) {
+        window.app.gameManager.setupImportSystem(); // Call it to ensure drag/drop is active
+    }
 }
 
-function showDetectiveRevelation(mystery, isCorrectGuess) {
-    const currentMysteryEl = document.getElementById('current-mystery');
-    const predictionResultEl = document.getElementById('prediction-result');
-    const revelationContentEl = document.getElementById('revelation-content');
-    const predictionOptionsContainer = document.getElementById('prediction-options');
+// showDetectiveRevelation is now a method within DetectiveGameManager
+// UI calls submitDetectivePrediction which then calls gameManager.showRevelation.
 
-    if (currentMysteryEl) currentMysteryEl.classList.add('hidden');
-
-    if (predictionOptionsContainer) {
-        predictionOptionsContainer.querySelectorAll('.prediction-btn').forEach(btn => {
-            const optionId = btn.dataset.optionid;
-            const optionData = mystery.options.find(opt => opt.id === optionId);
-            if (optionData) {
-                if (optionData.isCorrect || optionData.correct) {
-                    btn.classList.add('correct');
-                } else if (optionId === appState.detective.currentPrediction && !isCorrectGuess) {
-                    btn.classList.add('wrong');
-                }
-            }
-            btn.disabled = true;
-        });
-    }
-
-    if (revelationContentEl) {
-        const pointsAwarded = mystery.points || 0;
-        const pointsText = isCorrectGuess ?
-            `<div style="color: #22c55e; font-weight: bold;">+${pointsAwarded} punti! 🎉</div>` :
-            `<div style="color: #ef4444;">Nessun punto questa volta 😔</div>`;
-
-        revelationContentEl.innerHTML = `
-            <div style="font-size: 1.1rem; margin-bottom: 1rem;">
-                ${mystery.revelation || 'The outcome is revealed!'}
-            </div>
-            ${pointsText}
-        `;
-    }
-    if (predictionResultEl) predictionResultEl.classList.remove('hidden');
-}
-
-function submitDetectivePrediction() {
-    if (!appState.detective.currentPrediction) {
-        // Use the globally exposed showNotification
-        window.app.showNotification('🤔 Seleziona prima una predizione!', 'info');
-        return;
-    }
-
-    const mystery = appState.detective.mysteries[appState.detective.mysteryIndex];
-    const selectedOption = mystery.options.find(opt => opt.id === appState.detective.currentPrediction);
-
-    if (!selectedOption) {
-        // Use the globally exposed showNotification
-        window.app.showNotification('Error: Selected option not found.', 'error');
-        return;
-    }
-
-    const isCorrect = selectedOption.isCorrect || selectedOption.correct;
-
-    if (isCorrect) {
-        appState.userProfile.points += (mystery.points || 50);
-        appState.userProfile.predictionsCorrect++;
-        // Notification for correct answer will be part of showDetectiveRevelation or handled there
+// Update existing simple snapshot functions to use DetectiveGameManager for soccer:// format
+function exportSimpleSnapshot() { // This is window.app.exportSimpleSnapshot
+    if (window.app.gameManager) {
+        window.app.gameManager.exportSoccerProtocolSnapshot();
     } else {
-        // Notification for incorrect answer will be part of showDetectiveRevelation or handled there
-    }
-
-    if(window.app && window.app.checkForBadgesAndLevelUp) window.app.checkForBadgesAndLevelUp();
-    if(window.app && window.app.updateUserStatsDisplay) window.app.updateUserStatsDisplay();
-
-    showDetectiveRevelation(mystery, isCorrect); // This function should ideally call showNotification
-    saveData();
-}
-
-function nextDetectiveMystery() {
-    if (!appState.detective) return;
-    appState.detective.mysteryIndex++;
-
-    const predictionOptionsContainer = document.getElementById('prediction-options');
-    if (predictionOptionsContainer) {
-        predictionOptionsContainer.querySelectorAll('.prediction-btn').forEach(btn => {
-            btn.disabled = false;
-            btn.classList.remove('correct', 'wrong', 'selected');
-        });
-    }
-
-    loadCurrentMystery(); // This is now the internal function, not window.app.detective.loadCurrentMystery
-    saveData();
-}
-
-function submitDetectiveNarrative() {
-    const userNarrativeEl = document.getElementById('user-narrative');
-    if (!userNarrativeEl) {
-        console.error("User narrative textarea not found.");
-        if(window.app && window.app.showNotification) window.app.showNotification("Error: Narrative input area missing.", "error");
-        else alert("Error: Narrative input area missing.");
-        return;
-    }
-    const userText = userNarrativeEl.value.trim();
-
-    if (!userText) {
-        // Use the globally exposed showNotification
-        window.app.showNotification('📝 Scrivi prima una cronaca!', 'info');
-        return;
-    }
-
-    // In a real scenario, officialText might come from the current mystery object
-    const officialText = "Al 67° minuto splendida azione della Juventus: Chiesa serve un cross millimetrico dalla destra, Vlahovic svetta imperioso ma trova la grande parata di Handanovic che mantiene il risultato sul 2-1.";
-
-    const userNarrativeDisplayEl = document.getElementById('user-narrative-display');
-    const officialNarrativeEl = document.getElementById('official-narrative');
-    const narrativeComparisonEl = document.getElementById('narrative-comparison');
-
-    if (userNarrativeDisplayEl) userNarrativeDisplayEl.textContent = userText;
-    if (officialNarrativeEl) officialNarrativeEl.textContent = officialText;
-    if (narrativeComparisonEl) narrativeComparisonEl.classList.remove('hidden');
-
-    // Update gamification stats
-    if (appState.userProfile) {
-        appState.userProfile.narrativesWritten = (appState.userProfile.narrativesWritten || 0) + 1;
-        appState.userProfile.points = (appState.userProfile.points || 0) + 25; // Example points for narrative
-
-        if(window.app && window.app.checkForBadgesAndLevelUp) window.app.checkForBadgesAndLevelUp();
-        if(window.app && window.app.updateUserStatsDisplay) window.app.updateUserStatsDisplay();
-    }
-
-    // Use the globally exposed showNotification
-    window.app.showNotification('📰 Cronaca pubblicata! +25 punti creatività', 'success');
-    saveData();
-}
-
-// --- Simple Snapshot Export Functions (for soccerbox-coach-mode) ---
-function exportSimpleSnapshot() {
-    try {
-        // This is a simplified snapshot structure for demonstration
-        const simpleSnapshot = {
-            match: "Partita Semplice Esempio",
-            timestamp: "45'",
-            highlights: ["Gol Squadra A al 10'", "Ammonizione Giocatore X al 25'"],
-            notes: "Analisi preliminare del primo tempo."
-        };
-        const encoded = btoa(JSON.stringify(simpleSnapshot));
-        // Using a slightly different prefix for simple snapshots if needed, or keep original
-        const shareLink = `soccer://snapshot/${encoded}`; // Or soccer://snapshot/simple/${encoded}
-
-        const shareLinkInput = document.getElementById('share-link'); // Assumes this ID exists in soccerbox-coach-mode
-        const shareLinkContainer = document.getElementById('share-link-container'); // Assumes this ID exists
-
-        if (shareLinkInput && shareLinkContainer) {
-            shareLinkInput.value = shareLink;
-            shareLinkContainer.classList.remove('hidden');
-            window.app.showNotification('🔗 Link snapshot (semplice) generato!', 'success');
-        } else {
-            console.error("Elementi UI per share-link non trovati nel DOM.");
-            window.app.showNotification('❌ Errore UI: Elementi per link non trovati.', 'error');
-        }
-    } catch (error) {
-        console.error("Errore nella generazione dello snapshot semplice:", error);
-        window.app.showNotification('❌ Errore nella generazione dello snapshot semplice.', 'error');
+        window.app.showNotification('❌ Game Manager non inizializzato.', 'error');
+        // Fallback to old simple snapshot if really needed, but task implies using new one.
+        // try { ... old simple snapshot code ... } catch ...
     }
 }
 
-function copySimpleShareLink() {
-    const shareLinkInput = document.getElementById('share-link'); // Assumes this ID exists
-    if (shareLinkInput && shareLinkInput.value) {
-        navigator.clipboard.writeText(shareLinkInput.value)
-            .then(() => {
-                window.app.showNotification('📋 Link copiato!', 'success');
-            })
-            .catch(err => {
-                console.error('Impossibile copiare il link: ', err);
-                window.app.showNotification('❌ Impossibile copiare il link.', 'error');
-            });
+function copySimpleShareLink() { // This is window.app.copySimpleShareLink
+    if (window.app.gameManager) {
+        window.app.gameManager.copyShareLink();
     } else {
-        window.app.showNotification('❌ Nessun link da copiare.', 'info');
+        window.app.showNotification('❌ Game Manager non inizializzato.', 'error');
     }
 }
 
 // --- Simple Coach Mode Activation ---
+// This part seems fine, no direct calls to the methods being moved,
+// but exportSimpleSnapshot called from its UI will now use the gameManager.
 // This function is called when "Avvia Analisi" is clicked in the "Simple Snapshot Coach" mode.
 function startSimpleCoachAnalysis() {
     // This function replaces the old global startAnalysis() which was tied to SoccerInABox
@@ -1769,27 +2016,4 @@ window.updateTimeline = function() {
     triggerCommunityEvent('milestone_note', {});
 };
 
-console.log('Coach-Community integration loaded successfully!');
-
-// Ensure detective functions also use window.app.showNotification if they were missed or for future-proofing
-// This is more of a conceptual check as the specific alert replacements were targeted above.
-// However, it's good practice to ensure all user-facing messages go through the new system.
-// Example: If loadDetectiveSnapshot had an alert for failure, it should be changed.
-// Reviewing loadDetectiveSnapshot, importDetectiveSnapshotFromLink, loadDetectiveSampleData:
-// - loadDetectiveSnapshot: uses window.app.showNotification for success/error - CONFIRMED (Lines 922, 930)
-// - importDetectiveSnapshotFromLink: uses window.app.showNotification for error - CONFIRMED (Lines 942, 949)
-// - loadDetectiveSampleData: (implicitly uses loadDetectiveSnapshot, so covered) - CONFIRMED
-// - completeDetectiveInvestigation: uses window.app.showNotification for success - CONFIRMED (Line 907)
-// - submitDetectivePrediction:
-//      - "select option first": uses window.app.showNotification - CONFIRMED (Line 1178)
-//      - "option not found": uses window.app.showNotification - CONFIRMED (Line 1185)
-// - submitDetectiveNarrative:
-//      - "write narrative first": uses window.app.showNotification - CONFIRMED (Line 1226)
-//      - "narrative published": uses window.app.showNotification - CONFIRMED (Line 1250)
-// - exportEnhancedSnapshot:
-//      - "exported": uses window.app.showNotification - CONFIRMED (Line 757)
-
-// All listed functions from step 2b of the prompt have been verified to use showNotification.
-// The primary action was porting and updating exportSimpleSnapshot and copySimpleShareLink.
-        
-        
+// End of app.js
